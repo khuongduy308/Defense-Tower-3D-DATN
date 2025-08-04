@@ -4,10 +4,10 @@ const { ccclass, property } = _decorator;
 @ccclass('PlayerController')
 export class PlayerController extends Component {
     @property
-    moveSpeed: number = 5;
+    moveSpeed: number = 1;
 
     @property
-    jumpForce: number = 5;
+    jumpForce: number = 10;
 
     @property(Node)
     cameraNode: Node = null;
@@ -71,9 +71,18 @@ export class PlayerController extends Component {
     public jump() {
         if (!this._canJump) return;
 
-        const velocity = new Vec3();
+        console.log('jump');
+        const velocity = new Vec3(0, 0, 0);
+
+        if (!this._rigidBody) {
+            console.warn("🔥 RigidBody chưa được gán!");
+
+        }
         this._rigidBody.getLinearVelocity(velocity);
-        velocity.y = this.jumpForce;
+        
+        velocity.y += this.jumpForce;
+        console.log(velocity.y);
+
         this._rigidBody.setLinearVelocity(velocity);
 
         this._canJump = false;

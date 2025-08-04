@@ -32,7 +32,7 @@ export class Joystick extends Component {
 
     onTouchStart(event: EventTouch) {
         this._isPressed = true;
-        this.updateJoystick(event);
+        // this.updateJoystick(event);
     }
 
     onTouchMove(event: EventTouch) {

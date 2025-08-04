@@ -410,8 +410,8 @@
     },
     "_enabled": true,
     "__prefab": null,
-    "moveSpeed": 5,
-    "jumpForce": null,
+    "moveSpeed": 2,
+    "jumpForce": 3,
     "cameraNode": {
       "__id__": 6
     },
