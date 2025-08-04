@@ -9,10 +9,10 @@ export class Joystick extends Component {
     joystickHandle: Node = null;
 
     @property
-    maxDistance: number = 50;
+    maxDistance: number = 10;
 
     @property
-    moveSpeed: number = 5;
+    moveSpeed: number = 1;
 
     @property(PlayerController)
     playerController: PlayerController = null; // Gắn vào từ Inspector

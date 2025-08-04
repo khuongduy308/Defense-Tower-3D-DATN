@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Vec3 } from 'cc';
+import { _decorator, Component, Node, Vec3, Animation, RigidBody, SkeletalAnimation } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('PlayerController')
@@ -6,46 +6,88 @@ export class PlayerController extends Component {
     @property
     moveSpeed: number = 5;
 
+    @property
+    jumpForce: number = 5;
+
     @property(Node)
     cameraNode: Node = null;
 
+
     private _inputDir: Vec3 = new Vec3();
+    private _animation: Animation = null;
+    private _rigidBody: RigidBody = null;
+    private _canJump: boolean = true;
+    private _currentAnim: string = '';
+
+    onLoad() {
+        this._animation = this.getComponent(SkeletalAnimation);
+        this._rigidBody = this.getComponent(RigidBody);
+    }
 
     public setMoveDirection(dir: Vec3) {
         this._inputDir.set(dir);
     }
 
     update(dt: number) {
-        if (!this.cameraNode) return;
+        if (!this.cameraNode || !this._rigidBody) return;
 
         const camMat = this.cameraNode.worldMatrix;
-
-        // Forward của camera (đảo lại vì model quay về -Z)
         const camForward = new Vec3(camMat.m08, 0, camMat.m10);
-        camForward.normalize();
-
         const camRight = new Vec3(camMat.m00, 0, camMat.m02);
+        camForward.normalize();
         camRight.normalize();
 
-        // Di chuyển nếu có input joystick
+        const moveDir = new Vec3();
         if (this._inputDir.lengthSqr() > 0.001) {
-            const moveDir = new Vec3();
             Vec3.scaleAndAdd(moveDir, moveDir, camForward, this._inputDir.z);
             Vec3.scaleAndAdd(moveDir, moveDir, camRight, this._inputDir.x);
+            moveDir.normalize().multiplyScalar(this.moveSpeed);
 
-            moveDir.normalize();
-            moveDir.multiplyScalar(this.moveSpeed * dt);
+            const velocity = new Vec3();
+            this._rigidBody.getLinearVelocity(velocity);
+            this._rigidBody.setLinearVelocity(new Vec3(moveDir.x, velocity.y, moveDir.z));
 
-            const currentPos = this.node.worldPosition;
-            Vec3.add(currentPos, currentPos, moveDir);
-            this.node.setWorldPosition(currentPos);
-        }
-
-        // Luôn xoay player theo hướng camera (dù có di chuyển hay không)
-        if (camForward.lengthSqr() > 0.001) {
+            // Xoay theo hướng camera
             const angle = Math.atan2(-camForward.x, -camForward.z) * 180 / Math.PI;
             this.node.eulerAngles = new Vec3(0, angle, 0);
+
+            this.playAnim('walk');
+        } else {
+            // Dừng lại -> giữ lại velocity.y, set xz về 0
+            const velocity = new Vec3();
+            this._rigidBody.getLinearVelocity(velocity);
+            this._rigidBody.setLinearVelocity(new Vec3(0, velocity.y, 0));
+            this.playAnim('idle');
+        }
+
+        // Kiểm tra đang rơi
+        const velocity = new Vec3();
+        this._rigidBody.getLinearVelocity(velocity);
+        if (velocity.y < -0.1 && !this._canJump) {
+            this.playAnim('fall');
         }
     }
 
+    public jump() {
+        if (!this._canJump) return;
+
+        const velocity = new Vec3();
+        this._rigidBody.getLinearVelocity(velocity);
+        velocity.y = this.jumpForce;
+        this._rigidBody.setLinearVelocity(velocity);
+
+        this._canJump = false;
+        this.playAnim('jump');
+
+        // Tạm set nhảy lại sau 0.6s
+        setTimeout(() => {
+            this._canJump = true;
+        }, 600);
+    }
+
+    private playAnim(name: string) {
+        if (!this._animation || this._currentAnim === name) return;
+        this._currentAnim = name;
+        this._animation.play(name);
+    }
 }

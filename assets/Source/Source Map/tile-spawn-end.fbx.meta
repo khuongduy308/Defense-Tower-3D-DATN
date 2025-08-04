@@ -1,0 +1,127 @@
+{
+  "ver": "2.3.0",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "d9bf7c3a-8047-48d3-b513-cfcb845c2bfc",
+  "files": [],
+  "subMetas": {
+    "a62fe": {
+      "importer": "gltf-mesh",
+      "uuid": "d9bf7c3a-8047-48d3-b513-cfcb845c2bfc@a62fe",
+      "displayName": "",
+      "id": "a62fe",
+      "name": "Scene.mesh",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.1.0",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "fd73d": {
+      "importer": "gltf-embeded-image",
+      "uuid": "d9bf7c3a-8047-48d3-b513-cfcb845c2bfc@fd73d",
+      "displayName": "",
+      "id": "fd73d",
+      "name": "DiffuseColor_Texture.image",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "4f17a": {
+      "importer": "texture",
+      "uuid": "d9bf7c3a-8047-48d3-b513-cfcb845c2bfc@4f17a",
+      "displayName": "",
+      "id": "4f17a",
+      "name": "DiffuseColor_Texture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "d9bf7c3a-8047-48d3-b513-cfcb845c2bfc@fd73d"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "9991c": {
+      "importer": "gltf-material",
+      "uuid": "d9bf7c3a-8047-48d3-b513-cfcb845c2bfc@9991c",
+      "displayName": "",
+      "id": "9991c",
+      "name": "colormap.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "46a3e": {
+      "importer": "gltf-scene",
+      "uuid": "d9bf7c3a-8047-48d3-b513-cfcb845c2bfc@46a3e",
+      "displayName": "",
+      "id": "46a3e",
+      "name": "tile-spawn-end.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.12",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "DiffuseColor_Texture",
+        "uri": "d9bf7c3a-8047-48d3-b513-cfcb845c2bfc@fd73d"
+      }
+    ],
+    "legacyFbxImporter": false,
+    "allowMeshDataAccess": true,
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "redirect": "d9bf7c3a-8047-48d3-b513-cfcb845c2bfc@46a3e",
+    "assetFinder": {
+      "meshes": [
+        "d9bf7c3a-8047-48d3-b513-cfcb845c2bfc@a62fe"
+      ],
+      "skeletons": [],
+      "textures": [
+        "d9bf7c3a-8047-48d3-b513-cfcb845c2bfc@4f17a"
+      ],
+      "materials": [
+        "d9bf7c3a-8047-48d3-b513-cfcb845c2bfc@9991c"
+      ],
+      "scenes": [
+        "d9bf7c3a-8047-48d3-b513-cfcb845c2bfc@46a3e"
+      ]
+    }
+  }
+}

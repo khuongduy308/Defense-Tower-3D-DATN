@@ -1,0 +1,127 @@
+{
+  "ver": "2.3.0",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "f18ce2ca-5495-4067-a65d-4630a71c50ff",
+  "files": [],
+  "subMetas": {
+    "a62fe": {
+      "importer": "gltf-mesh",
+      "uuid": "f18ce2ca-5495-4067-a65d-4630a71c50ff@a62fe",
+      "displayName": "",
+      "id": "a62fe",
+      "name": "Scene.mesh",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.1.0",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "fd73d": {
+      "importer": "gltf-embeded-image",
+      "uuid": "f18ce2ca-5495-4067-a65d-4630a71c50ff@fd73d",
+      "displayName": "",
+      "id": "fd73d",
+      "name": "DiffuseColor_Texture.image",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "4f17a": {
+      "importer": "texture",
+      "uuid": "f18ce2ca-5495-4067-a65d-4630a71c50ff@4f17a",
+      "displayName": "",
+      "id": "4f17a",
+      "name": "DiffuseColor_Texture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "f18ce2ca-5495-4067-a65d-4630a71c50ff@fd73d"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "9991c": {
+      "importer": "gltf-material",
+      "uuid": "f18ce2ca-5495-4067-a65d-4630a71c50ff@9991c",
+      "displayName": "",
+      "id": "9991c",
+      "name": "colormap.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "dab36": {
+      "importer": "gltf-scene",
+      "uuid": "f18ce2ca-5495-4067-a65d-4630a71c50ff@dab36",
+      "displayName": "",
+      "id": "dab36",
+      "name": "tile-straight-slope-large.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.12",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "DiffuseColor_Texture",
+        "uri": "f18ce2ca-5495-4067-a65d-4630a71c50ff@fd73d"
+      }
+    ],
+    "legacyFbxImporter": false,
+    "allowMeshDataAccess": true,
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "redirect": "f18ce2ca-5495-4067-a65d-4630a71c50ff@dab36",
+    "assetFinder": {
+      "meshes": [
+        "f18ce2ca-5495-4067-a65d-4630a71c50ff@a62fe"
+      ],
+      "skeletons": [],
+      "textures": [
+        "f18ce2ca-5495-4067-a65d-4630a71c50ff@4f17a"
+      ],
+      "materials": [
+        "f18ce2ca-5495-4067-a65d-4630a71c50ff@9991c"
+      ],
+      "scenes": [
+        "f18ce2ca-5495-4067-a65d-4630a71c50ff@dab36"
+      ]
+    }
+  }
+}

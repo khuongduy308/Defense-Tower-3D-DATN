@@ -1,0 +1,127 @@
+{
+  "ver": "2.3.0",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "39cc37e1-8a48-4e34-b664-91b9be8fff29",
+  "files": [],
+  "subMetas": {
+    "a62fe": {
+      "importer": "gltf-mesh",
+      "uuid": "39cc37e1-8a48-4e34-b664-91b9be8fff29@a62fe",
+      "displayName": "",
+      "id": "a62fe",
+      "name": "Scene.mesh",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.1.0",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "fd73d": {
+      "importer": "gltf-embeded-image",
+      "uuid": "39cc37e1-8a48-4e34-b664-91b9be8fff29@fd73d",
+      "displayName": "",
+      "id": "fd73d",
+      "name": "DiffuseColor_Texture.image",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "4f17a": {
+      "importer": "texture",
+      "uuid": "39cc37e1-8a48-4e34-b664-91b9be8fff29@4f17a",
+      "displayName": "",
+      "id": "4f17a",
+      "name": "DiffuseColor_Texture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "39cc37e1-8a48-4e34-b664-91b9be8fff29@fd73d"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "9991c": {
+      "importer": "gltf-material",
+      "uuid": "39cc37e1-8a48-4e34-b664-91b9be8fff29@9991c",
+      "displayName": "",
+      "id": "9991c",
+      "name": "colormap.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "d4d10": {
+      "importer": "gltf-scene",
+      "uuid": "39cc37e1-8a48-4e34-b664-91b9be8fff29@d4d10",
+      "displayName": "",
+      "id": "d4d10",
+      "name": "tile-wide-corner.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.12",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "DiffuseColor_Texture",
+        "uri": "39cc37e1-8a48-4e34-b664-91b9be8fff29@fd73d"
+      }
+    ],
+    "legacyFbxImporter": false,
+    "allowMeshDataAccess": true,
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "redirect": "39cc37e1-8a48-4e34-b664-91b9be8fff29@d4d10",
+    "assetFinder": {
+      "meshes": [
+        "39cc37e1-8a48-4e34-b664-91b9be8fff29@a62fe"
+      ],
+      "skeletons": [],
+      "textures": [
+        "39cc37e1-8a48-4e34-b664-91b9be8fff29@4f17a"
+      ],
+      "materials": [
+        "39cc37e1-8a48-4e34-b664-91b9be8fff29@9991c"
+      ],
+      "scenes": [
+        "39cc37e1-8a48-4e34-b664-91b9be8fff29@d4d10"
+      ]
+    }
+  }
+}
