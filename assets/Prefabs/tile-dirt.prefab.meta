@@ -1,0 +1,13 @@
+{
+  "ver": "1.1.39",
+  "importer": "prefab",
+  "imported": true,
+  "uuid": "fa8abb4c-6af2-4eb7-a3af-aaee1ab4f563",
+  "files": [
+    ".json"
+  ],
+  "subMetas": {},
+  "userData": {
+    "syncNodeName": "tile-dirt"
+  }
+}

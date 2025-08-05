@@ -1,0 +1,13 @@
+{
+  "ver": "1.1.39",
+  "importer": "prefab",
+  "imported": true,
+  "uuid": "7c58ff41-c7d6-4cdb-ac91-a1eefc264651",
+  "files": [
+    ".json"
+  ],
+  "subMetas": {},
+  "userData": {
+    "syncNodeName": "tile-corner-round"
+  }
+}
