@@ -1,0 +1,43 @@
+import { _decorator, Component, Vec3, Node, tween } from 'cc';
+const { ccclass, property } = _decorator;
+
+@ccclass('BaseEnemy')
+export class BaseEnemy extends Component {
+    @property
+    moveSpeed: number = 2;
+
+    private path: Vec3[] = [];
+    private currentIndex: number = 0;
+
+    init(path: Vec3[]) {
+        this.path = path;
+        this.currentIndex = 0;
+        this.moveToNextPoint();
+    }
+
+    moveToNextPoint() {
+        if (this.currentIndex >= this.path.length) {
+            this.onReachEnd();
+            return;
+        }
+
+        const targetPos = this.path[this.currentIndex];
+        targetPos.y = 0.1; // 👈 Đảm bảo đi trên mặt đường
+
+        tween(this.node)
+            .to(Vec3.distance(this.node.worldPosition, targetPos) / this.moveSpeed, {
+                position: targetPos
+            })
+            .call(() => {
+                this.currentIndex++;
+                this.moveToNextPoint();
+            })
+            .start();
+    }
+
+    onReachEnd() {
+        console.log("❗ Enemy reached goal!");
+        this.node.destroy();
+    }
+}
+
