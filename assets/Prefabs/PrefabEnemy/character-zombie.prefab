@@ -43,7 +43,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 0,
-      "y": 0.499,
+      "y": 0.49900001287460327,
       "z": 0
     },
     "_lrot": {
@@ -973,10 +973,10 @@
       "__id__": 39
     },
     "_group": 1,
-    "_type": 1,
+    "_type": 4,
     "_mass": 1,
     "_allowSleep": true,
-    "_linearDamping": 0,
+    "_linearDamping": 0.1,
     "_angularDamping": 0.1,
     "_useGravity": true,
     "_linearFactor": {
@@ -1045,6 +1045,7 @@
       "__id__": 43
     },
     "moveSpeed": 2,
+    "maxHp": 100,
     "_id": ""
   },
   {

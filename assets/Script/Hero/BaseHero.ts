@@ -1,5 +1,6 @@
 import { _decorator, Component, Node, Vec3 } from 'cc';
 const { ccclass, property } = _decorator;
+import { BaseEnemy } from '../Enemy/BaseEnemy';
 
 @ccclass('BaseHero')
 export class BaseHero extends Component {
@@ -40,19 +41,21 @@ export class BaseHero extends Component {
     }
 
     getAllEnemiesInScene(): Node[] {
+
         const enemiesNode = this.node.scene.getChildByName("Enemies");
         if (!enemiesNode) return [];
+        console.log(`Found ${enemiesNode.children.length} enemies in scene`);
         return enemiesNode.children;
     }
 
     attack(enemy: Node): void {
-        // Default attack logic (có thể bị override bởi hero con)
-        // const enemyHealth = enemy.getComponent('EnemyHealth');
-        // if (enemyHealth) {
-        //     enemyHealth.takeDamage(this.attackDamage);
-        //     console.log(`🎯 Hero attacked ${enemy.name} for ${this.attackDamage} damage`);
-        // }
+    const enemyHealth = enemy.getComponent(BaseEnemy); // 👈 dùng class
+    console.log(`Hero attacking ${enemy.name} at position ${enemy.worldPosition}`);
+    if (enemyHealth) {
+        enemyHealth.takeDamage(this.attackDamage);
+        console.log(`🎯 Hero attacked ${enemy.name} for ${this.attackDamage} damage`);
     }
+}
 
     takeDamage(damage: number): void {
         this.currentHp -= damage;

@@ -6,8 +6,16 @@ export class BaseEnemy extends Component {
     @property
     moveSpeed: number = 2;
 
+    @property
+    maxHp: number = 100;
+
     private path: Vec3[] = [];
     private currentIndex: number = 0;
+    private currentHp: number = 0;
+
+    onLoad() {
+        this.currentHp = this.maxHp;
+    }
 
     init(path: Vec3[]) {
         this.path = path;
@@ -35,6 +43,21 @@ export class BaseEnemy extends Component {
             .start();
     }
 
+    
+    takeDamage(damage: number) {
+        this.currentHp -= damage;
+        console.log(`💥 ${this.node.name} bị tấn công, còn ${this.currentHp} HP`);
+
+        if (this.currentHp <= 0) {
+            this.onDeath();
+        }
+    }
+
+    onDeath() {
+        console.log(`☠️ ${this.node.name} đã chết`);
+        this.node.destroy();
+    }
+    
     onReachEnd() {
         console.log("❗ Enemy reached goal!");
         this.node.destroy();
