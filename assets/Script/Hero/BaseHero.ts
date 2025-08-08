@@ -53,7 +53,6 @@ export class BaseHero extends Component {
     console.log(`Hero attacking ${enemy.name} at position ${enemy.worldPosition}`);
     if (enemyHealth) {
         enemyHealth.takeDamage(this.attackDamage);
-        console.log(`🎯 Hero attacked ${enemy.name} for ${this.attackDamage} damage`);
     }
 }
 
@@ -74,7 +73,6 @@ export class BaseHero extends Component {
     }
 
     onDeath(): void {
-        console.log(`💀 ${this.node.name} has died.`);
         this.node.destroy();
     }
 

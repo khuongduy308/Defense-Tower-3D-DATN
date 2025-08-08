@@ -21,15 +21,59 @@ export class GameManager extends Component {
     @property
     moveSpeed: number = 2;
 
+    // ✅ Cấu hình wave
+    @property
+    totalWaves: number = 3; // tổng số wave
+
+    @property
+    enemiesPerWave: number = 5; // số quái mỗi wave
+
+    @property
+    delayBetweenEnemies: number = 1; // delay giữa từng quái trong 1 wave (giây)
+
+    @property
+    delayBetweenWaves: number = 5; // delay giữa các wave (giây)
+
     private path: Vec3[] = [];
+    private currentWave: number = 0;
+    private spawnEnemySchedule = () => { }; // placeholder
 
     start() {
         this.scheduleOnce(() => {
             this.extractPathFromMap();
-            this.spawnWave(5, 1);
-        }, 0.1); // Delay 1 frame (bảo đảm map đã render xong)
+            this.startWaveSystem();
+        }, 0.1);
     }
 
+    startWaveSystem() {
+        this.currentWave = 0;
+        this.spawnNextWave();
+    }
+
+    spawnNextWave() {
+        if (this.currentWave >= this.totalWaves) {
+            console.log("🎉 Hoàn thành tất cả wave!");
+            return;
+        }
+
+        this.currentWave++;
+        console.log(`🚀 Bắt đầu wave ${this.currentWave}/${this.totalWaves}`);
+
+        let spawned = 0;
+        this.schedule(() => {
+            if (spawned >= this.enemiesPerWave) {
+                this.unschedule(this.spawnEnemySchedule);
+                // Sau khi wave kết thúc, chờ delayBetweenWaves rồi spawn wave tiếp
+                this.scheduleOnce(() => {
+                    this.spawnNextWave();
+                }, this.delayBetweenWaves);
+                return;
+            }
+            this.spawnEnemy();
+            spawned++;
+        }, this.delayBetweenEnemies, this.enemiesPerWave - 1);
+
+    }
 
     extractPathFromMap() {
         const grid: Record<string, GridTile> = {};
@@ -94,19 +138,6 @@ export class GameManager extends Component {
         }
 
         console.warn("⚠️ Không tìm được đường đi từ Start đến End.");
-    }
-
-
-    spawnWave(count: number, delay: number = 1) {
-        let spawned = 0;
-        this.schedule(() => {
-            if (spawned >= count) {
-                this.unscheduleAllCallbacks();
-                return;
-            }
-            this.spawnEnemy();
-            spawned++;
-        }, delay);
     }
 
     spawnEnemy() {

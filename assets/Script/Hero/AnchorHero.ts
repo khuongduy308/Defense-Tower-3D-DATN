@@ -29,7 +29,6 @@ export class AnchorHero extends BaseHero {
     }
 
     attack(target: Node) {
-        console.log(this.node.name +  ' bắn tên vào ' + target.name);
         this.shootArrow(target);
     }
 
@@ -50,7 +49,7 @@ export class AnchorHero extends BaseHero {
         arrow.lookAt(endPos); // xoay đầu mũi tên theo hướng bay
 
         const distance = Vec3.distance(startPos, endPos);
-        const flightTime = distance / 10; // tốc độ bay (tùy chỉnh)
+        const flightTime = distance / 5; // tốc độ bay (tùy chỉnh)
 
         tween(arrow)
             .to(flightTime, { position: endPos })
@@ -100,8 +99,7 @@ export class AnchorHero extends BaseHero {
             console.warn("❌ Không tìm thấy node Enemies trong scene");
             return [];
         }
-
-        console.log(`✅ Found ${enemiesNode.children.length} enemies in scene`);
+        
         return enemiesNode.children;
     }
 }
