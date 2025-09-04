@@ -1,7 +1,7 @@
 [
   {
     "__type__": "cc.Prefab",
-    "_name": "character-zombie",
+    "_name": "BaseEnemy",
     "_objFlags": 0,
     "_native": "",
     "data": {
@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "character-zombie",
+    "_name": "BaseEnemy",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": null,
@@ -1044,7 +1044,7 @@
     "__prefab": {
       "__id__": 43
     },
-    "moveSpeed": 2,
+    "moveSpeed": 0.5,
     "maxHp": 100,
     "_id": ""
   },

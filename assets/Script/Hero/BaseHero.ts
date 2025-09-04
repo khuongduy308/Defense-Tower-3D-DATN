@@ -1,60 +1,66 @@
-import { _decorator, Component, Node, Vec3 } from 'cc';
+import { _decorator, Component, Node, Vec3, director } from 'cc';
 const { ccclass, property } = _decorator;
 import { BaseEnemy } from '../Enemy/BaseEnemy';
 
 @ccclass('BaseHero')
 export class BaseHero extends Component {
-    @property
-    maxHp: number = 100;
-
-    @property
-    maxEnergy: number = 100;
-
-    @property
-    attackRange: number = 5;
-
-    @property
-    attackDamage: number = 10;
+    @property maxHp: number = 100;
+    @property maxEnergy: number = 100;
+    @property attackRange: number = 5;
+    @property attackDamage: number = 10;
+    @property attackCooldown: number = 1;
 
     private currentHp: number = 0;
     private currentEnergy: number = 0;
+    private cooldownTimer: number = 0;
 
     start() {
         this.currentHp = this.maxHp;
         this.currentEnergy = this.maxEnergy;
     }
 
-    update(deltaTime: number) {
-        const enemies = this.findEnemiesInRange();
-        if (enemies.length > 0) {
-            this.attack(enemies[0]);
+    update(dt: number) {
+        this.cooldownTimer -= dt;
+        if (this.cooldownTimer <= 0) {
+            const target = this.findClosestEnemy();
+            if (target) {
+                this.attack(target);
+                this.cooldownTimer = this.attackCooldown;
+            }
         }
     }
 
-    findEnemiesInRange(): Node[] {
-        const enemiesInScene = this.getAllEnemiesInScene();
+    findClosestEnemy(): Node | null {
+        const enemies = this.getAllEnemiesInScene();
+        let minDist = Infinity;
+        let closest: Node | null = null;
         const myPos = this.node.worldPosition;
 
-        return enemiesInScene.filter(enemy => {
-            return Vec3.distance(myPos, enemy.worldPosition) <= this.attackRange;
-        });
+        for (const enemy of enemies) {
+            const dist = Vec3.distance(myPos, enemy.worldPosition);
+            if (dist <= this.attackRange && dist < minDist) {
+                minDist = dist;
+                closest = enemy;
+            }
+        }
+        return closest;
     }
 
     getAllEnemiesInScene(): Node[] {
-
-        const enemiesNode = this.node.scene.getChildByName("Enemies");
+        const scene = director.getScene();
+        const enemiesNode = scene.getChildByName("Main")?.getChildByName("Enemies");
         if (!enemiesNode) return [];
-        console.log(`Found ${enemiesNode.children.length} enemies in scene`);
+        // console.log(`Found ${enemiesNode.children.length} enemies in scene`);
         return enemiesNode.children;
     }
 
     attack(enemy: Node): void {
-    const enemyHealth = enemy.getComponent(BaseEnemy); // 👈 dùng class
-    console.log(`Hero attacking ${enemy.name} at position ${enemy.worldPosition}`);
-    if (enemyHealth) {
-        enemyHealth.takeDamage(this.attackDamage);
+        const enemyHealth = enemy.getComponent(BaseEnemy); // 👈 dùng class
+        // console.log(`Hero attacking ${enemy.name} at position ${enemy.worldPosition}`);
+        if (enemyHealth) {
+            enemyHealth.takeDamage(this.attackDamage);
+        }
     }
-}
 
     takeDamage(damage: number): void {
         this.currentHp -= damage;
@@ -76,14 +82,14 @@ export class BaseHero extends Component {
         this.node.destroy();
     }
 
-    // Nếu muốn dùng năng lượng để kích hoạt skill:
-    useEnergy(amount: number): boolean {
-        if (this.currentEnergy >= amount) {
-            this.currentEnergy -= amount;
-            return true;
-        }
-        return false;
-    }
+    // // Nếu muốn dùng năng lượng để kích hoạt skill:
+    // useEnergy(amount: number): boolean {
+    //     if (this.currentEnergy >= amount) {
+    //         this.currentEnergy -= amount;
+    //         return true;
+    //     }
+    //     return false;
+    // }
 
     // Getter để UI hiển thị
     getHp(): number {

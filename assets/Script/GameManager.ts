@@ -9,38 +9,68 @@ type GridTile = {
     z: number;
 };
 
+type EnemyConfig = {
+    prefab: Prefab;
+    count: number;
+    delay: number; // delay giữa từng enemy
+};
+
+type WaveConfig = {
+    enemies: EnemyConfig[];
+    delayAfterWave: number; // delay trước khi bắt đầu wave tiếp theo
+};
+
 @ccclass('GameManager')
 export class GameManager extends Component {
-    @property({ type: Prefab }) enemyPrefab: Prefab = null;
+    @property({ type: Prefab }) baseEnemyPrefab: Prefab = null;
+    @property({ type: Prefab }) fastEnemyPrefab: Prefab = null;
+
     @property({ type: Node }) mapNode: Node = null;
     @property({ type: Node }) enemiesContainer: Node = null;
     @property({ type: Node }) startPoint: Node = null;
     @property({ type: Node }) endPoint: Node = null;
 
+    
+    // // ✅ Cấu hình wave
+    // @property
+    // totalWaves: number = 3; // tổng số wave
 
-    @property
-    moveSpeed: number = 2;
+    // @property
+    // enemiesPerWave: number = 5; // số quái mỗi wave
 
-    // ✅ Cấu hình wave
-    @property
-    totalWaves: number = 3; // tổng số wave
+    // @property
+    // delayBetweenEnemies: number = 1; // delay giữa từng quái trong 1 wave (giây)
 
-    @property
-    enemiesPerWave: number = 5; // số quái mỗi wave
-
-    @property
-    delayBetweenEnemies: number = 1; // delay giữa từng quái trong 1 wave (giây)
-
-    @property
-    delayBetweenWaves: number = 5; // delay giữa các wave (giây)
+    // @property
+    // delayBetweenWaves: number = 5; // delay giữa các wave (giây)
 
     private path: Vec3[] = [];
     private currentWave: number = 0;
     private spawnEnemySchedule = () => { }; // placeholder
 
+    private wavesConfig: WaveConfig[] = [];
+
     start() {
         this.scheduleOnce(() => {
             this.extractPathFromMap();
+
+            this.wavesConfig = [
+                {
+                    enemies: [
+                        { prefab: this.baseEnemyPrefab, count: 5, delay: 1 },
+                        { prefab: this.fastEnemyPrefab, count: 2, delay: 2 }
+                    ],
+                    delayAfterWave: 5
+                },
+                {
+                    enemies: [
+                        { prefab: this.baseEnemyPrefab, count: 8, delay: 0.8 },
+                        { prefab: this.fastEnemyPrefab, count: 1, delay: 3 }
+                    ],
+                    delayAfterWave: 8
+                }
+            ];
+
             this.startWaveSystem();
         }, 0.1);
     }
@@ -51,28 +81,43 @@ export class GameManager extends Component {
     }
 
     spawnNextWave() {
-        if (this.currentWave >= this.totalWaves) {
+        if (this.currentWave >= this.wavesConfig.length) {
             console.log("🎉 Hoàn thành tất cả wave!");
             return;
         }
 
+        const wave = this.wavesConfig[this.currentWave];
         this.currentWave++;
-        console.log(`🚀 Bắt đầu wave ${this.currentWave}/${this.totalWaves}`);
+        console.log(`🚀 Bắt đầu wave ${this.currentWave}/${this.wavesConfig.length}`);
 
-        let spawned = 0;
-        this.schedule(() => {
-            if (spawned >= this.enemiesPerWave) {
-                this.unschedule(this.spawnEnemySchedule);
-                // Sau khi wave kết thúc, chờ delayBetweenWaves rồi spawn wave tiếp
+        let enemyIndex = 0;
+
+        const spawnEnemyGroup = () => {
+            if (enemyIndex >= wave.enemies.length) {
+                // wave xong → đợi rồi qua wave tiếp theo
                 this.scheduleOnce(() => {
                     this.spawnNextWave();
-                }, this.delayBetweenWaves);
+                }, wave.delayAfterWave);
                 return;
             }
-            this.spawnEnemy();
-            spawned++;
-        }, this.delayBetweenEnemies, this.enemiesPerWave - 1);
 
+            const group = wave.enemies[enemyIndex];
+            let spawned = 0;
+
+            this.schedule(() => {
+                if (spawned >= group.count) {
+                    this.unscheduleAllCallbacks();
+                    enemyIndex++;
+                    // spawn nhóm kế tiếp
+                    this.scheduleOnce(spawnEnemyGroup, 0.5);
+                    return;
+                }
+                this.spawnEnemy(group.prefab);
+                spawned++;
+            }, group.delay, group.count - 1);
+        };
+
+        spawnEnemyGroup();
     }
 
     extractPathFromMap() {
@@ -140,19 +185,18 @@ export class GameManager extends Component {
         console.warn("⚠️ Không tìm được đường đi từ Start đến End.");
     }
 
-    spawnEnemy() {
+    spawnEnemy(prefab: Prefab) {
         if (this.path.length === 0) {
             console.warn("⚠️ No path found for enemy!");
             return;
         }
 
-        const enemy = instantiate(this.enemyPrefab);
+        const enemy = instantiate(prefab);
         enemy.setParent(this.enemiesContainer);
         enemy.setWorldPosition(this.path[0]);
 
         const script = enemy.getComponent(BaseEnemy);
         if (script) {
-            script.moveSpeed = this.moveSpeed;
             script.init(this.path);
         }
     }

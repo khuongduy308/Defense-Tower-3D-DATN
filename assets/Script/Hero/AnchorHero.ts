@@ -14,16 +14,27 @@ export class AnchorHero extends BaseHero {
 
     private arrowTimer: number = 0;
 
-    update(deltaTime: number) {
+    // update(deltaTime: number) {
 
-        this.arrowTimer -= deltaTime;
+    //     this.arrowTimer -= deltaTime;
 
-        const enemies = this.findEnemiesInRange();
-        if (enemies.length > 0 && this.arrowTimer <= 0) {
-            this.arrowTimer = this.arrowCooldown;
-            const target = enemies[0];
-            if (target && target.isValid) {
+    //     const enemies = this.findEnemiesInRange();
+    //     if (enemies.length > 0 && this.arrowTimer <= 0) {
+    //         this.arrowTimer = this.arrowCooldown;
+    //         const target = enemies[0];
+    //         if (target && target.isValid) {
+    //             this.attack(target);
+    //         }
+    //     }
+    // }
+
+    update(dt: number) {
+        this.arrowTimer -= dt;
+        if (this.arrowTimer <= 0) {
+            const target = this.findClosestEnemy();
+            if (target) {
                 this.attack(target);
+                this.arrowTimer = this.attackCooldown;
             }
         }
     }
@@ -66,40 +77,40 @@ export class AnchorHero extends BaseHero {
             .start();
     }
 
-    isInRange(a: Vec3, b: Vec3, range: number): boolean {
-        const dx = a.x - b.x;
-        const dz = a.z - b.z;
-        const distXZ = Math.sqrt(dx * dx + dz * dz);
-        return distXZ <= range;
-    }
+    // isInRange(a: Vec3, b: Vec3, range: number): boolean {
+    //     const dx = a.x - b.x;
+    //     const dz = a.z - b.z;
+    //     const distXZ = Math.sqrt(dx * dx + dz * dz);
+    //     return distXZ <= range;
+    // }
 
-    findEnemiesInRange(): Node[] {
-        const enemiesInScene = this.getAllEnemiesInScene();
-        const myPos = this.node.worldPosition;
+    // findEnemiesInRange(): Node[] {
+    //     const enemiesInScene = this.getAllEnemiesInScene();
+    //     const myPos = this.node.worldPosition;
 
-        return enemiesInScene.filter(enemy => {
-            const enemyPos = enemy.worldPosition;
-            const dx = myPos.x - enemyPos.x;
-            const dz = myPos.z - enemyPos.z;
-            const distanceXZ = Math.sqrt(dx * dx + dz * dz);
-            return distanceXZ <= this.attackRange;
-        });
-    }
+    //     return enemiesInScene.filter(enemy => {
+    //         const enemyPos = enemy.worldPosition;
+    //         const dx = myPos.x - enemyPos.x;
+    //         const dz = myPos.z - enemyPos.z;
+    //         const distanceXZ = Math.sqrt(dx * dx + dz * dz);
+    //         return distanceXZ <= this.attackRange;
+    //     });
+    // }
 
-    getAllEnemiesInScene(): Node[] {
-        const scene = director.getScene();
-        if (!scene) {
-            console.warn("❌ Không lấy được scene từ director");
-            return [];
-        }
+    // getAllEnemiesInScene(): Node[] {
+    //     const scene = director.getScene();
+    //     if (!scene) {
+    //         console.warn("❌ Không lấy được scene từ director");
+    //         return [];
+    //     }
 
-        const enemiesNode = scene.getChildByName("Main")?.getChildByName("Enemies");
+    //     const enemiesNode = scene.getChildByName("Main")?.getChildByName("Enemies");
 
-        if (!enemiesNode) {
-            console.warn("❌ Không tìm thấy node Enemies trong scene");
-            return [];
-        }
+    //     if (!enemiesNode) {
+    //         console.warn("❌ Không tìm thấy node Enemies trong scene");
+    //         return [];
+    //     }
         
-        return enemiesNode.children;
-    }
+    //     return enemiesNode.children;
+    // }
 }

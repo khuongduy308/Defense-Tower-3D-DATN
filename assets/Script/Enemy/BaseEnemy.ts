@@ -3,11 +3,8 @@ const { ccclass, property } = _decorator;
 
 @ccclass('BaseEnemy')
 export class BaseEnemy extends Component {
-    @property
-    moveSpeed: number = 2;
-
-    @property
-    maxHp: number = 100;
+    @property moveSpeed: number = 2;
+    @property maxHp: number = 100;
 
     private path: Vec3[] = [];
     private currentIndex: number = 0;
@@ -46,7 +43,7 @@ export class BaseEnemy extends Component {
     
     takeDamage(damage: number) {
         this.currentHp -= damage;
-        console.log(`💥 ${this.node.name} bị tấn công, còn ${this.currentHp} HP`);
+        // console.log(`💥 ${this.node.name} bị tấn công, còn ${this.currentHp} HP`);
 
         if (this.currentHp <= 0) {
             this.onDeath();
@@ -54,7 +51,7 @@ export class BaseEnemy extends Component {
     }
 
     onDeath() {
-        console.log(`☠️ ${this.node.name} đã chết`);
+        // console.log(`☠️ ${this.node.name} đã chết`);
         this.node.destroy();
     }
     

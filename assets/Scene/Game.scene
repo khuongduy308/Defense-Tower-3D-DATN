@@ -148,8 +148,12 @@
     },
     "_enabled": true,
     "__prefab": null,
-    "enemyPrefab": {
+    "baseEnemyPrefab": {
       "__uuid__": "b2b01a38-4edc-4903-a09e-4a44ebdc7f38",
+      "__expectedType__": "cc.Prefab"
+    },
+    "fastEnemyPrefab": {
+      "__uuid__": "050caf0e-1e19-408d-8a9f-95e83276f3b8",
       "__expectedType__": "cc.Prefab"
     },
     "mapNode": {
@@ -164,11 +168,6 @@
     "endPoint": {
       "__id__": 26
     },
-    "moveSpeed": 0.5,
-    "totalWaves": 3,
-    "enemiesPerWave": 5,
-    "delayBetweenEnemies": 1,
-    "delayBetweenWaves": 5,
     "_id": "83ixmJ1qZGuLa7zqY4yRe8"
   },
   {
@@ -15536,7 +15535,7 @@
   {
     "__type__": "cc.Node",
     "_name": "Enemies",
-    "_objFlags": 512,
+    "_objFlags": 0,
     "_parent": {
       "__id__": 2
     },
@@ -16430,7 +16429,7 @@
       "y": 1,
       "z": 1
     },
-    "_layer": 1073741824,
+    "_layer": 1,
     "_euler": {
       "__type__": "cc.Vec3",
       "x": 0,
@@ -16566,7 +16565,7 @@
     "_priority": 1,
     "_fov": 45,
     "_fovAxis": 0,
-    "_orthoHeight": 449.1089108910891,
+    "_orthoHeight": 327.18162839248436,
     "_near": 1,
     "_far": 1456.31,
     "_color": {
