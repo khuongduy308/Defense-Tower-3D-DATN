@@ -8,6 +8,7 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
+  importerVersion: 2
   textureImporterSettings:
     alphaSource: 1
     mipMapMode: 0
@@ -764,13 +765,18 @@ ScriptedImporter:
   spriteSheetImportData: []
   asepriteLayers:
   - layerIndex: 0
-    guid: 1883100188
+    uuid:
+      value0: 1151510412
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: 1151510412
     name: Rocks
     layerFlags: 0
     layerType: 0
     blendMode: 0
     cells:
-    - name: Rocks_Frame_0
+    - name: Frame_0
       frameIndex: 0
       additiveSortOrder: 0
       cellRect:
@@ -779,7 +785,7 @@ ScriptedImporter:
         width: 638
         height: 482
       spriteId: eff95aacce0cf734e8af9ca791166921
-    - name: Rocks_Frame_1
+    - name: Frame_1
       frameIndex: 1
       additiveSortOrder: 0
       cellRect:
@@ -788,7 +794,7 @@ ScriptedImporter:
         width: 634
         height: 482
       spriteId: afcbd197af740154d830cff39b9ab143
-    - name: Rocks_Frame_2
+    - name: Frame_2
       frameIndex: 2
       additiveSortOrder: 0
       cellRect:
@@ -797,7 +803,7 @@ ScriptedImporter:
         width: 636
         height: 482
       spriteId: 07c1bb3f72d07614d8e26e0f8048b9a2
-    - name: Rocks_Frame_3
+    - name: Frame_3
       frameIndex: 3
       additiveSortOrder: 0
       cellRect:
@@ -806,7 +812,7 @@ ScriptedImporter:
         width: 637
         height: 482
       spriteId: 1ca5f48054c214e458431183024d3159
-    - name: Rocks_Frame_4
+    - name: Frame_4
       frameIndex: 4
       additiveSortOrder: 0
       cellRect:
@@ -815,7 +821,7 @@ ScriptedImporter:
         width: 637
         height: 482
       spriteId: dc5375d9a9448f742ae164ab0efaa906
-    - name: Rocks_Frame_5
+    - name: Frame_5
       frameIndex: 5
       additiveSortOrder: 0
       cellRect:
@@ -824,7 +830,7 @@ ScriptedImporter:
         width: 638
         height: 482
       spriteId: 5273b610d39e2a9469f2b8eb81c00957
-    - name: Rocks_Frame_6
+    - name: Frame_6
       frameIndex: 6
       additiveSortOrder: 0
       cellRect:
@@ -833,7 +839,7 @@ ScriptedImporter:
         width: 638
         height: 482
       spriteId: 1cf796ba53ba4f74eb16ea2535835766
-    - name: Rocks_Frame_7
+    - name: Frame_7
       frameIndex: 7
       additiveSortOrder: 0
       cellRect:
@@ -842,7 +848,7 @@ ScriptedImporter:
         width: 638
         height: 482
       spriteId: 60d08a5a3d1a5a1459331e1243d8faf8
-    - name: Rocks_Frame_8
+    - name: Frame_8
       frameIndex: 8
       additiveSortOrder: 0
       cellRect:
@@ -851,7 +857,7 @@ ScriptedImporter:
         width: 41
         height: 31
       spriteId: 57261d68e5523df4fbce47b084a37b8a
-    - name: Rocks_Frame_9
+    - name: Frame_9
       frameIndex: 9
       additiveSortOrder: 0
       cellRect:
@@ -860,7 +866,7 @@ ScriptedImporter:
         width: 41
         height: 30
       spriteId: d0a2e4c52a0e24b42b4aa7697e45a053
-    - name: Rocks_Frame_10
+    - name: Frame_10
       frameIndex: 10
       additiveSortOrder: 0
       cellRect:
@@ -869,7 +875,7 @@ ScriptedImporter:
         width: 44
         height: 31
       spriteId: 5521b075204d8104287679a7f91c6603
-    - name: Rocks_Frame_11
+    - name: Frame_11
       frameIndex: 11
       additiveSortOrder: 0
       cellRect:
@@ -878,7 +884,7 @@ ScriptedImporter:
         width: 46
         height: 32
       spriteId: 2fd65fc862e7f834faa74fb5d05abd4e
-    - name: Rocks_Frame_12
+    - name: Frame_12
       frameIndex: 12
       additiveSortOrder: 0
       cellRect:
@@ -887,7 +893,7 @@ ScriptedImporter:
         width: 47
         height: 34
       spriteId: d595af905ea84ca4babdab4d1ab4aec7
-    - name: Rocks_Frame_13
+    - name: Frame_13
       frameIndex: 13
       additiveSortOrder: 0
       cellRect:
@@ -896,7 +902,7 @@ ScriptedImporter:
         width: 46
         height: 34
       spriteId: 761f30e7063b6d34eb93d1d28f320e91
-    - name: Rocks_Frame_14
+    - name: Frame_14
       frameIndex: 14
       additiveSortOrder: 0
       cellRect:
@@ -905,7 +911,7 @@ ScriptedImporter:
         width: 44
         height: 34
       spriteId: ac4c4d3b6cb3cfa4286603b1c3a6e2d0
-    - name: Rocks_Frame_15
+    - name: Frame_15
       frameIndex: 15
       additiveSortOrder: 0
       cellRect:
@@ -914,7 +920,7 @@ ScriptedImporter:
         width: 43
         height: 33
       spriteId: 04a6881e662474d44aee20b33b1174ab
-    - name: Rocks_Frame_16
+    - name: Frame_16
       frameIndex: 16
       additiveSortOrder: 0
       cellRect:
@@ -923,7 +929,7 @@ ScriptedImporter:
         width: 65
         height: 52
       spriteId: ed16dc342ddacd2438894e2b680ddb5d
-    - name: Rocks_Frame_17
+    - name: Frame_17
       frameIndex: 17
       additiveSortOrder: 0
       cellRect:
@@ -932,7 +938,7 @@ ScriptedImporter:
         width: 68
         height: 51
       spriteId: 1d738219cb621854f8f23766bab3b671
-    - name: Rocks_Frame_18
+    - name: Frame_18
       frameIndex: 18
       additiveSortOrder: 0
       cellRect:
@@ -941,7 +947,7 @@ ScriptedImporter:
         width: 71
         height: 53
       spriteId: 8998ca49b7a0f9848b128e309bfaa642
-    - name: Rocks_Frame_19
+    - name: Frame_19
       frameIndex: 19
       additiveSortOrder: 0
       cellRect:
@@ -950,7 +956,7 @@ ScriptedImporter:
         width: 73
         height: 55
       spriteId: 7dcef72da805667478444d3e5e45a4a9
-    - name: Rocks_Frame_20
+    - name: Frame_20
       frameIndex: 20
       additiveSortOrder: 0
       cellRect:
@@ -959,7 +965,7 @@ ScriptedImporter:
         width: 75
         height: 56
       spriteId: 71ea86208d1f99542aa017d914d19d43
-    - name: Rocks_Frame_21
+    - name: Frame_21
       frameIndex: 21
       additiveSortOrder: 0
       cellRect:
@@ -968,7 +974,7 @@ ScriptedImporter:
         width: 75
         height: 55
       spriteId: 78262fed78fecc34ea17683059c07d9b
-    - name: Rocks_Frame_22
+    - name: Frame_22
       frameIndex: 22
       additiveSortOrder: 0
       cellRect:
@@ -977,7 +983,7 @@ ScriptedImporter:
         width: 73
         height: 54
       spriteId: 98a37416b36f2784d94e11587c5580e0
-    - name: Rocks_Frame_23
+    - name: Frame_23
       frameIndex: 23
       additiveSortOrder: 0
       cellRect:
@@ -986,7 +992,7 @@ ScriptedImporter:
         width: 71
         height: 53
       spriteId: a61ece9436679ed4cb11caa7b03a410b
-    - name: Rocks_Frame_24
+    - name: Frame_24
       frameIndex: 24
       additiveSortOrder: 0
       cellRect:
@@ -995,7 +1001,7 @@ ScriptedImporter:
         width: 83
         height: 62
       spriteId: 235ac5225a5da864aac8bc8a79ae7e48
-    - name: Rocks_Frame_25
+    - name: Frame_25
       frameIndex: 25
       additiveSortOrder: 0
       cellRect:
@@ -1004,7 +1010,7 @@ ScriptedImporter:
         width: 86
         height: 60
       spriteId: 9ed5fedb32f314c4fa7b687cfb68673c
-    - name: Rocks_Frame_26
+    - name: Frame_26
       frameIndex: 26
       additiveSortOrder: 0
       cellRect:
@@ -1013,7 +1019,7 @@ ScriptedImporter:
         width: 86
         height: 60
       spriteId: 7770c0e6c6bee294da348215dc86f33e
-    - name: Rocks_Frame_27
+    - name: Frame_27
       frameIndex: 27
       additiveSortOrder: 0
       cellRect:
@@ -1022,7 +1028,7 @@ ScriptedImporter:
         width: 90
         height: 63
       spriteId: 89dd8d0608f18d84c896fff9aea176ef
-    - name: Rocks_Frame_28
+    - name: Frame_28
       frameIndex: 28
       additiveSortOrder: 0
       cellRect:
@@ -1031,7 +1037,7 @@ ScriptedImporter:
         width: 91
         height: 65
       spriteId: e4b56a273d168954793443534457a4af
-    - name: Rocks_Frame_29
+    - name: Frame_29
       frameIndex: 29
       additiveSortOrder: 0
       cellRect:
@@ -1040,7 +1046,7 @@ ScriptedImporter:
         width: 91
         height: 64
       spriteId: c569b01a32485964f8ff1da44aa0d57c
-    - name: Rocks_Frame_30
+    - name: Frame_30
       frameIndex: 30
       additiveSortOrder: 0
       cellRect:
@@ -1049,7 +1055,7 @@ ScriptedImporter:
         width: 91
         height: 64
       spriteId: 17d152a4a649be043825837eb149ea65
-    - name: Rocks_Frame_31
+    - name: Frame_31
       frameIndex: 31
       additiveSortOrder: 0
       cellRect:
@@ -1065,3 +1071,4 @@ ScriptedImporter:
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 128, y: 128}
+  previousTextureSize: {x: 2048, y: 2048}

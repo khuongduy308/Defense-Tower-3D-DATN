@@ -8,6 +8,7 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
+  importerVersion: 2
   textureImporterSettings:
     alphaSource: 1
     mipMapMode: 0
@@ -224,13 +225,18 @@ ScriptedImporter:
   spriteSheetImportData: []
   asepriteLayers:
   - layerIndex: 0
-    guid: 98335164
+    uuid:
+      value0: 4176210860
+      value1: 0
+      value2: 0
+      value3: 0
+    guid: -118756436
     name: Wood_Tower_Purple
     layerFlags: 0
     layerType: 0
     blendMode: 0
     cells:
-    - name: Wood_Tower_Purple_Frame_0
+    - name: Frame_0
       frameIndex: 0
       additiveSortOrder: 0
       cellRect:
@@ -239,7 +245,7 @@ ScriptedImporter:
         width: 146
         height: 155
       spriteId: 658243afec979794ea89288b8833bb09
-    - name: Wood_Tower_Purple_Frame_1
+    - name: Frame_1
       frameIndex: 1
       additiveSortOrder: 0
       cellRect:
@@ -248,7 +254,7 @@ ScriptedImporter:
         width: 130
         height: 155
       spriteId: c50d7ec6cb45ee242a5d034f0cebf5fc
-    - name: Wood_Tower_Purple_Frame_2
+    - name: Frame_2
       frameIndex: 2
       additiveSortOrder: 0
       cellRect:
@@ -257,7 +263,7 @@ ScriptedImporter:
         width: 130
         height: 155
       spriteId: 4d4e9db9be9a36c419401f5262ce5241
-    - name: Wood_Tower_Purple_Frame_3
+    - name: Frame_3
       frameIndex: 3
       additiveSortOrder: 0
       cellRect:
@@ -266,7 +272,7 @@ ScriptedImporter:
         width: 130
         height: 155
       spriteId: c00625bfbf0d84449af18e8a7a835bdd
-    - name: Wood_Tower_Purple_Frame_4
+    - name: Frame_4
       frameIndex: 4
       additiveSortOrder: 0
       cellRect:
@@ -282,3 +288,4 @@ ScriptedImporter:
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 256, y: 192}
+  previousTextureSize: {x: 512, y: 512}
