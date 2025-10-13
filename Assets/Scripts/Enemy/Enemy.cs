@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private EnemyData data;
+    public static event Action<EnemyData> OnEnemyReachedEnd;
 
     private Path _currentPath;
 
@@ -42,6 +44,7 @@ public class Enemy : MonoBehaviour
             }
             else
             {
+                OnEnemyReachedEnd?.Invoke(data);
                 gameObject.SetActive(false);
             }
         }
