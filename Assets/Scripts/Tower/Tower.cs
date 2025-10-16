@@ -23,6 +23,25 @@ public class Tower : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        
+        if (collision.CompareTag("Enemy"))
+        {
+            Enemy enemy = collision.GetComponent<Enemy>();
+            if (enemy != null && !_enemiesInRange.Contains(enemy))
+            {
+                _enemiesInRange.Add(enemy);
+            }
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Enemy"))
+        {
+            Enemy enemy = collision.GetComponent<Enemy>();
+            if (enemy != null && _enemiesInRange.Contains(enemy))
+            {
+                _enemiesInRange.Remove(enemy);
+            }
+        }
     }
 }
