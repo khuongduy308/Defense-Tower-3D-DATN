@@ -37,11 +37,13 @@ public class Spawner : MonoBehaviour
     private void OnEnable()
     {
         Enemy.OnEnemyReachedEnd += HandleEnemyReachedEnd;
+        Enemy.OnEnemyDestroyed += HandleEnemyDestroyed;
     }
 
     private void OnDisable()
     {
         Enemy.OnEnemyReachedEnd -= HandleEnemyReachedEnd;
+        Enemy.OnEnemyDestroyed -= HandleEnemyDestroyed;
     }
 
     void Start()
@@ -91,12 +93,22 @@ public class Spawner : MonoBehaviour
         {
             GameObject spawnedObject = pool.GetPooledObject();
             spawnedObject.transform.position = transform.position;
+
+            float healthMultiplier = 1f + (_waveCounter * 0.1f); //+10% health per wave
+            Enemy enemy = spawnedObject.GetComponent<Enemy>();
+            enemy.Initialize(healthMultiplier);
+
             spawnedObject.SetActive(true);
         }
 
     }
-    
+
     private void HandleEnemyReachedEnd(EnemyData data)
+    {
+        _enemiesRemoved++;
+    }
+    
+    private void HandleEnemyDestroyed(Enemy enemy)
     {
         _enemiesRemoved++;
     }

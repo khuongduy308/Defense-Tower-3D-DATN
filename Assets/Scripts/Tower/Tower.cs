@@ -8,12 +8,35 @@ public class Tower : MonoBehaviour
     private CircleCollider2D _circleCollider;
 
     private List<Enemy> _enemiesInRange;
+    private ObjectPooler _projectilePool;
+    private float _shootTimer;
+
+    private void OnEnable()
+    {
+        Enemy.OnEnemyDestroyed += HandleEnemyDestroyed;
+    }
+
+    private void OnDisable()
+    {
+        Enemy.OnEnemyDestroyed -= HandleEnemyDestroyed;
+    }
 
     private void Start()
     {
         _circleCollider = GetComponent<CircleCollider2D>();
         _circleCollider.radius = data.range;
         _enemiesInRange = new List<Enemy>();
+        _projectilePool = GetComponent<ObjectPooler>();
+    }
+    
+    private void Update()
+    {
+        _shootTimer -= Time.deltaTime;
+        if(_shootTimer <= 0)
+        {
+            _shootTimer = data.shootInterval;
+            Shoot();
+        }
     }
 
     private void OnDrawGizmos()
@@ -43,5 +66,25 @@ public class Tower : MonoBehaviour
                 _enemiesInRange.Remove(enemy);
             }
         }
+    }
+
+    private void Shoot()
+    {
+        if (_enemiesInRange.Count > 0)
+        {
+            GameObject projectile = _projectilePool.GetPooledObject();
+            projectile.transform.position = transform.position;
+            projectile.SetActive(true);
+            Vector2 _shootDirection = (_enemiesInRange[0].transform.position - transform.position).normalized; //huong cua vien dan
+            projectile.GetComponent<Projectile>().Shoot(data, _shootDirection);
+        }
+    }
+
+    private void HandleEnemyDestroyed(Enemy enemy)
+    {
+        // if (_enemiesInRange.Contains(enemy))
+        // {
+            _enemiesInRange.Remove(enemy);
+        // }
     }
 }

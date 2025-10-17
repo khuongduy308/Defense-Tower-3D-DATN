@@ -7,11 +7,17 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] private EnemyData data;
     public static event Action<EnemyData> OnEnemyReachedEnd;
+    public static event Action<Enemy> OnEnemyDestroyed;
 
     private Path _currentPath;
 
     private Vector3 _targetPosition;
     private int _currentWaypoint = 0;
+    private float _lives;
+    private float _maxLives;
+
+    [SerializeField] private Transform healthBar;
+    private Vector3 _healthBarOriginalScale;
 
     private void Awake()
     {
@@ -20,6 +26,7 @@ public class Enemy : MonoBehaviour
             // _currentPath = FindObjectOfType<Path>();
             _currentPath = GameObject.Find("Path1").GetComponent<Path>();
         }
+        _healthBarOriginalScale = healthBar.localScale;
     }
 
     private void OnEnable()
@@ -48,5 +55,32 @@ public class Enemy : MonoBehaviour
                 gameObject.SetActive(false);
             }
         }
+    }
+
+    public void TakeDamage(float damage)
+    {
+        _lives -= damage;
+        _lives = Mathf.Max(_lives, 0);
+        UpdateHealthBar();
+        if (_lives <= 0)
+        {
+            OnEnemyDestroyed?.Invoke(this);
+            gameObject.SetActive(false);
+        }
+    }
+
+    private void UpdateHealthBar()
+    {
+        float healthPercent = _lives / _maxLives;
+        Vector3 scale = _healthBarOriginalScale;
+        scale.x = _healthBarOriginalScale.x * healthPercent;
+        healthBar.localScale = scale;
+    }
+
+    public void Initialize(float healthMultiplier)
+    {
+        _maxLives = data.lives * healthMultiplier;
+        _lives = _maxLives;
+        UpdateHealthBar();
     }
 }
