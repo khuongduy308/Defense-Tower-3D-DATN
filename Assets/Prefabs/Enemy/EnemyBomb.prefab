@@ -182,8 +182,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -2145469071
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: dd1cf78b673c2614587c5dabc56786e9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -207,6 +207,18 @@ PrefabInstance:
     - target: {fileID: -2253911629886400664, guid: 328a749cacbe1c342a77c9c2befc3a61, type: 3}
       propertyPath: m_Name
       value: Barrel_Blue
+      objectReference: {fileID: 0}
+    - target: {fileID: -2253911629886400664, guid: 328a749cacbe1c342a77c9c2befc3a61, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3626916397498700004, guid: 328a749cacbe1c342a77c9c2befc3a61, type: 3}
+      propertyPath: m_SortingLayer
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3626916397498700004, guid: 328a749cacbe1c342a77c9c2befc3a61, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -2145469071
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 328a749cacbe1c342a77c9c2befc3a61, type: 3}
       propertyPath: m_LocalPosition.x

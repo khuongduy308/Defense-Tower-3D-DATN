@@ -6,6 +6,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private EnemyData data;
+    public EnemyData Data => data;
     public static event Action<EnemyData> OnEnemyReachedEnd;
     public static event Action<Enemy> OnEnemyDestroyed;
 
@@ -18,6 +19,7 @@ public class Enemy : MonoBehaviour
 
     [SerializeField] private Transform healthBar;
     private Vector3 _healthBarOriginalScale;
+    private bool _hasBeenCounted = false;
 
     private void Awake()
     {
@@ -39,6 +41,8 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (_hasBeenCounted) return;
+        
         transform.position = Vector3.MoveTowards(transform.position, _targetPosition, data.speed * Time.deltaTime);
 
         float relativeDistance = (transform.position - _targetPosition).magnitude;
@@ -51,6 +55,7 @@ public class Enemy : MonoBehaviour
             }
             else
             {
+                _hasBeenCounted = true;
                 OnEnemyReachedEnd?.Invoke(data);
                 gameObject.SetActive(false);
             }
@@ -64,6 +69,10 @@ public class Enemy : MonoBehaviour
         UpdateHealthBar();
         if (_lives <= 0)
         {
+            if (!_hasBeenCounted)
+            {
+                _hasBeenCounted = true;
+            }
             OnEnemyDestroyed?.Invoke(this);
             gameObject.SetActive(false);
         }
@@ -79,6 +88,7 @@ public class Enemy : MonoBehaviour
 
     public void Initialize(float healthMultiplier)
     {
+        _hasBeenCounted = false;
         _maxLives = data.lives * healthMultiplier;
         _lives = _maxLives;
         UpdateHealthBar();

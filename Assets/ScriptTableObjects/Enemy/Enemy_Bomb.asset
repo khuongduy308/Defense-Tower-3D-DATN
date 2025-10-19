@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 937c661e05d347443b6f9840bcbf4c47, type: 3}
   m_Name: Enemy_Bomb
   m_EditorClassIdentifier: 
-  lives: 5
+  lives: 20
   damage: 5
-  speed: 1
+  speed: 3
+  resourceReward: 3
