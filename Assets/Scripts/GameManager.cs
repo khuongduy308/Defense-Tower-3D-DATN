@@ -5,11 +5,25 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance { get; private set; }
     public static event Action<int> OnLivesChanged;
     public static event Action<int> OnResourcesChanged;
     private int _lives = 10;
-    private int _resources = 0;
-    // public static event System.Action<int> OnLivesChanged;
+    private int _resources = 175;
+    public int Resources => _resources;
+    private float _gameSpeed = 1f;
+    public float GameSpeed => _gameSpeed;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+            // return;
+        }else{
+            Instance = this;
+        }
+    }
 
     private void OnEnable()
     {
@@ -47,6 +61,26 @@ public class GameManager : MonoBehaviour
         _resources += amount;
         OnResourcesChanged?.Invoke(_resources);
         Debug.Log($"Resources: {_resources}");
+    }
+
+    public void setTimeScale(float scale) //danh cho pause game
+    {
+        Time.timeScale = scale;
+    }
+
+    public void SpendResources(int amount)
+    {
+        if (_resources >= amount)
+        {
+            _resources -= amount;
+            OnResourcesChanged?.Invoke(_resources);
+        }
+    }
+    
+    public void SetGameSpeed(float newSpeed) //danh cho toc do game
+    {
+        _gameSpeed = newSpeed;
+        setTimeScale(_gameSpeed);
     }
 }
 

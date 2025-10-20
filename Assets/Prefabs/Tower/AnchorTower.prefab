@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7861648313709056237}
   - component: {fileID: 2073502993856823530}
   - component: {fileID: 1285271789225194254}
+  - component: {fileID: 2568622538808852982}
   m_Layer: 7
   m_Name: AnchorTower
   m_TagString: Untagged
@@ -82,7 +83,21 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 2.5
+--- !u!114 &2568622538808852982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7083659474677469422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f719bf8887bcb44988e2df22602d532, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 931028462258717742, guid: 8d0469c28b6474e40b8a8041c9459ade, type: 3}
+  poolSize: 5
 --- !u!1001 &883990729538909460
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -167,7 +182,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 30841b9cf28649a48989314eb83efeea, type: 3}
       propertyPath: m_SortingLayer
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 30841b9cf28649a48989314eb83efeea, type: 3}
       propertyPath: m_SortingLayerID
