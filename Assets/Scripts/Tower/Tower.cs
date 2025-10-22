@@ -78,8 +78,10 @@ public class Tower : MonoBehaviour
             GameObject projectile = _projectilePool.GetPooledObject();
             projectile.transform.position = transform.position;
             projectile.SetActive(true);
-            Vector2 _shootDirection = (_enemiesInRange[0].transform.position - transform.position).normalized; //huong cua vien dan
-            projectile.GetComponent<Projectile>().Shoot(data, _shootDirection);
+            // Vector2 _shootDirection = (_enemiesInRange[0].transform.position - transform.position).normalized; //huong cua vien dan
+            // projectile.GetComponent<Projectile>().Shoot(data, _shootDirection);
+
+            projectile.GetComponent<Projectile>().Shoot(data, _enemiesInRange[0]);
         }
     }
 

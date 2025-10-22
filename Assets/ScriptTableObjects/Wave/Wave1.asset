@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyType: 0
   spawnInterval: 0.5
-  enemiesPerWave: 3
+  enemiesPerWave: 10

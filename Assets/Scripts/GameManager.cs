@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     private int _lives = 10;
     private int _resources = 175;
     public int Resources => _resources;
-    private float _gameSpeed = 1f;
+    private float _gameSpeed = 0.5f;
     public float GameSpeed => _gameSpeed;
 
     private void Awake()

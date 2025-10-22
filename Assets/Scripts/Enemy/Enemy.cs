@@ -21,21 +21,34 @@ public class Enemy : MonoBehaviour
     private Vector3 _healthBarOriginalScale;
     private bool _hasBeenCounted = false;
 
+    private Transform _spriteTransform; // Tham chiếu đến object con chứa sprite
+    private Vector3 _spriteOriginalScale; // Scale gốc của sprite
+
     private void Awake()
     {
-        if (_currentPath == null)
-        {
-            // _currentPath = FindObjectOfType<Path>();
-            _currentPath = GameObject.Find("Path1").GetComponent<Path>();
-        }
         _healthBarOriginalScale = healthBar.localScale;
+
+        _spriteTransform = transform.GetChild(0); // Giả sử sprite là child đầu tiên
+        if (_spriteTransform != null)
+        {
+            _spriteOriginalScale = _spriteTransform.localScale;
+        }
+        else
+        {
+            Debug.LogError("Enemy không tìm thấy sprite child (GetChild(0))!", this);
+        }
     }
 
     private void OnEnable()
     {
-        _currentWaypoint = 0;
-        _targetPosition = _currentPath.GetPosition(_currentWaypoint);
+        // _currentWaypoint = 0;
+        // _targetPosition = _currentPath.GetPosition(_currentWaypoint);
         transform.GetChild(0).GetComponent<Animator>().Play("Run");
+
+        if (healthBar != null && _healthBarOriginalScale != Vector3.zero)
+        {
+            healthBar.localScale = _healthBarOriginalScale;
+        }
     }
 
     // Update is called once per frame
@@ -52,6 +65,7 @@ public class Enemy : MonoBehaviour
             if (_currentWaypoint < _currentPath.waypoints.Length)
             {
                 _targetPosition = _currentPath.GetPosition(_currentWaypoint);
+                FlipSprite(_targetPosition);
             }
             else
             {
@@ -86,11 +100,47 @@ public class Enemy : MonoBehaviour
         healthBar.localScale = scale;
     }
 
-    public void Initialize(float healthMultiplier)
+    // public void Initialize(float healthMultiplier)
+    // {
+    //     _hasBeenCounted = false;
+    //     _maxLives = data.lives * healthMultiplier;
+    //     _lives = _maxLives;
+    //     UpdateHealthBar();
+    // }
+
+    public void Initialize(Path path, float healthMultiplier)
     {
+        _currentPath = path; // Gán path được truyền vào
+
+        _currentWaypoint = 0;
+        _targetPosition = _currentPath.GetPosition(_currentWaypoint);
+        // Đặt vị trí của Enemy tại điểm bắt đầu của path
+        transform.position = _currentPath.GetPosition(0);
+
+        FlipSprite(_targetPosition);
+
         _hasBeenCounted = false;
         _maxLives = data.lives * healthMultiplier;
         _lives = _maxLives;
         UpdateHealthBar();
+    }
+    
+    private void FlipSprite(Vector3 targetPosition)
+    {
+        if (_spriteTransform == null) return;
+
+        // Tính toán hướng di chuyển ngang
+        float directionX = targetPosition.x - transform.position.x;
+
+        if (directionX > 0.01f) //khoảng đệm nhỏ để tránh rung lắc
+        {
+            // Đang đi sang PHẢI thì localScale.x về giá trị gốc (dương)
+            _spriteTransform.localScale = new Vector3(_spriteOriginalScale.x, _spriteOriginalScale.y, _spriteOriginalScale.z);
+        }
+        else if (directionX < -0.01f)
+        {
+            // Đang đi sang TRÁI localScale.x về giá trị âm (lật ngược)
+            _spriteTransform.localScale = new Vector3(-_spriteOriginalScale.x, _spriteOriginalScale.y, _spriteOriginalScale.z);
+        }
     }
 }

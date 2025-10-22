@@ -18,6 +18,8 @@ public class Spawner : MonoBehaviour
     private float _waveCooldown = 0f;
     private bool _isBetweenWaves = false;
 
+    [SerializeField] private List<Path> allPaths;
+
     [SerializeField] private ObjectPooler basePool;
     [SerializeField] private ObjectPooler bombPool;
     [SerializeField] private ObjectPooler healPool;
@@ -91,12 +93,22 @@ public class Spawner : MonoBehaviour
     {
         if (_poolDictionary.TryGetValue(CurrentWave.enemyType, out var pool))
         {
+            // Kiểm tra xem có path nào không
+            if (allPaths == null || allPaths.Count == 0)
+            {
+                Debug.LogError("Spawner không có Path nào được gán trong Inspector!");
+                return;
+            }
+
+            Path chosenPath = allPaths[UnityEngine.Random.Range(0, allPaths.Count)];
+
             GameObject spawnedObject = pool.GetPooledObject();
             spawnedObject.transform.position = transform.position;
 
             float healthMultiplier = 1f + (_waveCounter * 0.1f); //+10% health per wave
             Enemy enemy = spawnedObject.GetComponent<Enemy>();
-            enemy.Initialize(healthMultiplier);
+
+            enemy.Initialize(chosenPath, healthMultiplier);
 
             spawnedObject.SetActive(true);
         }
