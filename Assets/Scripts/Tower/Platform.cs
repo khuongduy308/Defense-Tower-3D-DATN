@@ -12,7 +12,7 @@ public class Platform : MonoBehaviour
 
     void Update()
     {
-        if (towerPanelOpen) return;
+        if (towerPanelOpen || Time.timeScale == 0f) return;
         
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {

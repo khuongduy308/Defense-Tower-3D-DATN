@@ -29,6 +29,9 @@ public class UIController : MonoBehaviour
     [SerializeField] private Color normalTextColor = Color.black;
     [SerializeField] private Color selectedTextColor = Color.white;
 
+    [SerializeField] private GameObject pausePanel;
+    private bool _isGamePaused = false;
+
     private void OnEnable()
     {
         Spawner.OnWaveChanged += UpdateWaveText;
@@ -164,12 +167,34 @@ public class UIController : MonoBehaviour
             text.color = isSelected ? selectedTextColor : normalTextColor;
         }
     }
-    
+
     private void HighlightSelectedSpeedButton(float selectedSpeed)
     {
         UpdateButtonVisual(speed1Button, selectedSpeed == 0.5f);
         UpdateButtonVisual(speed2Button, selectedSpeed == 1f);
         UpdateButtonVisual(speed3Button, selectedSpeed == 2f);
     }
+
+    public void TogglePause()
+    {
+        if (towerPanel.activeSelf)
+        {
+            return;
+        }
+
+        if (_isGamePaused)
+        {
+            pausePanel.SetActive(false);
+            _isGamePaused = false;
+            GameManager.Instance.setTimeScale(GameManager.Instance.GameSpeed);
+        }
+        else
+        {
+            pausePanel.SetActive(true);
+            _isGamePaused = true;
+            GameManager.Instance.setTimeScale(0f);
+        }
+    }
+    
     
 }
