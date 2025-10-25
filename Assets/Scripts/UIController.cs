@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+// using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
@@ -31,6 +33,8 @@ public class UIController : MonoBehaviour
 
     [SerializeField] private GameObject pausePanel;
     private bool _isGamePaused = false;
+
+    [SerializeField] private GameObject gameOverPanel;
 
     private void OnEnable()
     {
@@ -67,6 +71,11 @@ public class UIController : MonoBehaviour
     private void UpdateLivesText(int currentLives)
     {
         livesText.text = $"Lives: {currentLives}";
+
+        if(currentLives <= 0)
+        {
+            ShowGameOver();
+        }
     }
 
     private void UpdateResourcesText(int currentResources)
@@ -195,6 +204,28 @@ public class UIController : MonoBehaviour
             GameManager.Instance.setTimeScale(0f);
         }
     }
+
+    public void RestartLevel()
+    {
+        GameManager.Instance.setTimeScale(0.5f);
+        Scene currentScene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(currentScene.buildIndex);
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
+    public void GoToMainMenu()
+    {
+        GameManager.Instance.setTimeScale(0.5f);
+        SceneManager.LoadScene("MainMenu");
+    }
     
-    
+    private void ShowGameOver()
+    {
+        GameManager.Instance.setTimeScale(0f);
+        gameOverPanel.SetActive(true);
+    }
 }
