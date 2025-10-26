@@ -5,7 +5,11 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
+    public static Spawner Instance { get; private set; }
+
     public static event Action<int> OnWaveChanged;
+    public static event Action OnMissionComplete;
+
     [SerializeField] private WaveData[] waves;
     private int _currentWaveIndex = 0;
     private int _waveCounter = 0;
@@ -17,6 +21,7 @@ public class Spawner : MonoBehaviour
     private float _timeBetweenWaves = 2f;
     private float _waveCooldown = 0f;
     private bool _isBetweenWaves = false;
+    private bool _isEndlessMode = false;
 
     [SerializeField] private List<Path> allPaths;
 
@@ -34,6 +39,15 @@ public class Spawner : MonoBehaviour
             { EnemyType.EnemyBomb, bombPool },
             { EnemyType.EnemyHeal, healPool }
         };
+
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
     }
 
     private void OnEnable()
@@ -62,6 +76,12 @@ public class Spawner : MonoBehaviour
             _waveCooldown -= Time.deltaTime;
             if (_waveCooldown <= 0f)
             {
+                if (_waveCounter + 1 >= LevelManager.Instance.CurrentLevel.wavesToWin && !_isEndlessMode)
+                {
+                    OnMissionComplete?.Invoke();
+                    return;
+                }
+
                 _currentWaveIndex = (_currentWaveIndex + 1) % waves.Length;
                 _waveCounter++;
                 OnWaveChanged?.Invoke(_waveCounter);
@@ -119,9 +139,14 @@ public class Spawner : MonoBehaviour
     {
         _enemiesRemoved++;
     }
-    
+
     private void HandleEnemyDestroyed(Enemy enemy)
     {
         _enemiesRemoved++;
+    }
+    
+    public void EnableEndlessMode()
+    {
+        _isEndlessMode = true;
     }
 }
