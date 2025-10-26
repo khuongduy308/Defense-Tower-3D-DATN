@@ -9,5 +9,6 @@ public class LevelData : ScriptableObject
     public int startingResources;
     public int startingLives;
 
+    public WaveData[] wavesInThisLevel;
     // public AudioClip backgroundMusic;
 }

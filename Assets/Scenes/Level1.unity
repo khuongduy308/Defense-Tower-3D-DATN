@@ -1868,7 +1868,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &433879722
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6620,7 +6620,6 @@ MonoBehaviour:
   waves:
   - {fileID: 11400000, guid: d388f03ab601d4e468393e036b78ede9, type: 2}
   - {fileID: 11400000, guid: c0d21cdcdae76fa41968a6d935d0af3d, type: 2}
-  - {fileID: 11400000, guid: 2d1883d0270af9a41803c85d37b7450a, type: 2}
   allPaths:
   - {fileID: 1388804239}
   - {fileID: 726140125}
@@ -7895,7 +7894,7 @@ MonoBehaviour:
   waveText: {fileID: 1638483238}
   livesText: {fileID: 1721961065}
   resourcesText: {fileID: 281873478}
-  warningText: {fileID: 433879721}
+  warningText: {fileID: 433879722}
   towerPanel: {fileID: 721051948}
   towerCardPrefab: {fileID: 5193132882338152195, guid: 313c25874a4647345af8c99c8d2275cc, type: 3}
   towerCardContainer: {fileID: 39218181}
@@ -7910,7 +7909,7 @@ MonoBehaviour:
   selectedTextColor: {r: 1, g: 1, b: 1, a: 1}
   pausePanel: {fileID: 376491614}
   gameOverPanel: {fileID: 539602984}
-  objectiveText: {fileID: 0}
+  objectiveText: {fileID: 1472066014}
   missionCompletePanel: {fileID: 740107660}
 --- !u!1001 &2014934794
 PrefabInstance:

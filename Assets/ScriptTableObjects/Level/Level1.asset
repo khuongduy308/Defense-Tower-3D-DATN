@@ -13,6 +13,27 @@ MonoBehaviour:
   m_Name: Level1
   m_EditorClassIdentifier: 
   levelName: Level1
-  wavesToWin: 2
+  wavesToWin: 20
   startingResources: 180
   startingLives: 5
+  wavesInThisLevel:
+  - {fileID: 11400000, guid: 6940cff60c49e8640b5b535d7b55a05b, type: 2}
+  - {fileID: 11400000, guid: e222040c0f43a134e94712af8e85c49f, type: 2}
+  - {fileID: 11400000, guid: 43804906b56d23540aba30fb854b3e70, type: 2}
+  - {fileID: 11400000, guid: f85a344572295a04388ba33051e00de7, type: 2}
+  - {fileID: 11400000, guid: eb2b3e67586ae0648973ddb2f8a43fcb, type: 2}
+  - {fileID: 11400000, guid: 57a8f8fd51660ce42aa7772579485ccd, type: 2}
+  - {fileID: 11400000, guid: fa4321f99a523f441b57fad0cd3687ed, type: 2}
+  - {fileID: 11400000, guid: 13f4ae36057f8174c85fedda0d85edf9, type: 2}
+  - {fileID: 11400000, guid: b4da533aaeeda6d4992baf764fb0b54d, type: 2}
+  - {fileID: 11400000, guid: 8da7db8495e0e6f4a9388130a41708f5, type: 2}
+  - {fileID: 11400000, guid: 7dd041544ba03f54386940d4e2aec49b, type: 2}
+  - {fileID: 11400000, guid: 0e92e6ad9fec6b24080bec01a1497839, type: 2}
+  - {fileID: 11400000, guid: 62da6a8eb5cfc5f41ad4d4bd7cdf7774, type: 2}
+  - {fileID: 11400000, guid: 9ddf13c84b8a7b74c9c8c7fed5e5e8ad, type: 2}
+  - {fileID: 11400000, guid: 3d539e8c66b68084585b456fedfc6a65, type: 2}
+  - {fileID: 11400000, guid: 66278b51587acdd45adc857e128db382, type: 2}
+  - {fileID: 11400000, guid: 02fb9ab467d00524996b9a7d8a44bf22, type: 2}
+  - {fileID: 11400000, guid: cff39ed6c6172f54bbb61a807c537e10, type: 2}
+  - {fileID: 11400000, guid: 7ef4fe758c96f2f44b7f8f0bdafd9212, type: 2}
+  - {fileID: 11400000, guid: 843687a3f7a39374f97febc3110e04c3, type: 2}

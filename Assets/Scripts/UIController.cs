@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
+
 // using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -11,7 +13,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private TMP_Text waveText;
     [SerializeField] private TMP_Text livesText;
     [SerializeField] private TMP_Text resourcesText;
-    [SerializeField] private GameObject warningText;
+    [SerializeField] private TMP_Text warningText;
 
     [SerializeField] private GameObject towerPanel;
     [SerializeField] private GameObject towerCardPrefab;
@@ -153,10 +155,16 @@ public class UIController : MonoBehaviour
 
     private IEnumerator ShowWarningMessage(string message)
     {
-        warningText.GetComponent<Text>().text = message;
-        warningText.SetActive(true);
+        if (warningText == null)
+        {
+            Debug.LogError("LỖI: Biến warningText CHƯA ĐƯỢC GÁN trong Inspector của UIController!");
+            yield break; // Dừng Coroutine ngay lập tức
+        }
+    
+        warningText.text = message;
+        warningText.gameObject.SetActive(true);
         yield return new WaitForSecondsRealtime(2f);
-        warningText.SetActive(false);
+        warningText.gameObject.SetActive(false);
     }
 
     private void SetGameSpeed(float timeScale)
