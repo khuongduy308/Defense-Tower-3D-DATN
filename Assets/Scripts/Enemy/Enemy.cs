@@ -24,6 +24,8 @@ public class Enemy : MonoBehaviour
     private Transform _spriteTransform; // Tham chiếu đến object con chứa sprite
     private Vector3 _spriteOriginalScale; // Scale gốc của sprite
 
+    private List<SoldierAI> _attackers = new List<SoldierAI>();
+
     private void Awake()
     {
         _healthBarOriginalScale = healthBar.localScale;
@@ -55,6 +57,17 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         if (_hasBeenCounted) return;
+
+        _attackers.RemoveAll(s => s == null);
+
+        //Kiểm tra xem có bị chặn không
+        if (IsEngaged)
+        {
+            // BỊ CHẶN: Dừng lại
+            // (Bạn có thể thêm logic cho quái đánh trả lính ở đây)
+            // Ví dụ: Set animator "IsWalking" = false
+            return; // Không di chuyển
+        }
         
         transform.position = Vector3.MoveTowards(transform.position, _targetPosition, data.speed * Time.deltaTime);
 
@@ -124,7 +137,7 @@ public class Enemy : MonoBehaviour
         _lives = _maxLives;
         UpdateHealthBar();
     }
-    
+
     private void FlipSprite(Vector3 targetPosition)
     {
         if (_spriteTransform == null) return;
@@ -143,4 +156,26 @@ public class Enemy : MonoBehaviour
             _spriteTransform.localScale = new Vector3(-_spriteOriginalScale.x, _spriteOriginalScale.y, _spriteOriginalScale.z);
         }
     }
+
+    public void SetEngaged(bool engaged, SoldierAI soldier)
+    {
+        if (engaged)
+        {
+            // Lính bắt đầu chặn
+            if (!_attackers.Contains(soldier))
+            {
+                _attackers.Add(soldier);
+            }
+        }
+        else
+        {
+            // Lính hết chặn (do nó chết, hoặc quái chạy xa)
+            if (_attackers.Contains(soldier))
+            {
+                _attackers.Remove(soldier);
+            }
+        }
+    }
+    
+    public bool IsEngaged => _attackers.Count > 0;
 }

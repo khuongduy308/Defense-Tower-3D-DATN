@@ -32,6 +32,7 @@ public class Spawner : MonoBehaviour
     [SerializeField] private ObjectPooler basePool;
     [SerializeField] private ObjectPooler bombPool;
     [SerializeField] private ObjectPooler healPool;
+    [SerializeField] private ObjectPooler wolfPool;
 
     private Dictionary<EnemyType, ObjectPooler> _poolDictionary;
 
@@ -41,7 +42,8 @@ public class Spawner : MonoBehaviour
         {
             { EnemyType.EnemyBase, basePool },
             { EnemyType.EnemyBomb, bombPool },
-            { EnemyType.EnemyHeal, healPool }
+            { EnemyType.EnemyHeal, healPool },
+            { EnemyType.EnemyWolf, wolfPool }
         };
 
         if (Instance != null && Instance != this)

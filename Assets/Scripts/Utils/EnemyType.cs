@@ -4,5 +4,6 @@ public enum EnemyType
 {
     EnemyBase,
     EnemyBomb,
-    EnemyHeal
+    EnemyHeal,
+    EnemyWolf
 }

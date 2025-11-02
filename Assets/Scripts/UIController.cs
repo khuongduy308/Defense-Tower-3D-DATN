@@ -267,11 +267,17 @@ public class UIController : MonoBehaviour
         missionCompletePanel.SetActive(true);
         GameManager.Instance.setTimeScale(0f);
     }
-    
+
     public void EnterEndlessMode()
     {
         missionCompletePanel.SetActive(false);
         GameManager.Instance.setTimeScale(GameManager.Instance.GameSpeed);
         Spawner.Instance.EnableEndlessMode();
+    }
+    
+    public void GoToNextLevel()
+    {
+        // Gọi hàm đã tạo trong LevelManager
+        LevelManager.Instance.LoadNextLevel();
     }
 }
