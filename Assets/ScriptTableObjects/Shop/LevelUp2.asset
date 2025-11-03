@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 899a3e2250035e14c98508cfc827b6c8, type: 3}
+  m_Name: LevelUp2
+  m_EditorClassIdentifier: 
+  itemName: LevelUp2
+  itemIcon: {fileID: 21300000, guid: b342e3ee965ae174fb33645e16fbc63c, type: 3}
+  itemDescription: 'Level up for Tower level 2
+
+'
+  cost: 200
+  itemType: 1
+  value: 1

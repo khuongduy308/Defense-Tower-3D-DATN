@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
         if (Instance != null && Instance != this)
         {
             Destroy(this.gameObject);
-            // return;
+            return;
         }else{
             Instance = this;
         }
@@ -95,10 +95,17 @@ public class GameManager : MonoBehaviour
 
         SetGameSpeed(0.5f);
     }
-    
+
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         ResetGameState();
+    }
+    
+    public void AddLives(int amount)
+    {
+        _lives += amount;
+        OnLivesChanged?.Invoke(_lives);
+        Debug.Log($"Lives added. Total Lives: {_lives}");
     }
 }
 

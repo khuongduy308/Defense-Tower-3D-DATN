@@ -1,39 +1,51 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using System;
+using UnityEngine.UI; // Cần cho "Action"
 
 public class Platform : MonoBehaviour
 {
-    public static event System.Action<Platform> OnPlatformClicked;
-    [SerializeField] private LayerMask platformlayerMask;
-    public static bool towerPanelOpen  { get; set; } = false;
+    // --- SỰ KIỆN MỚI ---
+    // Gửi đi platform TRỐNG
+    public static event Action<Platform> OnEmptyPlatformClicked;
+    // Gửi đi tháp ĐÃ CÓ
+    public static event Action<BaseTower> OnTowerClicked;
+    
+    // Biến để lưu tháp đang đứng trên nó
+    private BaseTower _towerOnPlatform;
+    
+    // (Biến static này là từ code UIController của bạn)
+    public static bool towerPanelOpen = false; 
 
-    void Update()
+    // Hàm này được gọi từ UIController
+    public void PlaceTower(TowerData towerData)
     {
-        if (towerPanelOpen || Time.timeScale == 0f) return;
-        
-        if (Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            Vector2 worldPoint = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-            RaycastHit2D raycastHit = Physics2D.Raycast(worldPoint, Vector2.zero, Mathf.Infinity, platformlayerMask);
+        GameObject towerObj = Instantiate(towerData.prefab, transform.position, Quaternion.identity, transform);
 
-            if (raycastHit.collider != null)
-            {
-                Platform platform = raycastHit.collider.GetComponent<Platform>();
-                if (platform != null)
-                {
-                    // FindObjectOfType<UIController>().ShowTowerPanel();
-                    // Debug.Log("Platform clicked");
-                    OnPlatformClicked?.Invoke(platform);
-                }
-            }
+        // transform.GetComponent<SpriteRenderer>().enabled(false);
+        _towerOnPlatform = towerObj.GetComponent<BaseTower>();
+    }
+
+    private void OnMouseDown()
+    {
+        // Nếu đang mở panel (tower hoặc upgrade), không làm gì cả
+        if (towerPanelOpen) return; 
+
+        if (_towerOnPlatform != null)
+        {
+            // Đã có tháp -> Gửi sự kiện OnTowerClicked
+            OnTowerClicked?.Invoke(_towerOnPlatform);
+        }
+        else
+        {
+            // Trống -> Gửi sự kiện OnEmptyPlatformClicked
+            OnEmptyPlatformClicked?.Invoke(this);
         }
     }
-    
-    public void PlaceTower(TowerData data)
+
+    // Hàm để xóa tháp khi bán
+    public void ClearTower()
     {
-        Instantiate(data.prefab, transform.position, Quaternion.identity, transform);
+        _towerOnPlatform = null;
+        // (GameObject của tháp sẽ tự bị hủy bởi BaseTower)
     }
 }

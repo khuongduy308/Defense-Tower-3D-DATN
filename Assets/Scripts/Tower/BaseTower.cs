@@ -20,6 +20,11 @@ public abstract class BaseTower : MonoBehaviour
         Enemy.OnEnemyDestroyed -= HandleEnemyDestroyed;
     }
 
+    public TowerData GetData()
+    {
+        return data;
+    }
+
     // Start() chỉ khởi tạo những gì chung nhất
     protected virtual void Start()
     {
@@ -76,5 +81,36 @@ public abstract class BaseTower : MonoBehaviour
     protected void CleanUpEnemyList()
     {
         _enemiesInRange.RemoveAll(enemy => enemy == null || !enemy.gameObject.activeInHierarchy);
+    }
+    
+    public void UpgradeTower(TowerData upgradeData)
+    {
+        // 1. Cập nhật data
+        this.data = upgradeData;
+        
+        // 2. Cập nhật hình ảnh (hủy prefab cũ, tạo prefab mới)
+        // (Giả sử hình ảnh/prefab là con đầu tiên của tháp)
+        if (transform.childCount > 0)
+        {
+            Destroy(transform.GetChild(0).gameObject);
+        }
+        Instantiate(upgradeData.prefab, transform.position, transform.rotation, transform);
+        
+        // 3. Cập nhật các chỉ số khác (nếu cần)
+        _circleCollider.radius = data.range;
+        // (Bạn có thể cần reset _shootTimer ở đây nếu muốn tháp bắn ngay)
+    }
+
+    public void SellTower()
+    {
+        // 1. Tìm platform cha và báo là nó đã trống
+        Platform parentPlatform = GetComponentInParent<Platform>();
+        if (parentPlatform != null)
+        {
+            parentPlatform.ClearTower();
+        }
+        
+        // 2. Tự hủy
+        Destroy(gameObject);
     }
 }
