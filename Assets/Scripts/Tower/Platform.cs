@@ -4,35 +4,44 @@ using UnityEngine.UI; // Cần cho "Action"
 
 public class Platform : MonoBehaviour
 {
-    // --- SỰ KIỆN MỚI ---
-    // Gửi đi platform TRỐNG
-    public static event Action<Platform> OnEmptyPlatformClicked;
-    // Gửi đi tháp ĐÃ CÓ
-    public static event Action<BaseTower> OnTowerClicked;
-    
-    // Biến để lưu tháp đang đứng trên nó
-    private BaseTower _towerOnPlatform;
-    
-    // (Biến static này là từ code UIController của bạn)
-    public static bool towerPanelOpen = false; 
 
-    // Hàm này được gọi từ UIController
+    public static event Action<Platform> OnEmptyPlatformClicked;
+
+    public static event Action<BaseTower> OnTowerClicked;
+
+    private BaseTower _towerOnPlatform;
+    private SpriteRenderer _spriteRenderer;
+
+    public static bool towerPanelOpen = false; 
+    
+    private void Awake()
+    {
+        // Lấy SpriteRenderer một lần và lưu vào biến
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        if (_spriteRenderer == null)
+        {
+            Debug.LogError("Lỗi: Platform này không có SpriteRenderer!", this);
+        }
+    }
+
     public void PlaceTower(TowerData towerData)
     {
         GameObject towerObj = Instantiate(towerData.prefab, transform.position, Quaternion.identity, transform);
 
-        // transform.GetComponent<SpriteRenderer>().enabled(false);
+        if (_spriteRenderer != null)
+        {
+            _spriteRenderer.enabled = false;
+        }
         _towerOnPlatform = towerObj.GetComponent<BaseTower>();
     }
 
     private void OnMouseDown()
     {
-        // Nếu đang mở panel (tower hoặc upgrade), không làm gì cả
+        Debug.Log("Click detected on: " + gameObject.name + ", panelOpen = " + towerPanelOpen);
         if (towerPanelOpen) return; 
 
         if (_towerOnPlatform != null)
         {
-            // Đã có tháp -> Gửi sự kiện OnTowerClicked
             OnTowerClicked?.Invoke(_towerOnPlatform);
         }
         else
@@ -46,6 +55,9 @@ public class Platform : MonoBehaviour
     public void ClearTower()
     {
         _towerOnPlatform = null;
-        // (GameObject của tháp sẽ tự bị hủy bởi BaseTower)
+        if (_spriteRenderer != null)
+        {
+            _spriteRenderer.enabled = true; // Bật lại sprite khi bán tháp
+        }
     }
 }

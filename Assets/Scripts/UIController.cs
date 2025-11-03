@@ -40,12 +40,22 @@ public class UIController : MonoBehaviour
     [SerializeField] private TMP_Text objectiveText;
     [SerializeField] private GameObject missionCompletePanel;
 
+    [Header("Upgrade Panel")]
+    [SerializeField] private GameObject upgradePanel; // Kéo Panel Nâng Cấp vào đây
+    [SerializeField] private Button upgradeButton;
+    [SerializeField] private Button sellButton;
+    // [SerializeField] private TMP_Text upgradeCostText;
+    // [SerializeField] private TMP_Text sellValueText;
+    [SerializeField] private float sellReturnPercent = 0.7f; // Bán được 70% giá
+    private BaseTower _currentSelectedTower;
+
     private void OnEnable()
     {
         Spawner.OnWaveChanged += UpdateWaveText;
         GameManager.OnLivesChanged += UpdateLivesText;
         GameManager.OnResourcesChanged += UpdateResourcesText;
-        Platform.OnPlatformClicked += HandlePlatformClicked;
+        Platform.OnEmptyPlatformClicked += HandleEmptyPlatformClicked; // Mới
+        Platform.OnTowerClicked += HandleTowerClicked; // Mới
         TowerCard.OnTowerSelected += HandleTowerSelected;
         SceneManager.sceneLoaded += OnSceneLoaded;
         Spawner.OnMissionComplete += ShowMissionComplete;
@@ -56,7 +66,8 @@ public class UIController : MonoBehaviour
         Spawner.OnWaveChanged -= UpdateWaveText;
         GameManager.OnLivesChanged -= UpdateLivesText;
         GameManager.OnResourcesChanged -= UpdateResourcesText;
-        Platform.OnPlatformClicked -= HandlePlatformClicked;
+        Platform.OnEmptyPlatformClicked -= HandleEmptyPlatformClicked;
+        Platform.OnTowerClicked -= HandleTowerClicked;
         TowerCard.OnTowerSelected -= HandleTowerSelected;
         SceneManager.sceneLoaded -= OnSceneLoaded;
         Spawner.OnMissionComplete -= ShowMissionComplete;
@@ -67,6 +78,9 @@ public class UIController : MonoBehaviour
         speed1Button.onClick.AddListener(() => SetGameSpeed(0.5f));
         speed2Button.onClick.AddListener(() => SetGameSpeed(1f));
         speed3Button.onClick.AddListener(() => SetGameSpeed(2f));
+
+        upgradeButton.onClick.AddListener(UpgradeSelectedTower);
+        sellButton.onClick.AddListener(SellSelectedTower);
 
         HighlightSelectedSpeedButton(GameManager.Instance.GameSpeed);
     }
@@ -91,7 +105,7 @@ public class UIController : MonoBehaviour
         resourcesText.text = $"Resources: {currentResources}";
     }
 
-    private void HandlePlatformClicked(Platform platform)
+    private void HandleEmptyPlatformClicked(Platform platform)
     {
         _currentPlatform = platform;
         ShowTowerPanel();
@@ -274,10 +288,92 @@ public class UIController : MonoBehaviour
         GameManager.Instance.setTimeScale(GameManager.Instance.GameSpeed);
         Spawner.Instance.EnableEndlessMode();
     }
-    
+
     public void GoToNextLevel()
     {
         // Gọi hàm đã tạo trong LevelManager
         LevelManager.Instance.LoadNextLevel();
+    }
+
+    private void HandleTowerClicked(BaseTower tower)
+    {
+        _currentSelectedTower = tower;
+        ShowUpgradePanel(); // Mở panel nâng cấp
+    }
+    
+    public void ShowUpgradePanel()
+    {
+        upgradePanel.SetActive(true);
+        Platform.towerPanelOpen = true; // Dùng chung biến cờ
+        GameManager.Instance.setTimeScale(0f);
+        PopulateUpgradePanel();
+    }
+
+    public void HideUpgradePanel()
+    {
+        upgradePanel.SetActive(false);
+        Platform.towerPanelOpen = false;
+        GameManager.Instance.setTimeScale(GameManager.Instance.GameSpeed);
+        _currentSelectedTower = null; // Quên tháp đi
+    }
+
+    private void PopulateUpgradePanel()
+    {
+        TowerData currentData = _currentSelectedTower.GetData();
+
+        // 1. Tính tiền bán
+        int sellValue = Mathf.RoundToInt(currentData.cost * sellReturnPercent);
+        // sellValueText.text = sellValue.ToString();
+
+        // 2. Kiểm tra xem có nâng cấp được không
+        if (currentData.nextUpgrade != null)
+        {
+            // upgradeButton.gameObject.SetActive(true);
+            upgradeButton.interactable = true;
+            // upgradeCostText.text = currentData.nextUpgrade.cost.ToString();
+        }
+        else
+        {
+            // upgradeButton.gameObject.SetActive(false);
+            upgradeButton.interactable = false;
+            // upgradeCostText.text = "MAX";
+        }
+    }
+    
+    private void UpgradeSelectedTower()
+    {
+        TowerData upgradeData = _currentSelectedTower.GetData().nextUpgrade;
+        
+        // 1. Kiểm tra tiền
+        if (GameManager.Instance.Resources >= upgradeData.cost)
+        {
+            // 2. Trừ tiền
+            GameManager.Instance.SpendResources(upgradeData.cost);
+            
+            // 3. Ra lệnh cho tháp tự nâng cấp
+            _currentSelectedTower.UpgradeTower(upgradeData);
+        }
+        else
+        {
+            StartCoroutine(ShowWarningMessage("No Resource Enough!"));
+        }
+        
+        // 4. Luôn đóng panel
+        HideUpgradePanel();
+    }
+
+    private void SellSelectedTower()
+    {
+        // 1. Tính tiền bán
+        int sellValue = Mathf.RoundToInt(_currentSelectedTower.GetData().cost * sellReturnPercent);
+        
+        // 2. Cộng tiền
+        GameManager.Instance.AddResources(sellValue); // Dùng hàm public đã tạo
+        
+        // 3. Ra lệnh cho tháp tự bán
+        _currentSelectedTower.SellTower();
+        
+        // 4. Đóng panel
+        HideUpgradePanel();
     }
 }

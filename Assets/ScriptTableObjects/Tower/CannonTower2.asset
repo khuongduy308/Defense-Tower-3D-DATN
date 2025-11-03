@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9134551179c23f845b2e4ac9890f79d5, type: 3}
-  m_Name: AnchorTower
+  m_Name: CannonTower2
   m_EditorClassIdentifier: 
-  range: 5
-  shootInterval: 0.5
+  range: 3
+  shootInterval: 1.5
   projectileSpeed: 5
   projectileDuration: 2
-  projectileSize: 1
-  damage: 3
-  cost: 50
-  sprite: {fileID: -4311798649047596183, guid: 30841b9cf28649a48989314eb83efeea, type: 3}
-  prefab: {fileID: 7083659474677469422, guid: e257e2aaa80dfc54cb283659509a82ea, type: 3}
-  nextUpgrade: {fileID: 11400000, guid: af577c7fd88c289418d784d94e1d85a5, type: 2}
+  projectileSize: 2
+  damage: 10
+  cost: 100
+  sprite: {fileID: 21300000, guid: 8d0ada61c1408a4409a67008c2a18180, type: 3}
+  prefab: {fileID: 3470518458149128897, guid: ce582ba1c3ac5a74197ef97aace8ad6d, type: 3}
+  nextUpgrade: {fileID: 0}
