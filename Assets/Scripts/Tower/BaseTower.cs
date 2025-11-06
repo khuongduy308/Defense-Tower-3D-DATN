@@ -8,6 +8,7 @@ public abstract class BaseTower : MonoBehaviour
     [SerializeField] protected TowerData data; // Dùng 'protected' để lớp con có thể truy cập
     protected CircleCollider2D _circleCollider;
     protected List<Enemy> _enemiesInRange; // Dùng 'protected'
+    protected Platform _parentPlatform;
 
     // OnEnable / OnDisable để xử lý sự kiện enemy chết
     protected virtual void OnEnable()
@@ -103,14 +104,32 @@ public abstract class BaseTower : MonoBehaviour
 
     public void SellTower()
     {
-        // 1. Tìm platform cha và báo là nó đã trống
-        Platform parentPlatform = GetComponentInParent<Platform>();
-        if (parentPlatform != null)
+        if (_parentPlatform != null)
         {
-            parentPlatform.ClearTower();
+            _parentPlatform.ClearTower();
         }
-        
+
         // 2. Tự hủy
         Destroy(gameObject);
+    }
+
+    public Platform GetPlatform()
+    {
+        return _parentPlatform;
+    }
+
+    public void DestroyForUpgrade()
+    {
+        if (_parentPlatform != null)
+        {
+            _parentPlatform.ClearTower_ForUpgrade(); // Báo platform là nó đã trống
+        }
+
+        Destroy(gameObject);
+    }
+    
+    public void SetPlatform(Platform platform)
+    {
+        _parentPlatform = platform;
     }
 }

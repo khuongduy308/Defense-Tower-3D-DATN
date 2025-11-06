@@ -951,9 +951,6 @@ MonoBehaviour:
   shopItemCardContainer: {fileID: 540481311}
   warningText: {fileID: 433879722}
   shopItems:
-  - {fileID: 11400000, guid: 9fc3fbbcb03f51c469ad197fdeb82a62, type: 2}
-  - {fileID: 11400000, guid: 4be28ac0b2f537642864247f97656108, type: 2}
-  - {fileID: 11400000, guid: 28c9b953d5e71b549826410cb095090f, type: 2}
   - {fileID: 11400000, guid: 422f182f1769c6349908f99eb528d59e, type: 2}
 --- !u!4 &181277778
 Transform:

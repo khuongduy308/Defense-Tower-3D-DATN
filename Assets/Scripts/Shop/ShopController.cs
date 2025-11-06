@@ -35,6 +35,7 @@ public class ShopController : MonoBehaviour
     {
         shopPanel.SetActive(true);
         // Tạm dừng game, giống hệt Tower Panel
+        Platform.IsModalPanelOpen = true;
         GameManager.Instance.setTimeScale(0f); 
         PopulateShopCards();
     }
@@ -43,6 +44,7 @@ public class ShopController : MonoBehaviour
     {
         shopPanel.SetActive(false);
         // Tiếp tục game, dùng tốc độ đã lưu
+        Platform.IsModalPanelOpen = false;
         GameManager.Instance.setTimeScale(GameManager.Instance.GameSpeed);
     }
 

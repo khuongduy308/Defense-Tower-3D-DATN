@@ -12,7 +12,7 @@ public class Platform : MonoBehaviour
     private BaseTower _towerOnPlatform;
     private SpriteRenderer _spriteRenderer;
 
-    public static bool towerPanelOpen = false; 
+    public static bool IsModalPanelOpen = false; 
     
     private void Awake()
     {
@@ -27,18 +27,23 @@ public class Platform : MonoBehaviour
     public void PlaceTower(TowerData towerData)
     {
         GameObject towerObj = Instantiate(towerData.prefab, transform.position, Quaternion.identity, transform);
+        _towerOnPlatform = towerObj.GetComponent<BaseTower>();
+
+        if (_towerOnPlatform != null)
+        {
+            _towerOnPlatform.SetPlatform(this); 
+        }
 
         if (_spriteRenderer != null)
         {
             _spriteRenderer.enabled = false;
         }
-        _towerOnPlatform = towerObj.GetComponent<BaseTower>();
     }
 
     private void OnMouseDown()
     {
-        Debug.Log("Click detected on: " + gameObject.name + ", panelOpen = " + towerPanelOpen);
-        if (towerPanelOpen) return; 
+        Debug.Log("Click detected on: " + gameObject.name + ", panelOpen = " + IsModalPanelOpen);
+        if (IsModalPanelOpen) return; 
 
         if (_towerOnPlatform != null)
         {
@@ -59,5 +64,11 @@ public class Platform : MonoBehaviour
         {
             _spriteRenderer.enabled = true; // Bật lại sprite khi bán tháp
         }
+    }
+
+    public void ClearTower_ForUpgrade()
+    {
+        _towerOnPlatform = null;
+        // KHÔNG bật lại sprite, vì tháp mới sẽ được đặt lên ngay
     }
 }

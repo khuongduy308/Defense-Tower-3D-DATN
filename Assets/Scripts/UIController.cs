@@ -107,6 +107,15 @@ public class UIController : MonoBehaviour
 
     private void HandleEmptyPlatformClicked(Platform platform)
     {
+        if (towerPanel.activeSelf && _currentPlatform == platform)
+        {
+            HideTowerPanel(); // Nếu đúng, chỉ cần đóng nó lại
+            return;
+        }
+
+        HideTowerPanel();
+        HideUpgradePanel();
+
         _currentPlatform = platform;
         ShowTowerPanel();
     }
@@ -114,7 +123,7 @@ public class UIController : MonoBehaviour
     public void ShowTowerPanel()
     {
         towerPanel.SetActive(true);
-        Platform.towerPanelOpen = true;
+        // Platform.IsModalPanelOpen = true;
         GameManager.Instance.setTimeScale(0f);
         PopulateTowerCards();
     }
@@ -122,7 +131,7 @@ public class UIController : MonoBehaviour
     public void HideTowerPanel()
     {
         towerPanel.SetActive(false);
-        Platform.towerPanelOpen = false;
+        // Platform.IsModalPanelOpen = false;
         GameManager.Instance.setTimeScale(GameManager.Instance.GameSpeed);
     }
 
@@ -231,12 +240,14 @@ public class UIController : MonoBehaviour
         {
             pausePanel.SetActive(false);
             _isGamePaused = false;
+            Platform.IsModalPanelOpen = false;
             GameManager.Instance.setTimeScale(GameManager.Instance.GameSpeed);
         }
         else
         {
             pausePanel.SetActive(true);
             _isGamePaused = true;
+            Platform.IsModalPanelOpen = true;
             GameManager.Instance.setTimeScale(0f);
         }
     }
@@ -297,14 +308,26 @@ public class UIController : MonoBehaviour
 
     private void HandleTowerClicked(BaseTower tower)
     {
+        // 1. Kiểm tra xem có phải click lại chính tháp đang mở không
+        if (upgradePanel.activeSelf && _currentSelectedTower == tower)
+        {
+            HideUpgradePanel(); // Nếu đúng, chỉ cần đóng nó lại
+            return;
+        }
+        
+        // 2. Nếu không, đóng tất cả các panel (cả mua và nâng cấp) lại
+        HideTowerPanel();
+        HideUpgradePanel();
+
+        // 3. Mở panel NÂNG CẤP của tháp mới
         _currentSelectedTower = tower;
-        ShowUpgradePanel(); // Mở panel nâng cấp
+        ShowUpgradePanel();
     }
     
     public void ShowUpgradePanel()
     {
         upgradePanel.SetActive(true);
-        Platform.towerPanelOpen = true; // Dùng chung biến cờ
+        // Platform.IsModalPanelOpen = true; // Dùng chung biến cờ
         GameManager.Instance.setTimeScale(0f);
         PopulateUpgradePanel();
     }
@@ -312,7 +335,7 @@ public class UIController : MonoBehaviour
     public void HideUpgradePanel()
     {
         upgradePanel.SetActive(false);
-        Platform.towerPanelOpen = false;
+        // Platform.IsModalPanelOpen = false;
         GameManager.Instance.setTimeScale(GameManager.Instance.GameSpeed);
         _currentSelectedTower = null; // Quên tháp đi
     }
@@ -342,16 +365,32 @@ public class UIController : MonoBehaviour
     
     private void UpgradeSelectedTower()
     {
-        TowerData upgradeData = _currentSelectedTower.GetData().nextUpgrade;
+        TowerData currentData = _currentSelectedTower.GetData();
+        TowerData upgradeData = currentData.nextUpgrade;
+
+        if (upgradeData == null)
+        {
+            Debug.LogError("Lỗi: Cố gắng nâng cấp tháp đã max level.");
+            HideUpgradePanel();
+            return;
+        }
         
+        Platform platform = _currentSelectedTower.GetPlatform();
+        if (platform == null)
+        {
+            Debug.LogError("Lỗi: Không tìm thấy Platform của tháp!");
+            HideUpgradePanel();
+            return;
+        }
+    
         // 1. Kiểm tra tiền
         if (GameManager.Instance.Resources >= upgradeData.cost)
         {
             // 2. Trừ tiền
             GameManager.Instance.SpendResources(upgradeData.cost);
-            
+            _currentSelectedTower.DestroyForUpgrade();
             // 3. Ra lệnh cho tháp tự nâng cấp
-            _currentSelectedTower.UpgradeTower(upgradeData);
+            platform.PlaceTower(upgradeData);
         }
         else
         {
