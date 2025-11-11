@@ -130,8 +130,9 @@ public class UIController : MonoBehaviour
 
     public void HideTowerPanel()
     {
+        if (!towerPanel.activeSelf) return;
         towerPanel.SetActive(false);
-        // Platform.IsModalPanelOpen = false;
+        Platform.IsModalPanelOpen = false;
         GameManager.Instance.setTimeScale(GameManager.Instance.GameSpeed);
     }
 
@@ -334,8 +335,9 @@ public class UIController : MonoBehaviour
 
     public void HideUpgradePanel()
     {
+        if (!upgradePanel.activeSelf) return;
         upgradePanel.SetActive(false);
-        // Platform.IsModalPanelOpen = false;
+        Platform.IsModalPanelOpen = false;
         GameManager.Instance.setTimeScale(GameManager.Instance.GameSpeed);
         _currentSelectedTower = null; // Quên tháp đi
     }

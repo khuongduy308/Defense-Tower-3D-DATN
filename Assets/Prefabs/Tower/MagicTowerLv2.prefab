@@ -27,8 +27,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.357, z: 0}
-  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 0.6, y: 0.75, z: 0.6}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8821473144654396266}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -96,6 +96,7 @@ GameObject:
   - component: {fileID: 4231226827910413979}
   - component: {fileID: 5952712113034356658}
   - component: {fileID: 4278607660031527982}
+  - component: {fileID: -1450370003065025981}
   m_Layer: 7
   m_Name: MagicTowerLv2
   m_TagString: Untagged
@@ -132,7 +133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fbed0035bb24b847a80c90bccf28c1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: 270cb76df27b54a459cf7f94bde7fb15, type: 2}
+  data: {fileID: 11400000, guid: cbb5742747e4aa3499c0e33dc89b0ecd, type: 2}
 --- !u!58 &5952712113034356658
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -140,7 +141,7 @@ CircleCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 784139810578597882}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -182,6 +183,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 6534355184651712866, guid: 3142a683ca8c8184d8ae3559ca403253, type: 3}
   poolSize: 5
+--- !u!50 &-1450370003065025981
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 784139810578597882}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &6745359697327326878
 GameObject:
   m_ObjectHideFlags: 0

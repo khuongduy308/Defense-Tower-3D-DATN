@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9134551179c23f845b2e4ac9890f79d5, type: 3}
-  m_Name: AnchorTower
+  m_Name: AnchorTowerLv3
   m_EditorClassIdentifier: 
-  range: 4.5
-  shootInterval: 0.5
+  range: 5
+  shootInterval: 0.4
   projectileSpeed: 5
   projectileDuration: 2
   projectileSize: 1
-  damage: 3
-  cost: 50
+  damage: 6
+  cost: 80
   sprite: {fileID: -4311798649047596183, guid: 30841b9cf28649a48989314eb83efeea, type: 3}
-  prefab: {fileID: 7083659474677469422, guid: e257e2aaa80dfc54cb283659509a82ea, type: 3}
-  nextUpgrade: {fileID: 11400000, guid: af577c7fd88c289418d784d94e1d85a5, type: 2}
+  prefab: {fileID: 1737423280371371494, guid: ec44fac70f715174bbe664506c101ceb, type: 3}
+  nextUpgrade: {fileID: 0}

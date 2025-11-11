@@ -43,7 +43,7 @@ public class Platform : MonoBehaviour
     private void OnMouseDown()
     {
         Debug.Log("Click detected on: " + gameObject.name + ", panelOpen = " + IsModalPanelOpen);
-        if (IsModalPanelOpen) return; 
+        // if (IsModalPanelOpen) return; 
 
         if (_towerOnPlatform != null)
         {
