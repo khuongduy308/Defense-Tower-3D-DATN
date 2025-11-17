@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+    private Dictionary<string, int> _powerupInventory = new Dictionary<string, int>();
+    public static event Action<string, int> OnPowerupCountChanged;
     public static event Action<int> OnLivesChanged;
     public static event Action<int> OnResourcesChanged;
     private int _lives = 10;
@@ -93,6 +95,9 @@ public class GameManager : MonoBehaviour
         _resources = LevelManager.Instance.CurrentLevel.startingResources;
         OnResourcesChanged?.Invoke(_resources);
 
+        _powerupInventory.Clear();
+        // OnPowerupCountChanged?.Invoke("Bomb", 0);
+
         SetGameSpeed(0.5f);
     }
 
@@ -106,6 +111,38 @@ public class GameManager : MonoBehaviour
         _lives += amount;
         OnLivesChanged?.Invoke(_lives);
         Debug.Log($"Lives added. Total Lives: {_lives}");
+    }
+
+    public void AddPowerup(string powerupName, int amount) //them vat pham vao tui do
+    {
+        if (!_powerupInventory.ContainsKey(powerupName))
+        {
+            _powerupInventory[powerupName] = 0;
+        }
+        _powerupInventory[powerupName] += amount;
+
+        // Báo cho UI (như nút Bom) cập nhật
+        OnPowerupCountChanged?.Invoke(powerupName, _powerupInventory[powerupName]);
+    }
+
+    public bool UsePowerup(string powerupName)  //co kha nang su dung vat pham khong
+    {
+        if (_powerupInventory.ContainsKey(powerupName) && _powerupInventory[powerupName] > 0)
+        {
+            _powerupInventory[powerupName]--;
+            OnPowerupCountChanged?.Invoke(powerupName, _powerupInventory[powerupName]);
+            return true;
+        }
+        return false; // Hết vật phẩm
+    }
+
+    public int GetPowerupCount(string powerupName) //lay so luong vat pham trong tui do
+    {
+        if (_powerupInventory.ContainsKey(powerupName))
+        {
+            return _powerupInventory[powerupName];
+        }
+        return 0;
     }
 }
 

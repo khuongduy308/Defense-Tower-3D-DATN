@@ -92,10 +92,14 @@ public class ShopController : MonoBehaviour
 
     private void ApplyItemEffect(ShopItemData itemData)
     {
+        if (itemData.isConsumable)
+        {
+            GameManager.Instance.AddPowerup(itemData.powerupName, 1);
+            return; // neu mua vat pham dung sau thi luu lai roi thoat
+        }
         switch (itemData.itemType)
         {
             case ShopItemType.HealPlayer:
-                // Bạn sẽ cần thêm hàm `AddLives` trong GameManager
                 GameManager.Instance.AddLives(itemData.value); 
                 break;
 

@@ -24,4 +24,11 @@ public class ShopItemData : ScriptableObject
     
     [Tooltip("Số lượng (máu hồi, tiền, sát thương, hoặc thời gian đóng băng)")]
     public int value; 
+
+    [Header("Consumable Powerup")]
+    [Tooltip("Đánh dấu nếu đây là vật phẩm mua để giữ lai và sử dụng sau")]
+    public bool isConsumable;
+
+    [Tooltip("Tên định danh cho vật phẩm, ví dụ: 'Bomb', 'Potion'")]
+    public string powerupName;
 }

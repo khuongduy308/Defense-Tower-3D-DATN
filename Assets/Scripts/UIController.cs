@@ -107,14 +107,14 @@ public class UIController : MonoBehaviour
 
     private void HandleEmptyPlatformClicked(Platform platform)
     {
-        if (towerPanel.activeSelf && _currentPlatform == platform)
-        {
-            HideTowerPanel(); // Nếu đúng, chỉ cần đóng nó lại
-            return;
-        }
+        // if (towerPanel.activeSelf && _currentPlatform == platform)
+        // {
+        //     HideTowerPanel(); // Nếu đúng, chỉ cần đóng nó lại
+        //     return;
+        // }
 
-        HideTowerPanel();
-        HideUpgradePanel();
+        // HideTowerPanel();
+        // HideUpgradePanel();
 
         _currentPlatform = platform;
         ShowTowerPanel();
@@ -132,7 +132,7 @@ public class UIController : MonoBehaviour
     {
         if (!towerPanel.activeSelf) return;
         towerPanel.SetActive(false);
-        Platform.IsModalPanelOpen = false;
+        // Platform.IsModalPanelOpen = false;
         GameManager.Instance.setTimeScale(GameManager.Instance.GameSpeed);
     }
 
@@ -241,7 +241,7 @@ public class UIController : MonoBehaviour
         {
             pausePanel.SetActive(false);
             _isGamePaused = false;
-            Platform.IsModalPanelOpen = false;
+            // Platform.IsModalPanelOpen = false;
             GameManager.Instance.setTimeScale(GameManager.Instance.GameSpeed);
         }
         else
@@ -310,15 +310,15 @@ public class UIController : MonoBehaviour
     private void HandleTowerClicked(BaseTower tower)
     {
         // 1. Kiểm tra xem có phải click lại chính tháp đang mở không
-        if (upgradePanel.activeSelf && _currentSelectedTower == tower)
-        {
-            HideUpgradePanel(); // Nếu đúng, chỉ cần đóng nó lại
-            return;
-        }
+        // if (upgradePanel.activeSelf && _currentSelectedTower == tower)
+        // {
+        //     HideUpgradePanel(); // Nếu đúng, chỉ cần đóng nó lại
+        //     return;
+        // }
         
-        // 2. Nếu không, đóng tất cả các panel (cả mua và nâng cấp) lại
-        HideTowerPanel();
-        HideUpgradePanel();
+        // // 2. Nếu không, đóng tất cả các panel (cả mua và nâng cấp) lại
+        // HideTowerPanel();
+        // HideUpgradePanel();
 
         // 3. Mở panel NÂNG CẤP của tháp mới
         _currentSelectedTower = tower;
@@ -337,7 +337,7 @@ public class UIController : MonoBehaviour
     {
         if (!upgradePanel.activeSelf) return;
         upgradePanel.SetActive(false);
-        Platform.IsModalPanelOpen = false;
+        // Platform.IsModalPanelOpen = false;
         GameManager.Instance.setTimeScale(GameManager.Instance.GameSpeed);
         _currentSelectedTower = null; // Quên tháp đi
     }

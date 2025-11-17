@@ -16,7 +16,4 @@ MonoBehaviour:
   - enemyType: 0
     count: 9
     spawnInterval: 0.5
-  - enemyType: 3
-    count: 5
-    spawnInterval: 0.5
   timeBetweenGroups: 0
