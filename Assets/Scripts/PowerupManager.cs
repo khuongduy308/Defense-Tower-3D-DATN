@@ -36,7 +36,8 @@ public class PowerupManager : MonoBehaviour
             // (Tùy chọn) Đổi con trỏ chuột
             if (targetingCursor != null)
             {
-                Cursor.SetCursor(targetingCursor, Vector2.zero, CursorMode.Auto);
+                Vector2 hotspot = new Vector2(targetingCursor.width / 2, targetingCursor.height / 2);
+                Cursor.SetCursor(targetingCursor, hotspot, CursorMode.Auto);
             }
         }
     }

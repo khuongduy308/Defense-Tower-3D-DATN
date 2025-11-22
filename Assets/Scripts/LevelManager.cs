@@ -1,13 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.SceneManagement; // Vẫn giữ nếu cần quay về MainMenu
 
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance { get; private set; }
+
+    [Header("Data")]
     public LevelData[] allLevels;
     public LevelData CurrentLevel { get; private set; }
+    
+    public int CurrentLevelIndex { get; private set; }
+
+    [Header("Scene References")]
+    public Transform mapParent; // Kéo một object rỗng (VD: "Environment") vào đây để chứa Map
+    private GameObject _currentMapInstance; // Biến lưu trữ map đang chạy thực tế
 
     private void Awake()
     {
@@ -18,45 +26,60 @@ public class LevelManager : MonoBehaviour
         else
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            // Nếu bạn muốn test ngay Level 1 khi ấn Play:
+            // LoadLevel(allLevels[0]); 
+        }
+    }
+
+    public void LoadLevel(int index)
+    {
+        if (index < 0 || index >= allLevels.Length) return;
+
+        CurrentLevelIndex = index;
+        CurrentLevel = allLevels[index];
+
+        // 1. Xử lý Map (Single Scene)
+        if (_currentMapInstance != null) Destroy(_currentMapInstance);
+        if (CurrentLevel.mapPrefab != null)
+        {
+            _currentMapInstance = Instantiate(CurrentLevel.mapPrefab, mapParent);
         }
 
-        CurrentLevel = allLevels[0];
+        // 2. Cài đặt tài nguyên cho Player (Ví dụ)
+        // PlayerStats.Instance.SetMoney(CurrentLevel.startingResources);
+        // PlayerStats.Instance.SetLives(CurrentLevel.startingLives);
+
+        // 3. Truyền Wave Data sang Spawner
+        if (Spawner.Instance != null)
+        {
+            // Truyền đúng mảng WaveData[] vào
+            Spawner.Instance.SetupLevel(CurrentLevel.wavesInThisLevel);
+        }
     }
 
-    public void LoadLevel(LevelData levelData)
-    {
-        CurrentLevel = levelData;
-        SceneManager.LoadScene(levelData.levelName);
-    }
-
+    // Nút "Next Level" sẽ gọi hàm này
     public void LoadNextLevel()
     {
-        // 1. Tìm index của level hiện tại
-        int currentIndex = -1;
-        for (int i = 0; i < allLevels.Length; i++)
-        {
-            if (allLevels[i] == CurrentLevel)
-            {
-                currentIndex = i;
-                break;
-            }
-        }
+        int nextIndex = CurrentLevelIndex + 1;
 
-        // 2. Kiểm tra xem có level tiếp theo không
-        if (currentIndex != -1 && currentIndex + 1 < allLevels.Length)
+        if (nextIndex < allLevels.Length)
         {
-            // Có level tiếp theo! Tải nó.
-            LevelData nextLevel = allLevels[currentIndex + 1];
-            LoadLevel(nextLevel);
+            LoadLevel(nextIndex);
         }
         else
         {
-            // Đây là level cuối cùng, hoặc có lỗi
-            Debug.Log("Bạn đã hoàn thành level cuối cùng! Quay về Main Menu.");
-            // Giả sử bạn có Scene tên là "MainMenu"
-            SceneManager.LoadScene("MainMenu");
+            Debug.Log("Đã phá đảo! Quay về Main Menu.");
+            // Riêng về MainMenu thì nên LoadScene thật vì UI MainMenu thường khác hoàn toàn Game
+            SceneManager.LoadScene("MainMenu"); 
+            
+            // Lưu ý: Khi về MainMenu, LevelManager này có thể vẫn tồn tại do DontDestroyOnLoad.
+            // Bạn cần xử lý nó (Destroy) hoặc tái sử dụng cẩn thận.
         }
     }
-
+    
+    // Hàm tiện ích để load lại level hiện tại (Replay)
+    public void ReloadCurrentLevel()
+    {
+        LoadLevel(CurrentLevelIndex);
+    }
 }

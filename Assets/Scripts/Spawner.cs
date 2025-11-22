@@ -9,8 +9,6 @@ public class Spawner : MonoBehaviour
 
     public static event Action<int> OnWaveChanged;
     public static event Action OnMissionComplete;
-
-    // [SerializeField] private WaveData[] waves;
     private WaveData[] _wavesForThisLevel;
     private int _currentWaveIndex = 0;
     private int _waveCounter = 0;
@@ -24,6 +22,7 @@ public class Spawner : MonoBehaviour
     private bool _isBetweenWaves = false;
     private bool _isEndlessMode = false;
 
+    private bool _isSpawningActive = false; //danh dau da co level de chay
     private int _currentGroupIndex = 0;
     private int _enemiesSpawnedInGroup = 0;
 
@@ -71,9 +70,9 @@ public class Spawner : MonoBehaviour
     void Start()
     {
         // Lấy danh sách wave từ LevelManager
-        _wavesForThisLevel = LevelManager.Instance.CurrentLevel.wavesInThisLevel;
+        // _wavesForThisLevel = LevelManager.Instance.CurrentLevel.wavesInThisLevel;
 
-        OnWaveChanged?.Invoke(_waveCounter);
+        // OnWaveChanged?.Invoke(_waveCounter);
         // _spawnTimer = CurrentWave.spawnInterval;
     }
 
@@ -85,7 +84,7 @@ public class Spawner : MonoBehaviour
             _waveCooldown -= Time.deltaTime;
             if (_waveCooldown <= 0f)
             {
-                if (_waveCounter + 1 >= LevelManager.Instance.CurrentLevel.wavesToWin && !_isEndlessMode)
+                if (_waveCounter + 1 >= LevelManager.Instance.CurrentLevel.WavesToWin && !_isEndlessMode)
                 {
                     OnMissionComplete?.Invoke();
                     return;
@@ -159,6 +158,48 @@ public class Spawner : MonoBehaviour
         
     }
 
+    public void SetupLevel(WaveData[] levelWaves)
+{
+    _wavesForThisLevel = levelWaves;
+
+    // 1. Reset chỉ số Wave
+    _currentWaveIndex = 0;
+    
+    // 2. Reset các chỉ số trong Wave
+    _currentGroupIndex = 0;
+    _enemiesSpawnedInGroup = 0;
+    _spawnCounter = 0;
+    _enemiesRemoved = 0;
+    
+    _isBetweenWaves = false;
+
+    // 3. Kiểm tra an toàn và kích hoạt
+    if (_wavesForThisLevel != null && _wavesForThisLevel.Length > 0)
+    {
+        _isSpawningActive = true;
+        
+        // Báo hiệu UI cập nhật Wave 1
+        OnWaveChanged?.Invoke(1); 
+
+        // Lấy thông tin Wave đầu tiên để setup timer ban đầu
+        WaveData firstWave = _wavesForThisLevel[0];
+        if (firstWave.groupsInWave != null && firstWave.groupsInWave.Length > 0)
+        {
+            // Timer khởi điểm bằng thời gian giãn cách của nhóm quái đầu tiên
+            _spawnTimer = firstWave.groupsInWave[0].spawnInterval;
+        }
+        else
+        {
+            // Trường hợp Wave rỗng không có quái
+            _spawnTimer = 1f; 
+        }
+    }
+    else
+    {
+        Debug.LogError("Spawner: List Wave bị rỗng hoặc null!");
+        _isSpawningActive = false;
+    }
+}
     private void SpawnEnemy(EnemyType typeToSpawn)
     {
         // if (_poolDictionary.TryGetValue(CurrentWave.enemyType, out var pool))

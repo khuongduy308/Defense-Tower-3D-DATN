@@ -38,12 +38,16 @@ public class PowerupButton : MonoBehaviour
     // Cập nhật số lượng và trạng thái nút
     private void UpdateButton(string name, int newCount)
     {
-        // Chỉ cập nhật nếu đúng là vật phẩm này
+        // Debug xem có nhận được tin nhắn không
+        Debug.Log($"Nút {powerupName} nhận tin từ {name}. Số lượng mới: {newCount}");
+
         if (name == powerupName)
         {
             countText.text = "x" + newCount;
-            // Tắt nút nếu hết bom
             button.interactable = (newCount > 0);
+            
+            // Debug xem nút có được bật không
+            Debug.Log($"Nút {powerupName} đã set interactable = {button.interactable}");
         }
     }
 }

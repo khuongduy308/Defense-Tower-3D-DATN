@@ -255,7 +255,8 @@ public class UIController : MonoBehaviour
 
     public void RestartLevel()
     {
-        LevelManager.Instance.LoadLevel(LevelManager.Instance.CurrentLevel);
+        int currentIndex = LevelManager.Instance.CurrentLevelIndex;
+        LevelManager.Instance.LoadLevel(currentIndex);
     }
 
     public void QuitGame()
@@ -282,7 +283,7 @@ public class UIController : MonoBehaviour
 
     private IEnumerator ShowObjective()
     {
-        objectiveText.text = $"Survive {LevelManager.Instance.CurrentLevel.wavesToWin} waves!";
+        objectiveText.text = $"Survive {LevelManager.Instance.CurrentLevel.WavesToWin} waves!";
         objectiveText.gameObject.SetActive(true);
         yield return new WaitForSeconds(3f);
         objectiveText.gameObject.SetActive(false);
