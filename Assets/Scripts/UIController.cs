@@ -10,6 +10,7 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
+    public static UIController Instance { get; private set; }
     [SerializeField] private TMP_Text waveText;
     [SerializeField] private TMP_Text livesText;
     [SerializeField] private TMP_Text resourcesText;
@@ -71,6 +72,18 @@ public class UIController : MonoBehaviour
         TowerCard.OnTowerSelected -= HandleTowerSelected;
         SceneManager.sceneLoaded -= OnSceneLoaded;
         Spawner.OnMissionComplete -= ShowMissionComplete;
+    }
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
     }
 
     private void Start()
@@ -417,5 +430,13 @@ public class UIController : MonoBehaviour
         
         // 4. Đóng panel
         HideUpgradePanel();
+    }
+
+    public void ResetGameUI()
+    {
+        HideTowerPanel();
+        HideUpgradePanel();
+        
+        missionCompletePanel.SetActive(false);
     }
 }

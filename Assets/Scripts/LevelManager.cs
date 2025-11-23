@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement; // Vẫn giữ nếu cần quay về MainMenu
+using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
@@ -10,12 +10,13 @@ public class LevelManager : MonoBehaviour
     [Header("Data")]
     public LevelData[] allLevels;
     public LevelData CurrentLevel { get; private set; }
-    
     public int CurrentLevelIndex { get; private set; }
 
-    [Header("Scene References")]
-    public Transform mapParent; // Kéo một object rỗng (VD: "Environment") vào đây để chứa Map
-    private GameObject _currentMapInstance; // Biến lưu trữ map đang chạy thực tế
+    [Header("Settings")]
+    [SerializeField] private string gameSceneName = "Game";
+    [SerializeField] private string mapContainerName = "Environment";
+    private Transform _mapParent; 
+    private GameObject _currentMapInstance;
 
     private void Awake()
     {
@@ -26,8 +27,35 @@ public class LevelManager : MonoBehaviour
         else
         {
             Instance = this;
-            // Nếu bạn muốn test ngay Level 1 khi ấn Play:
-            // LoadLevel(allLevels[0]); 
+            DontDestroyOnLoad(gameObject);
+        }
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == gameSceneName)
+        {
+            GameObject envObj = GameObject.Find(mapContainerName);
+            if (envObj != null)
+            {
+                _mapParent = envObj.transform;
+            }
+            else
+            {
+                _mapParent = new GameObject(mapContainerName).transform;
+            }
+
+            StartCoroutine(SetupLevelRoutine(CurrentLevelIndex));
         }
     }
 
@@ -38,29 +66,57 @@ public class LevelManager : MonoBehaviour
         CurrentLevelIndex = index;
         CurrentLevel = allLevels[index];
 
-        // 1. Xử lý Map (Single Scene)
-        if (_currentMapInstance != null) Destroy(_currentMapInstance);
-        if (CurrentLevel.mapPrefab != null)
+        if (SceneManager.GetActiveScene().name != gameSceneName)
         {
-            _currentMapInstance = Instantiate(CurrentLevel.mapPrefab, mapParent);
+            SceneManager.LoadScene(gameSceneName);
         }
-
-        // 2. Cài đặt tài nguyên cho Player (Ví dụ)
-        // PlayerStats.Instance.SetMoney(CurrentLevel.startingResources);
-        // PlayerStats.Instance.SetLives(CurrentLevel.startingLives);
-
-        // 3. Truyền Wave Data sang Spawner
-        if (Spawner.Instance != null)
+        else
         {
-            // Truyền đúng mảng WaveData[] vào
-            Spawner.Instance.SetupLevel(CurrentLevel.wavesInThisLevel);
+            StartCoroutine(SetupLevelRoutine(index));
         }
     }
 
-    // Nút "Next Level" sẽ gọi hàm này
+    private IEnumerator SetupLevelRoutine(int index)
+    {
+        yield return null; 
+
+        if (_currentMapInstance != null) Destroy(_currentMapInstance);
+
+        if (UIController.Instance != null)
+        {
+            UIController.Instance.ResetGameUI(); // Tắt bảng Win đi
+            Debug.Log("UIController: Reset UI khi load level mới.");
+        }
+
+        if (CurrentLevel.mapPrefab != null)
+        {
+            _currentMapInstance = Instantiate(CurrentLevel.mapPrefab, _mapParent);
+        }
+
+        List<Path> pathsInNewMap = new List<Path>();
+        if (_currentMapInstance != null)
+        {
+            Path[] foundPaths = _currentMapInstance.GetComponentsInChildren<Path>();
+            pathsInNewMap.AddRange(foundPaths);
+        }
+
+        if (Spawner.Instance != null)
+        {
+            Spawner.Instance.SetupLevel(CurrentLevel.wavesInThisLevel, pathsInNewMap);
+        }
+        else
+        {
+            Debug.LogError("Không tìm thấy Spawner instance!");
+        }
+        
+        Time.timeScale = 1f;
+    }
+
     public void LoadNextLevel()
     {
         int nextIndex = CurrentLevelIndex + 1;
+
+        Debug.Log($"Check Next Level: Hiện tại={CurrentLevelIndex}, Tiếp theo={nextIndex}, Tổng số Level={allLevels.Length}");
 
         if (nextIndex < allLevels.Length)
         {
@@ -68,16 +124,11 @@ public class LevelManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("Đã phá đảo! Quay về Main Menu.");
-            // Riêng về MainMenu thì nên LoadScene thật vì UI MainMenu thường khác hoàn toàn Game
-            SceneManager.LoadScene("MainMenu"); 
-            
-            // Lưu ý: Khi về MainMenu, LevelManager này có thể vẫn tồn tại do DontDestroyOnLoad.
-            // Bạn cần xử lý nó (Destroy) hoặc tái sử dụng cẩn thận.
+            Debug.Log("Về Main Menu");
+            SceneManager.LoadScene("MainMenu");
         }
     }
-    
-    // Hàm tiện ích để load lại level hiện tại (Replay)
+
     public void ReloadCurrentLevel()
     {
         LoadLevel(CurrentLevelIndex);

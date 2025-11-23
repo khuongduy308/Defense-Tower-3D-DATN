@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Level2
   m_EditorClassIdentifier: 
   levelName: Level2
-  wavesToWin: 20
+  levelIndex: 2
   startingResources: 200
   startingLives: 10
+  mapPrefab: {fileID: 2527347871539578169, guid: 8269a40c9db66654b9a614810185970a, type: 3}
   wavesInThisLevel:
   - {fileID: 11400000, guid: 6940cff60c49e8640b5b535d7b55a05b, type: 2}
   - {fileID: 11400000, guid: e222040c0f43a134e94712af8e85c49f, type: 2}
@@ -37,3 +38,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: cff39ed6c6172f54bbb61a807c537e10, type: 2}
   - {fileID: 11400000, guid: 7ef4fe758c96f2f44b7f8f0bdafd9212, type: 2}
   - {fileID: 11400000, guid: 843687a3f7a39374f97febc3110e04c3, type: 2}
+  enemyTypesAllowed: 00000000010000000200000003000000

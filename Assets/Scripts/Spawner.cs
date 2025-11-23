@@ -26,7 +26,7 @@ public class Spawner : MonoBehaviour
     private int _currentGroupIndex = 0;
     private int _enemiesSpawnedInGroup = 0;
 
-    [SerializeField] private List<Path> allPaths;
+    private List<Path> allPaths;
 
     [SerializeField] private ObjectPooler basePool;
     [SerializeField] private ObjectPooler bombPool;
@@ -69,16 +69,14 @@ public class Spawner : MonoBehaviour
 
     void Start()
     {
-        // Lấy danh sách wave từ LevelManager
-        // _wavesForThisLevel = LevelManager.Instance.CurrentLevel.wavesInThisLevel;
 
-        // OnWaveChanged?.Invoke(_waveCounter);
-        // _spawnTimer = CurrentWave.spawnInterval;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!_isSpawningActive || _wavesForThisLevel == null) return;
+
         if (_isBetweenWaves)
         {
             _waveCooldown -= Time.deltaTime;
@@ -103,19 +101,6 @@ public class Spawner : MonoBehaviour
             }
             return;
         } else {
-            // _spawnTimer -= Time.deltaTime;
-            // if (_spawnTimer <= 0f && _spawnCounter < CurrentWave.enemiesPerWave)
-            // {
-            //     _spawnTimer = CurrentWave.spawnInterval;
-            //     _spawnCounter++;
-            //     SpawnEnemy();
-            // }
-            // else if (_spawnCounter >= CurrentWave.enemiesPerWave && _enemiesRemoved >= CurrentWave.enemiesPerWave)
-            // {
-
-            //     _isBetweenWaves = true;
-            //     _waveCooldown = _timeBetweenWaves;
-            // }
 
             _spawnTimer -= Time.deltaTime;
 
@@ -158,9 +143,11 @@ public class Spawner : MonoBehaviour
         
     }
 
-    public void SetupLevel(WaveData[] levelWaves)
+    public void SetupLevel(WaveData[] levelWaves, List<Path> mapPaths)
 {
     _wavesForThisLevel = levelWaves;
+
+    allPaths = mapPaths;
 
     // 1. Reset chỉ số Wave
     _currentWaveIndex = 0;
@@ -172,6 +159,13 @@ public class Spawner : MonoBehaviour
     _enemiesRemoved = 0;
     
     _isBetweenWaves = false;
+
+    if (allPaths == null || allPaths.Count == 0)
+    {
+        Debug.LogError("Spawner: Level này không tìm thấy Path (đường đi) nào cả!");
+        _isSpawningActive = false;
+        return;
+    }
 
     // 3. Kiểm tra an toàn và kích hoạt
     if (_wavesForThisLevel != null && _wavesForThisLevel.Length > 0)
@@ -202,28 +196,6 @@ public class Spawner : MonoBehaviour
 }
     private void SpawnEnemy(EnemyType typeToSpawn)
     {
-        // if (_poolDictionary.TryGetValue(CurrentWave.enemyType, out var pool))
-        // {
-        //     // Kiểm tra xem có path nào không
-        //     if (allPaths == null || allPaths.Count == 0)
-        //     {
-        //         Debug.LogError("Spawner không có Path nào được gán trong Inspector!");
-        //         return;
-        //     }
-
-        //     Path chosenPath = allPaths[UnityEngine.Random.Range(0, allPaths.Count)];
-
-        //     GameObject spawnedObject = pool.GetPooledObject();
-        //     spawnedObject.transform.position = transform.position;
-
-        //     float healthMultiplier = 1f + (_waveCounter * 0.1f); //+10% health per wave
-        //     Enemy enemy = spawnedObject.GetComponent<Enemy>();
-
-        //     enemy.Initialize(chosenPath, healthMultiplier);
-
-        //     spawnedObject.SetActive(true);
-        // }
-
 
         if (_poolDictionary.TryGetValue(typeToSpawn, out var pool))
         {
@@ -237,8 +209,6 @@ public class Spawner : MonoBehaviour
             Path chosenPath = allPaths[UnityEngine.Random.Range(0, allPaths.Count)];
 
             GameObject spawnedObject = pool.GetPooledObject();
-            // Xóa dòng này: spawnedObject.transform.position = transform.position;
-            // Vì hàm Initialize() trong Enemy.cs đã làm việc này rồi
 
             float healthMultiplier = 1f + (_waveCounter * 0.1f);
             Enemy enemy = spawnedObject.GetComponent<Enemy>();

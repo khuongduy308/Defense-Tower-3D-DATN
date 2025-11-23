@@ -58,6 +58,13 @@ public class Enemy : MonoBehaviour
     {
         if (_hasBeenCounted) return;
 
+        if (_currentPath == null) 
+        {
+            // Nếu đường đi đã mất (do reset level), thì quái này cũng nên biến mất
+            gameObject.SetActive(false); 
+            return;
+        }
+
         _attackers.RemoveAll(s => s == null);
 
         //Kiểm tra xem có bị chặn không
@@ -113,16 +120,14 @@ public class Enemy : MonoBehaviour
         healthBar.localScale = scale;
     }
 
-    // public void Initialize(float healthMultiplier)
-    // {
-    //     _hasBeenCounted = false;
-    //     _maxLives = data.lives * healthMultiplier;
-    //     _lives = _maxLives;
-    //     UpdateHealthBar();
-    // }
-
     public void Initialize(Path path, float healthMultiplier)
     {
+        if (path == null)
+            {
+                Debug.LogError("Enemy được khởi tạo với Path NULL! Hủy Object này.");
+                gameObject.SetActive(false);
+                return;
+            }
         _currentPath = path; // Gán path được truyền vào
 
         _currentWaypoint = 0;

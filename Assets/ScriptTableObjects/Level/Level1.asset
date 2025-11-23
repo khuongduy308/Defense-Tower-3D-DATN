@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: Level1
   m_EditorClassIdentifier: 
   levelName: Level1
-  wavesToWin: 5
-  startingResources: 180
+  levelIndex: 1
+  startingResources: 200
   startingLives: 5
+  mapPrefab: {fileID: 1471126692273429435, guid: 2f6b173e5d10a294e9c7b808bbefa539, type: 3}
   wavesInThisLevel:
   - {fileID: 11400000, guid: 6940cff60c49e8640b5b535d7b55a05b, type: 2}
   - {fileID: 11400000, guid: e222040c0f43a134e94712af8e85c49f, type: 2}
   - {fileID: 11400000, guid: 43804906b56d23540aba30fb854b3e70, type: 2}
   - {fileID: 11400000, guid: f85a344572295a04388ba33051e00de7, type: 2}
   - {fileID: 11400000, guid: eb2b3e67586ae0648973ddb2f8a43fcb, type: 2}
+  enemyTypesAllowed: 00000000010000000200000003000000
