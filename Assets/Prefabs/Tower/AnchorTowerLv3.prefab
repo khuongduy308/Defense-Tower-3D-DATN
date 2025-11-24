@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3096846552287338825}
   - component: {fileID: 7476289353653092728}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Thap_cung_lv3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 6694760597282215996}
   - component: {fileID: 8159544507325830117}
   - component: {fileID: -639830271043594428}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: AnchorTowerLv3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -225,7 +225,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -2253911629886400664, guid: 30841b9cf28649a48989314eb83efeea, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 30841b9cf28649a48989314eb83efeea, type: 3}
       propertyPath: m_Color.b
@@ -311,7 +311,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -2253911629886400664, guid: 30841b9cf28649a48989314eb83efeea, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 30841b9cf28649a48989314eb83efeea, type: 3}
       propertyPath: m_Color.b

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3726987164838548272}
   - component: {fileID: 5263833446624073992}
   - component: {fileID: 165996072276611622}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46,9 +46,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8bef2671f2f21449ad89fb2a7f8f318, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  platformlayerMask:
-    serializedVersion: 2
-    m_Bits: 1
 --- !u!212 &5263833446624073992
 SpriteRenderer:
   m_ObjectHideFlags: 0

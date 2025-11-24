@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8289847921428017619}
   - component: {fileID: 1510079590518437875}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: cannon tower (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 5952712113034356658}
   - component: {fileID: 4278607660031527982}
   - component: {fileID: -1450370003065025981}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: MagicTowerLv2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -221,7 +221,7 @@ GameObject:
   - component: {fileID: 4568870068679886944}
   - component: {fileID: 7138341809326873732}
   - component: {fileID: 1603336779692879790}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Component 1 (1) (1)_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}

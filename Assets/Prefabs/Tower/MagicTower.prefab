@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1504914000795486759}
   - component: {fileID: 2010023620264582222}
   - component: {fileID: 4961827138522002864}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Component 1 (1) (1)_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -119,7 +119,7 @@ GameObject:
   - component: {fileID: 500749595675492407}
   - component: {fileID: 4841820010063421945}
   - component: {fileID: -1352378622733859965}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: MagicTower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -246,7 +246,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -2253911629886400664, guid: 70da9a23ffe384d4da67e06ebe4101b3, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 70da9a23ffe384d4da67e06ebe4101b3, type: 3}
       propertyPath: m_SortingLayer

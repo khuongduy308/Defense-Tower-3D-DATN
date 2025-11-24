@@ -8051,6 +8051,9 @@ MonoBehaviour:
   upgradeButton: {fileID: 1230025523}
   sellButton: {fileID: 57071106}
   sellReturnPercent: 0.7
+  clickableLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &2017379701
 GameObject:
   m_ObjectHideFlags: 0

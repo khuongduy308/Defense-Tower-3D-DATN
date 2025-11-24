@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5735923512281583258}
   - component: {fileID: 2830778055478478424}
   - component: {fileID: 3278913321665376127}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: CannonTowerLv3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -136,7 +136,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2759710679192778671}
   - component: {fileID: 8087603447107993028}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cannon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -220,7 +220,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8979788035238270879}
   - component: {fileID: 3817695015266089083}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Thap_phao_lv3
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2111036944229898583}
   - component: {fileID: 5988709283258070680}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: warrior tower (1) (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,7 +93,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 555700613007839771}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 6100787272745460538}
   - component: {fileID: 4294682944920826699}
   - component: {fileID: 6633413457307752620}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: WarriorTower
   m_TagString: Untagged
   m_Icon: {fileID: 0}

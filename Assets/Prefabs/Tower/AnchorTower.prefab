@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1285271789225194254}
   - component: {fileID: 2568622538808852982}
   - component: {fileID: 1134387021727265136}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: AnchorTower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -140,7 +140,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -2253911629886400664, guid: 70da9a23ffe384d4da67e06ebe4101b3, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 70da9a23ffe384d4da67e06ebe4101b3, type: 3}
       propertyPath: m_SortingLayer
@@ -214,7 +214,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -2253911629886400664, guid: 30841b9cf28649a48989314eb83efeea, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 30841b9cf28649a48989314eb83efeea, type: 3}
       propertyPath: m_SortingLayer

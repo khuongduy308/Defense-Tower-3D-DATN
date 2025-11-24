@@ -48,7 +48,11 @@ public class UIController : MonoBehaviour
     // [SerializeField] private TMP_Text upgradeCostText;
     // [SerializeField] private TMP_Text sellValueText;
     [SerializeField] private float sellReturnPercent = 0.7f; // Bán được 70% giá
+
+    [Header("Input Settings")]
+    [SerializeField] private LayerMask clickableLayer;
     private BaseTower _currentSelectedTower;
+    public bool IsAnyPanelOpen => towerPanel.activeSelf || upgradePanel.activeSelf;
 
     private void OnEnable()
     {
@@ -86,6 +90,15 @@ public class UIController : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        // Xử lý Input chuột trái
+        if (Input.GetMouseButtonDown(0))
+        {
+            ProcessClick();
+        }
+    }
+
     private void Start()
     {
         speed1Button.onClick.AddListener(() => SetGameSpeed(0.5f));
@@ -96,6 +109,48 @@ public class UIController : MonoBehaviour
         sellButton.onClick.AddListener(SellSelectedTower);
 
         HighlightSelectedSpeedButton(GameManager.Instance.GameSpeed);
+    }
+
+    private void ProcessClick()
+    {
+        // 1. Chặn click xuyên qua UI (Panel)
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+
+        // 2. Bắn tia Raycast từ vị trí chuột
+        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        
+        // QUAN TRỌNG: Chỉ check va chạm với layer nằm trong clickableLayer
+        RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero, Mathf.Infinity, clickableLayer);
+
+        if (hit.collider != null)
+        {
+            // Thử lấy component Platform từ object bị bắn trúng
+            Platform clickedPlatform = hit.collider.GetComponent<Platform>();
+            
+            // Trường hợp click trúng Tháp con nằm trên Platform
+            if (clickedPlatform == null)
+            {
+                clickedPlatform = hit.collider.GetComponentInParent<Platform>();
+            }
+
+            // Nếu tìm thấy Platform, kích hoạt hàm xử lý click
+            if (clickedPlatform != null)
+            {
+                clickedPlatform.HandleClick();
+            }
+        }
+        else
+        {
+            // (Tùy chọn) Nếu click ra ngoài khoảng không -> Đóng các panel đang mở
+            if (IsAnyPanelOpen)
+            {
+                HideTowerPanel();
+                HideUpgradePanel();
+            }
+        }
     }
 
     private void UpdateWaveText(int currentWave)
@@ -120,14 +175,15 @@ public class UIController : MonoBehaviour
 
     private void HandleEmptyPlatformClicked(Platform platform)
     {
-        // if (towerPanel.activeSelf && _currentPlatform == platform)
-        // {
-        //     HideTowerPanel(); // Nếu đúng, chỉ cần đóng nó lại
-        //     return;
-        // }
-
-        // HideTowerPanel();
-        // HideUpgradePanel();
+        // Nếu đang mở bảng nâng cấp -> Đóng nó lại trước
+        if (upgradePanel.activeSelf) HideUpgradePanel();
+        
+        // Nếu click lại vào chính platform đang mở -> Đóng bảng xây (Toggle)
+        if (towerPanel.activeSelf && _currentPlatform == platform)
+        {
+            HideTowerPanel();
+            return;
+        }
 
         _currentPlatform = platform;
         ShowTowerPanel();
@@ -145,7 +201,7 @@ public class UIController : MonoBehaviour
     {
         if (!towerPanel.activeSelf) return;
         towerPanel.SetActive(false);
-        // Platform.IsModalPanelOpen = false;
+        _currentPlatform = null;
         GameManager.Instance.setTimeScale(GameManager.Instance.GameSpeed);
     }
 
@@ -323,16 +379,15 @@ public class UIController : MonoBehaviour
 
     private void HandleTowerClicked(BaseTower tower)
     {
-        // 1. Kiểm tra xem có phải click lại chính tháp đang mở không
-        // if (upgradePanel.activeSelf && _currentSelectedTower == tower)
-        // {
-        //     HideUpgradePanel(); // Nếu đúng, chỉ cần đóng nó lại
-        //     return;
-        // }
-        
-        // // 2. Nếu không, đóng tất cả các panel (cả mua và nâng cấp) lại
-        // HideTowerPanel();
-        // HideUpgradePanel();
+        // Nếu đang mở bảng xây -> Đóng nó lại trước
+        if (towerPanel.activeSelf) HideTowerPanel();
+
+        // Nếu click lại vào chính tháp đang chọn -> Đóng bảng nâng cấp (Toggle)
+        if (upgradePanel.activeSelf && _currentSelectedTower == tower)
+        {
+            HideUpgradePanel();
+            return;
+        }
 
         // 3. Mở panel NÂNG CẤP của tháp mới
         _currentSelectedTower = tower;

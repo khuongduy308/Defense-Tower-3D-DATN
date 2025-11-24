@@ -1,6 +1,6 @@
 using UnityEngine;
 using System;
-using UnityEngine.UI; // Cần cho "Action"
+using UnityEngine.EventSystems; // Cần cho "Action"
 
 public class Platform : MonoBehaviour
 {
@@ -40,21 +40,38 @@ public class Platform : MonoBehaviour
         }
     }
 
-    private void OnMouseDown()
-    {
-        Debug.Log("Click detected on: " + gameObject.name + ", panelOpen = " + IsModalPanelOpen);
-        // if (IsModalPanelOpen) return; 
+    // private void OnMouseDown()
 
+    public void HandleClick()
+    {
         if (_towerOnPlatform != null)
         {
             OnTowerClicked?.Invoke(_towerOnPlatform);
         }
         else
         {
-            // Trống -> Gửi sự kiện OnEmptyPlatformClicked
             OnEmptyPlatformClicked?.Invoke(this);
         }
     }
+    // {
+    //     Debug.Log("Click detected on: " + gameObject.name + ", panelOpen = " + IsModalPanelOpen);
+    //     // if (IsModalPanelOpen) return; 
+
+    //     if (EventSystem.current.IsPointerOverGameObject())
+    //     {
+    //         return;
+    //     }
+
+    //     if (_towerOnPlatform != null)
+    //     {
+    //         OnTowerClicked?.Invoke(_towerOnPlatform);
+    //     }
+    //     else
+    //     {
+    //         // Trống -> Gửi sự kiện OnEmptyPlatformClicked
+    //         OnEmptyPlatformClicked?.Invoke(this);
+    //     }
+    // }
 
     // Hàm để xóa tháp khi bán
     public void ClearTower()

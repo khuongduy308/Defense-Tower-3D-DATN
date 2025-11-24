@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5641797006889509150}
   - component: {fileID: 3798552518806944052}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: cannon tower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 6785508059208433915}
   - component: {fileID: 5928028669004338446}
   - component: {fileID: 4182189219010092109}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: CannonTower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -220,7 +220,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2016194260021645613}
   - component: {fileID: 6109089142154482329}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cannon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
