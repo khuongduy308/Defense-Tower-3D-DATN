@@ -32,14 +32,14 @@ public class GameManager : MonoBehaviour
     {
         Enemy.OnEnemyReachedEnd += HandleEnemyReachedEnd;
         Enemy.OnEnemyDestroyed += HandleEnemyDestroyed;
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        // SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDisable()
     {
         Enemy.OnEnemyReachedEnd -= HandleEnemyReachedEnd;
         Enemy.OnEnemyDestroyed -= HandleEnemyDestroyed;
-        SceneManager.sceneLoaded -= OnSceneLoaded;
+        // SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private void Start()
@@ -101,10 +101,10 @@ public class GameManager : MonoBehaviour
         SetGameSpeed(0.5f);
     }
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        ResetGameState();
-    }
+    // private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    // {
+    //     ResetGameState();
+    // }
     
     public void AddLives(int amount)
     {
@@ -143,6 +143,22 @@ public class GameManager : MonoBehaviour
             return _powerupInventory[powerupName];
         }
         return 0;
+    }
+
+    public void InitLevelStats(int startResources, int startLives)
+    {
+        _resources = startResources;
+        OnResourcesChanged?.Invoke(_resources);
+
+        _lives = startLives;
+        OnLivesChanged?.Invoke(_lives);
+
+        _powerupInventory.Clear();
+        // Reset tốc độ game
+        SetGameSpeed(1f); // Hoặc 0.5f tùy design của bạn
+        Time.timeScale = 1f;
+
+        Debug.Log($"Game Reset: Tiền={_resources}, Mạng={_lives}");
     }
 }
 

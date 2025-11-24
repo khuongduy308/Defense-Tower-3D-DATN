@@ -8,7 +8,7 @@ public class MainMenuController : MonoBehaviour
 {
     public void StartNewGame()
     {
-        LevelManager.Instance.LoadLevel(0);
+        LevelManager.Instance.LoadLevelFromCloud(0);
     }
 
     public void QuitGame()
