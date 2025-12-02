@@ -233,6 +233,26 @@ public class LevelManager : MonoBehaviour
         // Load lại đúng level hiện tại
         LoadLevelFromCloud(CurrentLevelIndex);
     }
+
+    public void SaveProgress()
+    {
+        int currentLevel = CurrentLevelIndex;
+
+        // 1. Lưu Offline (PlayerPrefs) - Vẫn giữ để backup
+        int maxLevelLocal = PlayerPrefs.GetInt("MaxLevelReached", 0);
+        if (currentLevel >= maxLevelLocal)
+        {
+            PlayerPrefs.SetInt("MaxLevelReached", currentLevel + 1);
+            PlayerPrefs.Save();
+        }
+
+        // 2. Lưu Online (Gọi AuthManager) - Lưu level tiếp theo đã mở khóa
+        if (AuthManager.Instance != null && AuthManager.Instance.IsLoggedIn)
+        {
+            // Lưu ý: currentLevel là level vừa thắng -> mở khóa currentLevel + 1
+            AuthManager.Instance.SaveProgress(currentLevel + 1);
+        }
+    }
 }
 
 // --- DTO CLASSES ---

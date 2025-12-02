@@ -14,9 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   groupsInWave:
   - enemyType: 0
-    count: 43
+    count: 48
     spawnInterval: 0.5
   - enemyType: 1
-    count: 4
+    count: 8
+    spawnInterval: 1
+  - enemyType: 2
+    count: 7
+    spawnInterval: 1
+  - enemyType: 3
+    count: 13
     spawnInterval: 1
   timeBetweenGroups: 2

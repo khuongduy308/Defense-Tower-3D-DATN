@@ -14,7 +14,7 @@ public class LevelUploader : MonoBehaviour
 #if UNITY_EDITOR
 public class LevelUploadMenu
 {
-    // Đường dẫn Server (Sửa lại nếu bạn đổi port)
+    // Đường dẫn Server
     static string serverUrl = "http://localhost:3000/api/level";
 
     // Tạo menu chuột phải vào file LevelData

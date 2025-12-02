@@ -70,9 +70,6 @@ public class Enemy : MonoBehaviour
         //Kiểm tra xem có bị chặn không
         if (IsEngaged)
         {
-            // BỊ CHẶN: Dừng lại
-            // (Bạn có thể thêm logic cho quái đánh trả lính ở đây)
-            // Ví dụ: Set animator "IsWalking" = false
             return; // Không di chuyển
         }
         
