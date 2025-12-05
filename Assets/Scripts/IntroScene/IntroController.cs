@@ -18,7 +18,7 @@ public class IntroController : MonoBehaviour
 
     public void OnScreenTapped()
     {
-        welcomePanel.SetActive(false);
+        // welcomePanel.SetActive(false);
         authPanel.SetActive(true);
     }
 }

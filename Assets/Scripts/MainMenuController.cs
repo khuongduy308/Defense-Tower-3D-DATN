@@ -14,6 +14,11 @@ public class MainMenuController : MonoBehaviour
 
     private void UpdateLevelButtons()
     {
+        if (levelButtons == null || levelButtons.Length == 0)
+        {
+            Debug.LogWarning("Chưa kéo nút Level vào MainMenuController kìa!");
+            return;
+        }
         // Lấy level cao nhất từ PlayerPrefs (đã được AuthManager cập nhật khi login)
         int maxLevel = PlayerPrefs.GetInt("MaxLevelReached", 0);
 
