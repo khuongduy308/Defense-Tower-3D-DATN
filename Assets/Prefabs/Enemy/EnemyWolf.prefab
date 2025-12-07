@@ -50,6 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: b5a98caeba937804380ff177f8468f62, type: 2}
   healthBar: {fileID: 4633615886719219728}
+  deathVfxPrefab: {fileID: 4711359564558189518, guid: ac1104308b3586c42bcb412e46c99c07, type: 3}
 --- !u!58 &8567303039289565659
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -185,7 +186,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -151694205, guid: 0d657c35cd3b44949bbc8007bdeb714d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

@@ -18,6 +18,8 @@ public class Enemy : MonoBehaviour
     private float _maxLives;
 
     [SerializeField] private Transform healthBar;
+    [Header("Effects")]
+    [SerializeField] private GameObject deathVfxPrefab;
     private Vector3 _healthBarOriginalScale;
     private bool _hasBeenCounted = false;
 
@@ -100,12 +102,7 @@ public class Enemy : MonoBehaviour
         UpdateHealthBar();
         if (_lives <= 0)
         {
-            if (!_hasBeenCounted)
-            {
-                _hasBeenCounted = true;
-            }
-            OnEnemyDestroyed?.Invoke(this);
-            gameObject.SetActive(false);
+            Die();
         }
     }
 
@@ -180,4 +177,24 @@ public class Enemy : MonoBehaviour
     }
     
     public bool IsEngaged => _attackers.Count > 0;
+
+    private void Die()
+    {
+        // 1. Đảm bảo chỉ tính điểm 1 lần
+        if (!_hasBeenCounted)
+        {
+            _hasBeenCounted = true;
+            OnEnemyDestroyed?.Invoke(this);
+        }
+
+        // 2. Tạo hiệu ứng chết (Khúc xương)
+        if (deathVfxPrefab != null)
+        {
+            // Tạo hiệu ứng tại vị trí hiện tại của quái, giữ nguyên góc xoay mặc định
+            Instantiate(deathVfxPrefab, transform.position, Quaternion.identity);
+        }
+
+        // 3. Tắt quái vật đi (Trả về Pool)
+        gameObject.SetActive(false);
+    }
 }

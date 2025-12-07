@@ -50,6 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 8095e21ab009a3f4e8eb149e20bbd1ff, type: 2}
   healthBar: {fileID: 8636330453896560295}
+  deathVfxPrefab: {fileID: 4711359564558189518, guid: ac1104308b3586c42bcb412e46c99c07, type: 3}
 --- !u!50 &7076600402935883298
 Rigidbody2D:
   serializedVersion: 4
@@ -130,7 +131,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: e033846b83da550499da35a04bc6306f, type: 3}
       propertyPath: m_SortingLayer
-      value: 3
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3626916397498700004, guid: e033846b83da550499da35a04bc6306f, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: e033846b83da550499da35a04bc6306f, type: 3}
       propertyPath: m_SortingLayerID
