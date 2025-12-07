@@ -8,6 +8,10 @@ public class ProjectileTower : BaseTower
     private ObjectPooler _projectilePool;
     private float _shootTimer;
 
+    [Header("Tower Settings")]
+    [SerializeField] private Transform firePoint; // Kéo GameObject con (nòng súng)
+    [SerializeField] private bool useArcing = false; // Tích vào nếu là tháp pháo bắn đường cong
+
     // "override" hàm Start() của BaseTower
     protected override void Start()
     {
@@ -15,6 +19,12 @@ public class ProjectileTower : BaseTower
 
         // Đây là logic khởi tạo của riêng ProjectileTower
         _projectilePool = GetComponent<ObjectPooler>();
+        if (firePoint == null) 
+        {
+            firePoint = transform;
+            Debug.LogWarning($"Chưa gán FirePoint cho tháp {gameObject.name}, đang dùng vị trí mặc định.");
+        }
+
         if (transform.GetChild(0).GetComponent<Animator>())
         {
             transform.GetChild(0).GetComponent<Animator>().Play("Idle");
@@ -46,10 +56,10 @@ public class ProjectileTower : BaseTower
     private void Shoot()
     {
         GameObject projectile = _projectilePool.GetPooledObject();
-        projectile.transform.position = transform.position;
+        projectile.transform.position = firePoint.position;
         projectile.SetActive(true);
         
         // _enemiesInRange[0] lấy từ BaseTower
-        projectile.GetComponent<Projectile>().Shoot(data, _enemiesInRange[0]);
+        projectile.GetComponent<Projectile>().Shoot(data, _enemiesInRange[0], useArcing);
     }
 }
