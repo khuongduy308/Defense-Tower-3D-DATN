@@ -48,6 +48,7 @@ public class MainMenuController : MonoBehaviour
         if (LevelManager.Instance != null)
         {
             LevelManager.Instance.LoadLevelFromCloud(levelIndex);
+            Debug.Log("Đang tải Level " + (levelIndex + 1));
         }
         else
         {
