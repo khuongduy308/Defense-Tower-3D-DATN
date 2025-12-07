@@ -4,50 +4,103 @@ using TMPro;
 
 public class PowerupButton : MonoBehaviour
 {
-    [SerializeField] private string powerupName; // Gõ "Bomb" vào đây trong Inspector
+    [Header("Info")]
+    [SerializeField] private string powerupName; // Tên item: "Bomb"
     [SerializeField] private TMP_Text countText;
-    [SerializeField] private Button button;
+    [SerializeField] private Button mainButton; // Nút chính (hình quả bom)
+
+    [Header("Selection Visuals")]
+    [SerializeField] private Button cancelButton; // Nút dấu X (nhỏ)
+    [SerializeField] private float scaleMultiplier = 1.2f; // Tỉ lệ phóng to (1.2 lần)
+
+    private Vector3 _originalScale;
+    private bool _isSelected = false;
 
     private void OnEnable()
     {
-        // Đăng ký lắng nghe sự kiện từ GameManager
-        GameManager.OnPowerupCountChanged += UpdateButton;
+        GameManager.OnPowerupCountChanged += UpdateCountDisplay;
     }
 
     private void OnDisable()
     {
-        GameManager.OnPowerupCountChanged -= UpdateButton;
+        GameManager.OnPowerupCountChanged -= UpdateCountDisplay;
     }
 
     private void Start()
     {
-        // Lấy số lượng hiện tại khi game bắt đầu
+        _originalScale = transform.localScale;
+
+        // Update số lượng ban đầu
         int currentCount = GameManager.Instance.GetPowerupCount(powerupName);
-        UpdateButton(powerupName, currentCount);
+        UpdateCountDisplay(powerupName, currentCount);
 
-        // Gán sự kiện cho nút
-        button.onClick.AddListener(OnClicked);
+        // Gán sự kiện click
+        mainButton.onClick.AddListener(OnMainButtonClicked);
+        
+        if (cancelButton == null)
+        {
+            Debug.LogError($"LỖI: Bạn chưa kéo nút X (Cancel Button) vào script của {gameObject.name}!");
+        }
+        else 
+        {
+            // Ẩn nút X đi khi bắt đầu
+            cancelButton.gameObject.SetActive(false);
+            cancelButton.onClick.AddListener(OnCancelClicked);
+        }
     }
 
-    private void OnClicked()
+    private void OnMainButtonClicked()
     {
-        // Báo cho PowerupManager (Bước 4) là chúng ta muốn dùng bom
-        PowerupManager.Instance.SelectPowerup(powerupName);
+        // Nếu đang chọn rồi thì không làm gì hoặc có thể coi là hủy (tuỳ logic, ở đây ta giữ nguyên)
+        if (_isSelected) return;
+
+        // Gọi Manager kiểm tra xem có chọn được không
+        bool success = PowerupManager.Instance.SelectPowerup(powerupName, this);
+        
+        if (success)
+        {
+            SetSelectedState(true);
+        }
     }
 
-    // Cập nhật số lượng và trạng thái nút
-    private void UpdateButton(string name, int newCount)
+    private void OnCancelClicked()
     {
-        // Debug xem có nhận được tin nhắn không
-        Debug.Log($"Nút {powerupName} nhận tin từ {name}. Số lượng mới: {newCount}");
+        // Gọi Manager hủy bỏ việc nhắm
+        PowerupManager.Instance.CancelAiming();
+    }
 
+    // Hàm này sẽ được gọi bởi Manager khi hoàn thành nổ HOẶC khi bấm nút X
+    public void ResetState()
+    {
+        SetSelectedState(false);
+    }
+
+    private void SetSelectedState(bool selected)
+    {
+        _isSelected = selected;
+
+        if (selected)
+        {
+            // Phóng to nút
+            transform.localScale = _originalScale * scaleMultiplier;
+            // Hiện nút X
+            if (cancelButton != null) cancelButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            // Trả về kích thước gốc
+            transform.localScale = _originalScale;
+            // Ẩn nút X
+            if (cancelButton != null) cancelButton.gameObject.SetActive(false);
+        }
+    }
+
+    private void UpdateCountDisplay(string name, int newCount)
+    {
         if (name == powerupName)
         {
-            countText.text = "x" + newCount;
-            button.interactable = (newCount > 0);
-            
-            // Debug xem nút có được bật không
-            Debug.Log($"Nút {powerupName} đã set interactable = {button.interactable}");
+            if (countText != null) countText.text = "x" + newCount;
+            mainButton.interactable = (newCount > 0);
         }
     }
 }
