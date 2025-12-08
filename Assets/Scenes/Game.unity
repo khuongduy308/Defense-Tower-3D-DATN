@@ -6687,8 +6687,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c721a55db72acd34b83be49c0b878e93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bombRadius: 2.5
-  bombDamage: 150
+  bombRadius: 1
+  bombDamage: 100
   explosionVFX: {fileID: 1410799829117350378, guid: 3add0f2942f43e44fadd0fe69d767b1c, type: 3}
   targetingCursor: {fileID: 2800000, guid: b32872bf6cc41f5419fd7977dfaf01cb, type: 3}
 --- !u!4 &1652148993

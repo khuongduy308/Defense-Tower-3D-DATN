@@ -163,4 +163,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   explosionPrefab: {fileID: 1410799829117350378, guid: 66f2544e3bd8e804abdae455da81457a, type: 3}
   arcHeight: 2
-  targetOffset: 0.8
+  targetOffset: 0.5
+  isAreaDamage: 1
+  explosionRadius: 0.5

@@ -9,6 +9,10 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float arcHeight = 2.0f; 
     [SerializeField] private float targetOffset = 0.5f; // Bắn vào ngực
 
+    [Header("Area of Effect (AOE)")]
+    [SerializeField] private bool isAreaDamage = false; // Tích vào nếu là đạn pháo
+    [SerializeField] private float explosionRadius = 0.5f; // Bán kính vụ nổ
+
     private TowerData _data;
     private Enemy _target;
     private float _projectileDuration;
@@ -120,14 +124,48 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    private void HandleHitEnemy(Enemy enemy)
+    private void HandleHitEnemy(Enemy directTarget)
     {
-        enemy.TakeDamage(_data.damage);
+        Vector3 explosionCenter = directTarget.transform.position;
+        if (isAreaDamage)
+        {
+            // --- LOGIC NỔ LAN ---
+            ApplyAreaDamage(explosionCenter);
+        }
+        else
+        {
+            // --- LOGIC ĐƠN MỤC TIÊU (CŨ) ---
+            if (directTarget.gameObject.activeInHierarchy)
+            {
+                directTarget.TakeDamage(_data.damage);
+            }
+        }
+
         if (explosionPrefab != null)
         {
-            Instantiate(explosionPrefab, enemy.transform.position, Quaternion.identity);
+            Instantiate(explosionPrefab, explosionCenter, Quaternion.identity);
         }
+
         gameObject.SetActive(false);
+    }
+
+    private void ApplyAreaDamage(Vector3 center)
+    {
+        // Tìm tất cả Collider nằm trong bán kính nổ
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(center, explosionRadius);
+
+        foreach (Collider2D hitCol in hitColliders)
+        {
+            if (hitCol.CompareTag("Enemy"))
+            {
+                Enemy enemy = hitCol.GetComponent<Enemy>();
+                if (enemy != null && enemy.gameObject.activeInHierarchy)
+                {
+                    // Gây sát thương cho TẤT CẢ quái trong vùng này
+                    enemy.TakeDamage(_data.damage);
+                }
+            }
+        }
     }
 
 }
