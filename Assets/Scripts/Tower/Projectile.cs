@@ -123,8 +123,11 @@ public class Projectile : MonoBehaviour
     private void HandleHitEnemy(Enemy enemy)
     {
         enemy.TakeDamage(_data.damage);
+        if (explosionPrefab != null)
+        {
+            Instantiate(explosionPrefab, enemy.transform.position, Quaternion.identity);
+        }
         gameObject.SetActive(false);
-        // StartCoroutine(ExplosionProcess());
     }
 
 }
