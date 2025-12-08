@@ -15,5 +15,5 @@ MonoBehaviour:
   groupsInWave:
   - enemyType: 0
     count: 10
-    spawnInterval: 0.5
+    spawnInterval: 1
   timeBetweenGroups: 0

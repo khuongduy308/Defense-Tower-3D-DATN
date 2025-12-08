@@ -5,53 +5,34 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     [Header("Settings")]
-    [SerializeField] private GameObject explosionPrefab;
-    [SerializeField] private float explosionDuration = 0.5f;
-    [SerializeField] private float arcHeight = 2.0f; // Độ cao của đường đạn cong
-    
+    [SerializeField] private GameObject explosionPrefab; // Prefab vụ nổ (đã có script tự hủy)
+    [SerializeField] private float arcHeight = 2.0f; 
+    [SerializeField] private float targetOffset = 0.5f; // Bắn vào ngực
+
     private TowerData _data;
-    // private Vector3 _shootDirection;
-    private float _projectileDuration;
     private Enemy _target;
+    private float _projectileDuration;
 
-    private bool _isArcing; // Có bắn cong không?
-    private Vector3 _startPosition; // Vị trí bắt đầu (dùng cho bắn cong)
-    private float _travelTime; // Thời gian đã bay (dùng cho bắn cong)
-    private float _totalTravelTime; // Tổng thời gian dự kiến bay
-
-    private bool _isExploding = false;
-    [SerializeField] private Renderer projectileRenderer; 
-    [SerializeField] private Collider2D projectileCollider;
-
-    private void OnEnable()
-    {
-        _isExploding = false;
-        if (projectileRenderer != null) projectileRenderer.enabled = true;
-        if (projectileCollider != null) projectileCollider.enabled = true;
-    }
+    private bool _isArcing; 
+    private Vector3 _startPosition; 
+    private float _travelTime; 
+    private float _totalTravelTime;
 
     // Update is called once per frame
     void Update()
     {
-        if (_isExploding) return;
-
-        _projectileDuration -= Time.deltaTime; // Luôn giảm thời gian
-
-        // Ktra nếu mục tiêu đã chết, hoặc hết thời gian
-        if (_target == null || !_target.gameObject.activeInHierarchy || _projectileDuration <= 0)
+        if (_target == null || !_target.gameObject.activeInHierarchy)
         {
             gameObject.SetActive(false);
-            return; // Dừng hàm Update
+            return; 
         }
 
         if (_isArcing)
         {
-            // --- LOGIC BẮN CONG (PARABOL) ---
             MoveArc();
         }
         else
         {
-            // --- LOGIC BẮN THẲNG (CŨ) ---
             MoveStraight();
         }
     }
@@ -65,32 +46,34 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        Vector3 direction = (_target.transform.position - transform.position).normalized;
-        transform.right = direction; // Xoay mũi tên
-        transform.position += direction * _data.projectileSpeed * Time.deltaTime;
+        Vector3 targetPos = _target.transform.position + Vector3.up * targetOffset;
+        Vector3 direction = (targetPos - transform.position).normalized; // Hướng về ngực
+        float distanceToTarget = Vector3.Distance(transform.position, targetPos);
+        float step = _data.projectileSpeed * Time.deltaTime;
+
+        transform.right = direction; 
+
+        // Kiểm tra trúng đích sớm
+        if (distanceToTarget <= step)
+        {
+            transform.position = targetPos; // Dịch chuyển tới đích cho đẹp
+            HandleHitEnemy(_target);
+            return;
+        }
+
+        transform.position += direction * step;
     }
 
-    // Logic di chuyển cong
     private void MoveArc()
     {
         _travelTime += Time.deltaTime;
-        
-        // Tính toán tiến độ bay (từ 0 đến 1)
         float progress = _travelTime / _totalTravelTime;
+        if (progress >= 1.0f) progress = 1.0f;
 
-        if (progress >= 1.0f)
-        {
-            progress = 1.0f;
-        }
-
-        // 1. Nội suy tuyến tính vị trí X, Y gốc (đi thẳng từ A đến B)
-        Vector3 currentPos = Vector3.Lerp(_startPosition, _target.transform.position, progress);
-
-        // 2. Cộng thêm độ cao Y theo hình Sin (0 ở đầu, 1 ở giữa, 0 ở cuối)
-        // Mathf.Sin(progress * Mathf.PI) trả về giá trị hình vòng cung
+        Vector3 targetPos = _target.transform.position + Vector3.up * targetOffset;
+        Vector3 currentPos = Vector3.Lerp(_startPosition, targetPos, progress);
         currentPos.y += arcHeight * Mathf.Sin(progress * Mathf.PI);
 
-        // 3. Xoay đầu đạn theo hướng di chuyển
         Vector3 direction = currentPos - transform.position;
         if (direction != Vector3.zero)
         {
@@ -98,46 +81,31 @@ public class Projectile : MonoBehaviour
             transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         }
 
-        // 4. Cập nhật vị trí
         transform.position = currentPos;
+
+        if (progress >= 1.0f || Vector3.Distance(currentPos, targetPos) < 0.1f)
+        {
+            HandleHitEnemy(_target);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (_isExploding) return;
-
         if (collision.CompareTag("Enemy"))
         {
             Enemy enemy = collision.GetComponent<Enemy>();
             if (enemy != null && enemy == _target)
             {
-                enemy.TakeDamage(_data.damage);
-                StartCoroutine(ExplosionProcess());
+                HandleHitEnemy(enemy);
             }
         }
     }
 
-    private IEnumerator ExplosionProcess()
-    {
-        _isExploding = true;
-        if (projectileRenderer != null) projectileRenderer.enabled = false;
-        if (projectileCollider != null) projectileCollider.enabled = false;
-
-        if (explosionPrefab != null)
-        {
-            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-        }
-
-        yield return new WaitForSeconds(explosionDuration);
-        gameObject.SetActive(false);
-    }
-
-    // Hàm Shoot được cập nhật để nhận tham số isArcing
     public void Shoot(TowerData data, Enemy target, bool useArcing) 
     {
         _data = data;
         _target = target;
-        _projectileDuration = data.projectileDuration; // Dùng làm timeout cho đạn thẳng
+        _projectileDuration = data.projectileDuration;
         _isArcing = useArcing;
 
         if (_isArcing)
@@ -145,14 +113,18 @@ public class Projectile : MonoBehaviour
             _startPosition = transform.position;
             _travelTime = 0;
             
-            // Tính toán khoảng cách để xác định thời gian bay
-            // Giả sử tốc độ projectileSpeed là đơn vị/giây
+            // Tính toán lại thời gian bay dựa trên khoảng cách và tốc độ
             float distance = Vector3.Distance(_startPosition, target.transform.position);
             _totalTravelTime = distance / data.projectileSpeed;
-            
-            // Đảm bảo thời gian bay không quá nhỏ để tránh lỗi chia cho 0
             if(_totalTravelTime < 0.1f) _totalTravelTime = 0.1f; 
         }
+    }
+
+    private void HandleHitEnemy(Enemy enemy)
+    {
+        enemy.TakeDamage(_data.damage);
+        gameObject.SetActive(false);
+        // StartCoroutine(ExplosionProcess());
     }
 
 }
