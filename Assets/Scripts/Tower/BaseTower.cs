@@ -6,9 +6,10 @@ using UnityEngine;
 public abstract class BaseTower : MonoBehaviour
 {
     [SerializeField] protected TowerData data; // Dùng 'protected' để lớp con có thể truy cập
-    // protected CircleCollider2D _circleCollider;
+    [SerializeField] private GameObject rangeCirclePrefab;
     protected List<Enemy> _enemiesInRange; // Dùng 'protected'
     protected Platform _parentPlatform;
+    private GameObject _rangeObject;
 
     // OnEnable / OnDisable để xử lý sự kiện enemy chết
     protected virtual void OnEnable()
@@ -31,6 +32,26 @@ public abstract class BaseTower : MonoBehaviour
     {
         CreateRangeSensor();
         _enemiesInRange = new List<Enemy>();
+
+        if (rangeCirclePrefab != null)
+        {
+            _rangeObject = Instantiate(rangeCirclePrefab, transform.position, Quaternion.identity, transform);
+
+            //Scale = Range * 2
+            float diameter = data.range * 2f;
+            _rangeObject.transform.localScale = new Vector3(diameter, diameter, 1f);
+
+            // Mặc định là ẩn
+            _rangeObject.SetActive(false);
+        }
+    }
+
+    public void ToggleRangeVisual(bool isActive)
+    {
+        if (_rangeObject != null)
+        {
+            _rangeObject.SetActive(isActive);
+        }
     }
 
     private void CreateRangeSensor()
@@ -107,6 +128,12 @@ public abstract class BaseTower : MonoBehaviour
     {
         // 1. Cập nhật data
         this.data = upgradeData;
+
+        if (_rangeObject != null)
+        {
+            float diameter = data.range * 2f;
+            _rangeObject.transform.localScale = new Vector3(diameter, diameter, 1f);
+        }
         
         // 2. Cập nhật hình ảnh (hủy prefab cũ, tạo prefab mới)
         // (Giả sử hình ảnh/prefab là con đầu tiên của tháp)

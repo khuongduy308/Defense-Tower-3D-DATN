@@ -103,7 +103,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -183477595
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 283046958, guid: c82da5d2e87fbd14ea3e93ce69d8adb6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -188,6 +188,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 270cb76df27b54a459cf7f94bde7fb15, type: 2}
+  rangeCirclePrefab: {fileID: 3404803195061121542, guid: 106a2a2717105d948b7db55f75c06296, type: 3}
   firePoint: {fileID: 7541944751734523318}
   useArcing: 0
 --- !u!114 &4841820010063421945
@@ -294,7 +295,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 70da9a23ffe384d4da67e06ebe4101b3, type: 3}
       propertyPath: m_SortingLayer
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 70da9a23ffe384d4da67e06ebe4101b3, type: 3}
       propertyPath: m_SortingLayerID

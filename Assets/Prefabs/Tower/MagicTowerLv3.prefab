@@ -103,7 +103,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -183477595
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 283046958, guid: c82da5d2e87fbd14ea3e93ce69d8adb6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -188,6 +188,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 3c4cf29bcba0f074a8f9be2f9da9fed9, type: 2}
+  rangeCirclePrefab: {fileID: 3404803195061121542, guid: 106a2a2717105d948b7db55f75c06296, type: 3}
   firePoint: {fileID: 1317357343454019567}
   useArcing: 0
 --- !u!114 &1543373789375035729
@@ -347,7 +348,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1603390791
-  m_SortingLayer: 1
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 75891d9f614614c48bab3f59acea6a5f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

@@ -83,6 +83,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: af577c7fd88c289418d784d94e1d85a5, type: 2}
+  rangeCirclePrefab: {fileID: 3404803195061121542, guid: 106a2a2717105d948b7db55f75c06296, type: 3}
   firePoint: {fileID: 7781414645290952562}
   useArcing: 0
 --- !u!114 &7181956348005406880
@@ -201,7 +202,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 30841b9cf28649a48989314eb83efeea, type: 3}
       propertyPath: m_SortingLayer
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 30841b9cf28649a48989314eb83efeea, type: 3}
       propertyPath: m_SortingLayerID
@@ -295,7 +296,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 30841b9cf28649a48989314eb83efeea, type: 3}
       propertyPath: m_SortingLayer
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 30841b9cf28649a48989314eb83efeea, type: 3}
       propertyPath: m_SortingLayerID
@@ -369,7 +370,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 70da9a23ffe384d4da67e06ebe4101b3, type: 3}
       propertyPath: m_SortingLayer
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 70da9a23ffe384d4da67e06ebe4101b3, type: 3}
       propertyPath: m_SortingLayerID

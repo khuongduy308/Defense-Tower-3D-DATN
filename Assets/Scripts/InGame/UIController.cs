@@ -193,7 +193,7 @@ public class UIController : MonoBehaviour
     {
         towerPanel.SetActive(true);
         // Platform.IsModalPanelOpen = true;
-        GameManager.Instance.setTimeScale(0f);
+        // GameManager.Instance.setTimeScale(0f);
         PopulateTowerCards();
     }
 
@@ -202,7 +202,7 @@ public class UIController : MonoBehaviour
         if (!towerPanel.activeSelf) return;
         towerPanel.SetActive(false);
         _currentPlatform = null;
-        GameManager.Instance.setTimeScale(GameManager.Instance.GameSpeed);
+        // GameManager.Instance.setTimeScale(GameManager.Instance.GameSpeed);
     }
 
     private void HandleTowerSelected(TowerData towerData)
@@ -384,6 +384,10 @@ public class UIController : MonoBehaviour
 
     private void HandleTowerClicked(BaseTower tower)
     {
+        if (_currentSelectedTower != null)
+        {
+            _currentSelectedTower.ToggleRangeVisual(false);
+        }
         // Nếu đang mở bảng xây -> Đóng nó lại trước
         if (towerPanel.activeSelf) HideTowerPanel();
 
@@ -396,6 +400,10 @@ public class UIController : MonoBehaviour
 
         // 3. Mở panel NÂNG CẤP của tháp mới
         _currentSelectedTower = tower;
+        if (_currentSelectedTower != null)
+        {
+            _currentSelectedTower.ToggleRangeVisual(true);
+        }
         ShowUpgradePanel();
     }
     
@@ -403,16 +411,20 @@ public class UIController : MonoBehaviour
     {
         upgradePanel.SetActive(true);
         // Platform.IsModalPanelOpen = true; // Dùng chung biến cờ
-        GameManager.Instance.setTimeScale(0f);
+        // GameManager.Instance.setTimeScale(0f);
         PopulateUpgradePanel();
     }
 
     public void HideUpgradePanel()
     {
         if (!upgradePanel.activeSelf) return;
+        if (_currentSelectedTower != null)
+        {
+            _currentSelectedTower.ToggleRangeVisual(false);
+        }
         upgradePanel.SetActive(false);
         // Platform.IsModalPanelOpen = false;
-        GameManager.Instance.setTimeScale(GameManager.Instance.GameSpeed);
+        // GameManager.Instance.setTimeScale(GameManager.Instance.GameSpeed);
         _currentSelectedTower = null; // Quên tháp đi
     }
 
