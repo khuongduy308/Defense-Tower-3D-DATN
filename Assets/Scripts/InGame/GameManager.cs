@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
         // _resources += Mathf.RoundToInt(amount);
         _resources += amount;
         OnResourcesChanged?.Invoke(_resources);
-        Debug.Log($"Resources: {_resources}");
+        // Debug.Log($"Resources: {_resources}");
     }
 
     public void setTimeScale(float scale) //danh cho pause game

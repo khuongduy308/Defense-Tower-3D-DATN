@@ -558,9 +558,25 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 9104775962286482295, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9104775962286482295, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9104775962286482295, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9180288529111340421, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
       propertyPath: m_Name
       value: IconMenu (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9180288529111340421, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -872,9 +888,25 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 9104775962286482295, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9104775962286482295, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9104775962286482295, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9180288529111340421, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
       propertyPath: m_Name
       value: IconMenu (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9180288529111340421, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -997,9 +1029,25 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 9104775962286482295, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9104775962286482295, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9104775962286482295, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9180288529111340421, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
       propertyPath: m_Name
       value: IconMenu (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9180288529111340421, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1122,9 +1170,25 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 9104775962286482295, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9104775962286482295, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9104775962286482295, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9180288529111340421, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
       propertyPath: m_Name
       value: IconMenu (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9180288529111340421, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1339,9 +1403,25 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 9104775962286482295, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9104775962286482295, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9104775962286482295, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9180288529111340421, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
       propertyPath: m_Name
       value: IconMenu (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9180288529111340421, guid: 1640516002068b9469012500d2b1c1cf, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

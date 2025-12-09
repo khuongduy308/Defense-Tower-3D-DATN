@@ -73,8 +73,6 @@ MonoBehaviour:
   - {fileID: 2386398235943959230}
   - {fileID: 6435616589793133523}
   - {fileID: 155746265235450364}
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!1 &1498184835426929361
 GameObject:
   m_ObjectHideFlags: 0
@@ -342,7 +340,6 @@ MonoBehaviour:
   - {fileID: 5197843374669663820}
   - {fileID: 3443912437340386357}
   - {fileID: 1801558827672716509}
-  - {fileID: 0}
 --- !u!1001 &167268307772556966
 PrefabInstance:
   m_ObjectHideFlags: 0

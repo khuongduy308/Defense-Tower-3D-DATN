@@ -90,6 +90,9 @@ public class AuthManager : MonoBehaviour
                 CurrentUserId = res.userId;
                 MaxLevelReached = res.maxLevel;
 
+                PlayerPrefs.SetInt("MaxLevelReached", MaxLevelReached);
+                PlayerPrefs.Save();
+
                 messageText.text = $"Đăng nhập thành công!";
                 messageText.color = Color.green;
 
@@ -120,6 +123,9 @@ public class AuthManager : MonoBehaviour
         IsLoggedIn = false;
         CurrentUserId = "";
         MaxLevelReached = 0;
+
+        PlayerPrefs.DeleteKey("MaxLevelReached");
+        PlayerPrefs.Save();
 
         // 2. Quay về màn hình Intro
         SceneManager.LoadScene("IntroScene");

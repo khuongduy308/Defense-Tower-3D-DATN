@@ -373,6 +373,11 @@ public class UIController : MonoBehaviour
 
     public void GoToNextLevel()
     {
+        if (LevelManager.Instance != null)
+        {
+            // Gọi hàm SaveProgress vừa viết
+            LevelManager.Instance.SaveProgress(); 
+        }
         // Gọi hàm đã tạo trong LevelManager
         LevelManager.Instance.LoadNextLevel();
     }
