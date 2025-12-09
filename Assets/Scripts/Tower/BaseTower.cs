@@ -6,7 +6,7 @@ using UnityEngine;
 public abstract class BaseTower : MonoBehaviour
 {
     [SerializeField] protected TowerData data; // Dùng 'protected' để lớp con có thể truy cập
-    protected CircleCollider2D _circleCollider;
+    // protected CircleCollider2D _circleCollider;
     protected List<Enemy> _enemiesInRange; // Dùng 'protected'
     protected Platform _parentPlatform;
 
@@ -29,9 +29,28 @@ public abstract class BaseTower : MonoBehaviour
     // Start() chỉ khởi tạo những gì chung nhất
     protected virtual void Start()
     {
-        _circleCollider = GetComponent<CircleCollider2D>();
-        _circleCollider.radius = data.range;
+        CreateRangeSensor();
         _enemiesInRange = new List<Enemy>();
+    }
+
+    private void CreateRangeSensor()
+    {
+        // 1. Tạo GameObject con
+        GameObject rangeObj = new GameObject("RangeSensor");
+        rangeObj.transform.SetParent(this.transform);
+        rangeObj.transform.localPosition = Vector3.zero;
+
+        // 2. Thêm Collider và setup bán kính
+        CircleCollider2D rangeCol = rangeObj.AddComponent<CircleCollider2D>();
+        rangeCol.isTrigger = true;
+        rangeCol.radius = data.range;
+
+        // 3. QUAN TRỌNG: Set Layer để không chặn click chuột
+        rangeObj.layer = LayerMask.NameToLayer("Ignore Raycast");
+
+        // 4. Gắn script chuyển tiếp tín hiệu
+        TowerRangeSensor sensor = rangeObj.AddComponent<TowerRangeSensor>();
+        sensor.Initialize(this);
     }
     
     // Vẽ tầm bắn trong Editor
@@ -44,7 +63,7 @@ public abstract class BaseTower : MonoBehaviour
     }
 
     // Logic phát hiện kẻ thù vào tầm
-    protected virtual void OnTriggerEnter2D(Collider2D collision)
+    public virtual void OnEnemyEnterRange(Collider2D collision)
     {
         if (collision.CompareTag("Enemy"))
         {
@@ -57,7 +76,7 @@ public abstract class BaseTower : MonoBehaviour
     }
 
     // Logic phát hiện kẻ thù ra khỏi tầm
-    protected virtual void OnTriggerExit2D(Collider2D collision)
+    public virtual void OnEnemyExitRange(Collider2D collision)
     {
         if (collision.CompareTag("Enemy"))
         {
@@ -93,13 +112,14 @@ public abstract class BaseTower : MonoBehaviour
         // (Giả sử hình ảnh/prefab là con đầu tiên của tháp)
         if (transform.childCount > 0)
         {
-            Destroy(transform.GetChild(0).gameObject);
+            foreach (Transform child in transform)
+            {
+                Destroy(child.gameObject);
+            }
         }
         Instantiate(upgradeData.prefab, transform.position, transform.rotation, transform);
-        
-        // 3. Cập nhật các chỉ số khác (nếu cần)
-        _circleCollider.radius = data.range;
-        // (Bạn có thể cần reset _shootTimer ở đây nếu muốn tháp bắn ngay)
+
+    //     _circleCollider.radius = data.range;)
     }
 
     public void SellTower()
