@@ -205,9 +205,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 635404728}
-        m_TargetAssemblyTypeName: AuthManager, Assembly-CSharp
-        m_MethodName: OnRegisterBtnClicked
+      - m_Target: {fileID: 1208282371}
+        m_TargetAssemblyTypeName: IntroController, Assembly-CSharp
+        m_MethodName: OnClickRegister
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -475,7 +475,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1208282371}
         m_TargetAssemblyTypeName: IntroController, Assembly-CSharp
-        m_MethodName: OnScreenTapped
+        m_MethodName: OnTapToStart
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -738,10 +738,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d82a55748583932408c9b92c92b1cbb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  authPanel: {fileID: 1313659831}
-  usernameInput: {fileID: 1564505545}
-  passwordInput: {fileID: 2122345319}
-  messageText: {fileID: 272957068}
   baseUrl: http://localhost:3000/api
 --- !u!4 &635404729
 Transform:
@@ -1400,6 +1396,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   welcomePanel: {fileID: 1263564130}
   authPanel: {fileID: 1313659831}
+  usernameInput: {fileID: 1564505545}
+  passwordInput: {fileID: 2122345319}
+  messageText: {fileID: 272957068}
 --- !u!1 &1263564130
 GameObject:
   m_ObjectHideFlags: 0
@@ -2377,9 +2376,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 635404728}
-        m_TargetAssemblyTypeName: AuthManager, Assembly-CSharp
-        m_MethodName: OnLoginBtnClicked
+      - m_Target: {fileID: 1208282371}
+        m_TargetAssemblyTypeName: IntroController, Assembly-CSharp
+        m_MethodName: OnClickLogin
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
