@@ -68,9 +68,7 @@ public class LevelManager : MonoBehaviour
         // Nếu chưa ở trong Game Scene -> Load Scene trước
         if (SceneManager.GetActiveScene().name != gameSceneName)
         {
-            // Chúng ta chưa có Data ngay, nhưng cứ chuyển Scene đã
-            // Data sẽ được tải khi Coroutine chạy
-            SceneManager.LoadScene(gameSceneName);
+            Loader.Load(gameSceneName);
             StartCoroutine(DownloadAndPlayLevel(index, true)); // true = đợi scene load
         }
         else
@@ -102,7 +100,17 @@ public class LevelManager : MonoBehaviour
 
     private IEnumerator DownloadAndPlayLevel(int index, bool waitForScene)
     {
-        if (waitForScene) yield return new WaitForSeconds(0.1f); // Đợi scene chuyển hẳn
+        if (waitForScene) 
+        {
+            // Vòng lặp: Chừng nào chưa sang Scene "Game" thì đứng đợi ở đây
+            while (SceneManager.GetActiveScene().name != gameSceneName)
+            {
+                yield return null; // Đợi sang frame tiếp theo kiểm tra lại
+            }
+
+            // Đã sang Scene Game rồi, nhưng đợi thêm 1 frame để Spawner kịp chạy hàm Awake()
+            yield return null; 
+        }
 
         Debug.Log($"Đang tải Level {index} từ: {serverUrl + index}");
         

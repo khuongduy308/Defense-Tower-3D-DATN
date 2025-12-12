@@ -15,7 +15,6 @@ public class AuthManager : MonoBehaviour
     // public TMP_Text messageText;
     
     [Header("Server Config")]
-    // Nhớ thay bằng link Render nếu đã deploy
     public string baseUrl = "http://localhost:3000/api"; 
 
     // --- LƯU TRẠNG THÁI NGƯỜI CHƠI ---
@@ -71,7 +70,7 @@ public class AuthManager : MonoBehaviour
                     OnAuthActionFinished?.Invoke(true, $"Welcome {res.username}!");
                     
                     yield return new WaitForSeconds(1f);
-                    SceneManager.LoadScene("MainMenu");
+                    Loader.Load("MainMenu");
                 }
                 else
                 {
