@@ -79,4 +79,10 @@ public class IntroController : MonoBehaviour
         // Gọi sang Logic Manager
         AuthManager.Instance.RequestRegister(usernameInput.text, passwordInput.text);
     }
+
+    public void OnClickGoogleLogin()
+    {
+        messageText.text = "Đang kết nối Google...";
+        AuthManager.Instance.OnGoogleLoginBtnClicked();
+    }
 }

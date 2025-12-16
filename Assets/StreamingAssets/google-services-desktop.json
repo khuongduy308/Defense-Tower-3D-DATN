@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "795222669468",
+    "project_id": "tower-defense-1fff1",
+    "storage_bucket": "tower-defense-1fff1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:795222669468:android:629bf524fbe67cf46d5559",
+        "android_client_info": {
+          "package_name": "com.Duy.TowerDefense"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "795222669468-fktrmld1g2jjhjtfvn4kvjsprt2rl3qb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtuO9wSxUR86unddHWpvSSEhbBpzEZ2U4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "795222669468-fktrmld1g2jjhjtfvn4kvjsprt2rl3qb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
