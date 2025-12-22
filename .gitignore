@@ -30,3 +30,8 @@ Thumbs.db
 
 # Crash and build reports
 *.stacktrace
+
+# Bỏ qua các file thư viện native nặng của Firebase
+Assets/Firebase/Plugins/x86_64/
+*.so
+*.bundle
