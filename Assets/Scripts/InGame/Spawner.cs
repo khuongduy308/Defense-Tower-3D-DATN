@@ -96,6 +96,8 @@ public class Spawner : MonoBehaviour
                 _spawnTimer = 0f;
                 _isBetweenWaves = false;
 
+                AudioManager.Instance.PlayRandomSFX("StartWave1", "StartWave2", "StartWave3", "StartWave4");
+
                 _currentGroupIndex = 0;
                 _enemiesSpawnedInGroup = 0;
             }

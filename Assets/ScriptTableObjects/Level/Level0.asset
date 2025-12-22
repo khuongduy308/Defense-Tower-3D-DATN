@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelName: Level0
   levelIndex: 0
-  startingResources: 200
-  startingLives: 10
+  startingResources: 350
+  startingLives: 20
   mapPrefab: {fileID: 2611311330800131007, guid: fc6541d6a33ca3d47b04cf1828860885, type: 3}
   wavesInThisLevel:
   - {fileID: 11400000, guid: 6940cff60c49e8640b5b535d7b55a05b, type: 2}
@@ -23,5 +23,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 43804906b56d23540aba30fb854b3e70, type: 2}
   - {fileID: 11400000, guid: f85a344572295a04388ba33051e00de7, type: 2}
   - {fileID: 11400000, guid: eb2b3e67586ae0648973ddb2f8a43fcb, type: 2}
-  - {fileID: 11400000, guid: 843687a3f7a39374f97febc3110e04c3, type: 2}
   enemyTypesAllowed: 00000000010000000200000003000000

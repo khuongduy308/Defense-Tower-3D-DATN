@@ -17,5 +17,9 @@ public class TowerData : ScriptableObject
 
     public GameObject prefab;
 
+    [Header("Audio")]
+    public string shootSoundName;
+    public string impactSoundName;
+
     public TowerData nextUpgrade;
 }

@@ -180,6 +180,8 @@ public class Enemy : MonoBehaviour
 
     private void Die()
     {
+        AudioManager.Instance.PlayRandomSFX("Die1", "Die2");
+
         // 1. Đảm bảo chỉ tính điểm 1 lần
         if (!_hasBeenCounted)
         {

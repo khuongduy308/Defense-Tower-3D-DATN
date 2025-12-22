@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81a5bea8b873c11459554ff6bc2d7506, type: 3}
+  m_Name: Level6
+  m_EditorClassIdentifier: 
+  levelName: Level6
+  levelIndex: 6
+  startingResources: 600
+  startingLives: 20
+  mapPrefab: {fileID: 2527347871539578169, guid: 8269a40c9db66654b9a614810185970a, type: 3}
+  wavesInThisLevel:
+  - {fileID: 11400000, guid: ad7f0af19366a2a4bb1d2f039a7d9711, type: 2}
+  - {fileID: 11400000, guid: 67ff37b31abd19e42920442f74a87baa, type: 2}
+  - {fileID: 11400000, guid: 6e03dee7674a40644b16ccf1dfd20f98, type: 2}
+  - {fileID: 11400000, guid: b6c57993e2347034995fbc7d8bff0696, type: 2}
+  - {fileID: 11400000, guid: c83cee17f0346454a83918e3ade6e2ff, type: 2}
+  - {fileID: 11400000, guid: a585414954c6f724bb3e7ddef99419aa, type: 2}
+  - {fileID: 11400000, guid: 1fbd73f884ce76442a3a434403ac3650, type: 2}
+  - {fileID: 11400000, guid: 97c6a6ebd8a8dbe4a9ed8454b0560a4b, type: 2}
+  - {fileID: 11400000, guid: aa384ffedf43f024aa7e1ea660966432, type: 2}
+  - {fileID: 11400000, guid: 228be4b125874fe4a8ebe501790d2cc7, type: 2}
+  - {fileID: 11400000, guid: af4b4f713d8003a41b268a67ddc51025, type: 2}
+  - {fileID: 11400000, guid: 1a2108d4c8a74a54081117419cb2b3b1, type: 2}
+  - {fileID: 11400000, guid: 9ede13f0537996c4c8d45f2f8d545d8c, type: 2}
+  - {fileID: 11400000, guid: 8bd10d329ab49fb48a271c0cea8c32fa, type: 2}
+  enemyTypesAllowed: 00000000010000000200000003000000

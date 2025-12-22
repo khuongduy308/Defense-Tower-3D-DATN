@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81a5bea8b873c11459554ff6bc2d7506, type: 3}
+  m_Name: Level9
+  m_EditorClassIdentifier: 
+  levelName: Level9
+  levelIndex: 9
+  startingResources: 900
+  startingLives: 15
+  mapPrefab: {fileID: 1991345100348154800, guid: 71765a19fd480a34facd43e6f1e1e5b1, type: 3}
+  wavesInThisLevel:
+  - {fileID: 11400000, guid: f64db43c332e4184e94e4da43c9c1760, type: 2}
+  - {fileID: 11400000, guid: 41368666e1931da47885a6c9aa2ca3b1, type: 2}
+  - {fileID: 11400000, guid: f3b05c3aca131da4eae3b3772a1fdca5, type: 2}
+  - {fileID: 11400000, guid: 6259f7ef62df6b2468772978b0eabd98, type: 2}
+  - {fileID: 11400000, guid: de48079cdeaf2d341b931109b6269136, type: 2}
+  - {fileID: 11400000, guid: 206397a44e5cb6c4eb29418d71930d86, type: 2}
+  - {fileID: 11400000, guid: 128fbf3649e7acc4493f46bb53da71bd, type: 2}
+  - {fileID: 11400000, guid: ae6bac8ad26794446b3c84ddba6f62ed, type: 2}
+  - {fileID: 11400000, guid: 16c9c23f90663b94caed99564255f4e1, type: 2}
+  - {fileID: 11400000, guid: 6523bc5b8484041459e65bec0256a3af, type: 2}
+  - {fileID: 11400000, guid: 15cabb2f57509764f8fef085945214d8, type: 2}
+  - {fileID: 11400000, guid: 4ebeeb1a88d84f946be73d2391a50b54, type: 2}
+  - {fileID: 11400000, guid: 302e251268408dc49a77812d55e75d9e, type: 2}
+  - {fileID: 11400000, guid: 9be33ee29a44cdf459e4cd75f7434ce5, type: 2}
+  - {fileID: 11400000, guid: ff9fbfbe38523994d82c1cc63b2b083a, type: 2}
+  - {fileID: 11400000, guid: 3efb1d0bfea33a444810168e0970f39d, type: 2}
+  - {fileID: 11400000, guid: a05ddb812002f964fb036c1ace1f4beb, type: 2}
+  - {fileID: 11400000, guid: fb996fb7ae9771049bb296f86ebc5af4, type: 2}
+  - {fileID: 11400000, guid: 9ae4e2ec4b02b7c4094aa7b51710db7a, type: 2}
+  - {fileID: 11400000, guid: 596b0d3bdcc37af41993b6ff639cf887, type: 2}
+  enemyTypesAllowed: 00000000010000000200000003000000

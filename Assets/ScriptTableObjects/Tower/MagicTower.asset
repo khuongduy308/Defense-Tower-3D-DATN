@@ -12,13 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9134551179c23f845b2e4ac9890f79d5, type: 3}
   m_Name: MagicTower
   m_EditorClassIdentifier: 
-  range: 4
+  range: 3
   shootInterval: 0.1
   projectileSpeed: 5
   projectileDuration: 2
   projectileSize: 0.5
-  damage: 0.5
-  cost: 70
+  damage: 2
+  cost: 150
   sprite: {fileID: 21300000, guid: 8598f1807b0695a438a84b3b5de252f3, type: 3}
   prefab: {fileID: 9178509327889697745, guid: 0d502d18965868b4f9526666e540ff18, type: 3}
+  shootSoundName: ThapPhep
+  impactSoundName: 
   nextUpgrade: {fileID: 11400000, guid: cbb5742747e4aa3499c0e33dc89b0ecd, type: 2}

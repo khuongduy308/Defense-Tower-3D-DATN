@@ -61,5 +61,10 @@ public class ProjectileTower : BaseTower
         
         // _enemiesInRange[0] lấy từ BaseTower
         projectile.GetComponent<Projectile>().Shoot(data, _enemiesInRange[0], useArcing);
+
+        if (!string.IsNullOrEmpty(data.shootSoundName))
+        {
+            AudioManager.Instance.PlaySFX(data.shootSoundName);
+        }
     }
 }

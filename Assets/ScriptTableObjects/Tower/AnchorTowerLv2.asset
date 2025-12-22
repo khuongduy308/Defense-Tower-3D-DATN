@@ -12,13 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9134551179c23f845b2e4ac9890f79d5, type: 3}
   m_Name: AnchorTowerLv2
   m_EditorClassIdentifier: 
-  range: 5
-  shootInterval: 0.5
+  range: 3.8
+  shootInterval: 0.8
   projectileSpeed: 12
   projectileDuration: 2
   projectileSize: 1
-  damage: 5
-  cost: 50
+  damage: 35
+  cost: 150
   sprite: {fileID: -4311798649047596183, guid: 30841b9cf28649a48989314eb83efeea, type: 3}
   prefab: {fileID: 6102952699891265720, guid: 1f82a4e6bbfbbd042a370c1733e385c1, type: 3}
+  shootSoundName: ThapCung
+  impactSoundName: 
   nextUpgrade: {fileID: 11400000, guid: f093103d48a0e634f820b898b39be873, type: 2}

@@ -146,6 +146,11 @@ public class Projectile : MonoBehaviour
             Instantiate(explosionPrefab, explosionCenter, Quaternion.identity);
         }
 
+        if (!string.IsNullOrEmpty(_data.impactSoundName))
+        {
+            AudioManager.Instance.PlaySFX(_data.impactSoundName);
+        }
+
         gameObject.SetActive(false);
     }
 
