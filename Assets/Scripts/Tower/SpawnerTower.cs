@@ -58,8 +58,9 @@ public class SpawnerTower : BaseTower
         SoldierAI ai = soldierObj.GetComponent<SoldierAI>();
         if (ai != null)
         {
-            // Giao "chốt" cho lính. Lính sẽ quay về đây khi không có quái.
             ai.SetGuardPost(spawnPoint.position);
+            // Giao "chốt" cho lính. Lính sẽ quay về đây khi không có quái.
+            ai.Initialize(data.damage);
         }
     }
 }

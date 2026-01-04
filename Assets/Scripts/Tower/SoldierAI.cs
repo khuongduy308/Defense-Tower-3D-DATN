@@ -1,16 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SoldierAI : MonoBehaviour
 {
     [Header("Soldier Stats")]
     [SerializeField] private float moveSpeed = 2f;
-    [SerializeField] private int attackDamage = 5;
+    private float _damage;
     [SerializeField] private float attackRange = 0.5f; // Khoảng cách lính đứng để đánh
     [SerializeField] private float attackInterval = 1f; // Tốc độ đánh
     [SerializeField] private float aggroRange = 2f; // Tầm lính phát hiện quái
     [SerializeField] private int maxHealth = 100;
+    [SerializeField] private Transform healthBar;
+    private Vector3 _healthBarOriginalScale;
     
     private int _currentHealth;
     private float _attackTimer;
@@ -29,6 +32,10 @@ public class SoldierAI : MonoBehaviour
         // Lắng nghe sự kiện quái chết
         Enemy.OnEnemyDestroyed += HandleEnemyDestroyed;
         _currentHealth = maxHealth;
+        if (healthBar != null && _healthBarOriginalScale != Vector3.zero)
+        {
+            healthBar.localScale = _healthBarOriginalScale;
+        }
     }
 
     void OnDisable()
@@ -43,14 +50,32 @@ public class SoldierAI : MonoBehaviour
         }
     }
 
-    void Start()
+    void Awake()
     {
+        _healthBarOriginalScale = healthBar.localScale;
         // Tạo collider "phát hiện" quái
         _aggroCollider = gameObject.AddComponent<CircleCollider2D>();
         _aggroCollider.isTrigger = true;
         _aggroCollider.radius = aggroRange;
+    }
+
+    void Start()
+    {
         
         _currentState = State.Patrolling;
+    }
+
+    public void Initialize(float damageFromTower)
+    {
+        
+        // Ép kiểu float về int nếu biến máu của quái là int, hoặc sửa máu quái thành float
+        _damage = damageFromTower; 
+        
+        // Reset máu lính
+        _currentHealth = maxHealth;
+        // Reset trạng thái
+        _currentState = State.Patrolling;
+        UpdateHealthBar();
     }
 
     // Hàm này được gọi bởi SpawnerTower
@@ -156,7 +181,7 @@ public class SoldierAI : MonoBehaviour
             // (Tùy chọn) Chạy animation đánh
             // transform.GetComponent<Animator>().Play("Chop");
 
-            _currentTarget.TakeDamage(attackDamage);
+            _currentTarget.TakeDamage(Mathf.RoundToInt(_damage));
             if (_currentTarget == null)
             {
                 return; // Quái đã chết, kết thúc hàm Attack() tại đây
@@ -179,14 +204,40 @@ public class SoldierAI : MonoBehaviour
         // Dọn dẹp danh sách
         _enemiesInRange.RemoveAll(e => e == null || !e.gameObject.activeInHierarchy);
 
-        if (_enemiesInRange.Count > 0)
-        {
-            _currentTarget = _enemiesInRange[0]; // Lấy con quái đầu tiên
-        }
-        else
+        if (_enemiesInRange.Count == 0)
         {
             _currentTarget = null;
+            return;
         }
+
+        Enemy bestCandidate = null;
+
+        foreach (var enemy in _enemiesInRange)
+        {
+            if (enemy.AttackerCount == 0)
+            {
+                bestCandidate = enemy;
+                break; // Tìm thấy con ngon ăn rồi, chốt luôn!
+            }
+        }
+
+        // 2. Nếu tất cả quái đều đã bị chặn rồi (đông quá), 
+        // thì chọn con quái nào ít người bu vào nhất để hỗ trợ đồng đội.
+        if (bestCandidate == null)
+        {
+            int minAttackers = int.MaxValue;
+            foreach (var enemy in _enemiesInRange)
+            {
+                if (enemy.AttackerCount < minAttackers)
+                {
+                    minAttackers = enemy.AttackerCount;
+                    bestCandidate = enemy;
+                }
+            }
+        }
+
+        // 3. Gán mục tiêu
+        _currentTarget = bestCandidate;
     }
 
     // Nhận sát thương (ví dụ: bị quái đánh lại)
@@ -244,5 +295,16 @@ public class SoldierAI : MonoBehaviour
             // Tìm mục tiêu mới ngay lập tức
             FindNewTarget();
         }
+    }
+
+    private void UpdateHealthBar()
+    {
+        if (healthBar == null) return;
+        float healthPercent = (float)_currentHealth / maxHealth;
+        healthPercent = Mathf.Clamp01(healthPercent);
+        
+        Vector3 scale = _healthBarOriginalScale;
+        scale.x = _healthBarOriginalScale.x * healthPercent;
+        healthBar.localScale = scale;
     }
 }

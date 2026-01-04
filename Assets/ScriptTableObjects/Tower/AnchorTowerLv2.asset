@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9134551179c23f845b2e4ac9890f79d5, type: 3}
   m_Name: AnchorTowerLv2
   m_EditorClassIdentifier: 
-  range: 3.8
+  range: 3.2
   shootInterval: 0.8
   projectileSpeed: 12
   projectileDuration: 2

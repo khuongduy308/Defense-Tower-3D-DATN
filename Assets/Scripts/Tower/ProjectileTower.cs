@@ -55,16 +55,68 @@ public class ProjectileTower : BaseTower
     // Hàm Shoot() là của riêng lớp này
     private void Shoot()
     {
-        GameObject projectile = _projectilePool.GetPooledObject();
-        projectile.transform.position = firePoint.position;
-        projectile.SetActive(true);
-        
-        // _enemiesInRange[0] lấy từ BaseTower
-        projectile.GetComponent<Projectile>().Shoot(data, _enemiesInRange[0], useArcing);
+        // 1. Tìm mục tiêu xịn nhất
+        Enemy target = GetEnemyClosestToEnd();
 
+        // Nếu không tìm thấy ai (hoặc list rỗng) thì không bắn
+        if (target == null) return;
+
+        // 2. Lấy đạn từ Pool
+        GameObject projectileObj = _projectilePool.GetPooledObject();
+        projectileObj.transform.position = firePoint.position;
+        projectileObj.SetActive(true);
+        
+        // 3. Bắn vào target vừa tìm được
+        Projectile projectileScript = projectileObj.GetComponent<Projectile>();
+        projectileScript.Shoot(data, target, useArcing);
+
+        // 4. Âm thanh
         if (!string.IsNullOrEmpty(data.shootSoundName))
         {
             AudioManager.Instance.PlaySFX(data.shootSoundName);
         }
+    }
+
+    // Hàm tìm quái gần đích nhất
+    protected Enemy GetEnemyClosestToEnd()
+    {
+        // 1. Dọn dẹp danh sách (xóa quái null hoặc đã chết)
+        CleanUpEnemyList(); 
+
+        if (_enemiesInRange.Count == 0) return null;
+
+        Enemy bestCandidate = null;
+        float minDistanceToWaypoint = float.MaxValue;
+        int maxWaypointIndex = -1; // -1 là chưa đi được đâu
+
+        foreach (Enemy enemy in _enemiesInRange)
+        {
+            // Bỏ qua nếu quái lỗi
+            if (enemy == null || !enemy.gameObject.activeInHierarchy) continue;
+
+            // Lấy thông tin của quái
+            int enemyIndex = enemy.CurrentWaypointIndex;
+            float dist = enemy.GetDistanceToTarget();
+
+            // SO SÁNH:
+            // Tiêu chí 1: Ai có Waypoint Index cao hơn thì người đó gần đích hơn
+            if (enemyIndex > maxWaypointIndex)
+            {
+                bestCandidate = enemy;
+                maxWaypointIndex = enemyIndex;
+                minDistanceToWaypoint = dist;
+            }
+            // Tiêu chí 2: Nếu cùng Waypoint Index, ai gần cái Waypoint đó hơn thì thắng
+            else if (enemyIndex == maxWaypointIndex)
+            {
+                if (dist < minDistanceToWaypoint)
+                {
+                    bestCandidate = enemy;
+                    minDistanceToWaypoint = dist;
+                }
+            }
+        }
+
+        return bestCandidate;
     }
 }

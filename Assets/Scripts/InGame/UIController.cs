@@ -324,8 +324,7 @@ public class UIController : MonoBehaviour
 
     public void RestartLevel()
     {
-        int currentIndex = LevelManager.Instance.CurrentLevelIndex;
-        LevelManager.Instance.LoadLevelFromCloud(currentIndex);
+        LevelManager.Instance.ReloadCurrentLevel();
     }
 
     public void QuitGame()

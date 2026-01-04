@@ -2,291 +2,278 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking; // MỚI: Dùng để gọi Server
 using UnityEngine.SceneManagement;
+using Firebase.Firestore; // Thư viện Firestore
+using Firebase.Extensions;
 
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance { get; private set; }
 
-    [Header("Cloud Config (MỚI)")]
-    public string serverUrl = "http://localhost:3000/api/level/"; // Link server
-    public GameResourceConfig resourceConfig; // Kéo file config Resources vào đây
+    #region CONFIGURATION
+    [Header("Firebase Config")]
+    [SerializeField] private string collectionName = "levels"; // Tên collection trên Firestore
+    public GameResourceConfig resourceConfig; // Config để map string -> Prefab
 
-    [Header("Offline Data")]
-    public LevelData[] allLevels; // Dữ liệu offline dự phòng
-    
-    // Runtime State
-    public LevelData CurrentLevel { get; private set; }
-    public int CurrentLevelIndex { get; private set; }
+    [Header("Offline Fallback")]
+    public LevelData[] offlineLevels; 
 
-    [Header("Settings")]
+    [Header("Scene Settings")]
     [SerializeField] private string gameSceneName = "Game";
     [SerializeField] private string mapContainerName = "Environment";
-    private Transform _mapParent; 
-    private GameObject _currentMapInstance;
+    #endregion
 
+    #region RUNTIME STATE
+    public LevelData CurrentLevel { get; private set; }
+    public int CurrentLevelIndex { get; private set; }
+    
+    private Transform _mapParent;
+    private GameObject _currentMapInstance;
+    private FirebaseFirestore db;
+    #endregion
+
+    #region UNITY LIFECYCLE
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
-    private void OnEnable() { SceneManager.sceneLoaded += OnSceneLoaded; }
-    private void OnDisable() { SceneManager.sceneLoaded -= OnSceneLoaded; }
+    private void Start()
+    {
+        // Khởi tạo DB một lần duy nhất
+        db = FirebaseFirestore.DefaultInstance;
+    }
+
+    private void OnEnable() => SceneManager.sceneLoaded += OnSceneLoaded;
+    private void OnDisable() => SceneManager.sceneLoaded -= OnSceneLoaded;
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name == gameSceneName)
         {
-            GameObject envObj = GameObject.Find(mapContainerName);
-            if (envObj != null) _mapParent = envObj.transform;
-            else _mapParent = new GameObject(mapContainerName).transform;
-
-            // Khi Scene load xong, tiếp tục cài đặt với LevelData đang có
+            InitializeMapContainer();
+            // Nếu đã tải xong data level, tiến hành setup
             if (CurrentLevel != null)
             {
-                StartCoroutine(SetupLevelRoutine(CurrentLevel));
+                StartCoroutine(SetupGameRoutine(CurrentLevel));
             }
         }
     }
+    #endregion
 
-    // --- PHẦN 1: LOAD LEVEL (ENTRY POINTS) ---
+    #region PUBLIC API (LOAD LEVEL)
 
-    // Cách 1: Load từ Cloud (Khuyên dùng)
-    public void LoadLevelFromCloud(int index)
+    public void LoadLevel(int index)
     {
         CurrentLevelIndex = index;
-        
-        // Nếu chưa ở trong Game Scene -> Load Scene trước
-        if (SceneManager.GetActiveScene().name != gameSceneName)
+        StartCoroutine(LoadLevelFromFirestore(index));
+    }
+
+    public void LoadNextLevel() => LoadLevel(CurrentLevelIndex + 1);
+    public void ReloadCurrentLevel() => LoadLevel(CurrentLevelIndex);
+
+    public void SaveProgress()
+    {
+        int nextLevel = CurrentLevelIndex + 1;
+
+        // 1. Lưu Offline (Backup)
+        if (CurrentLevelIndex >= PlayerPrefs.GetInt("MaxLevelReached", 0))
         {
-            Loader.Load(gameSceneName);
-            StartCoroutine(DownloadAndPlayLevel(index, true)); // true = đợi scene load
+            PlayerPrefs.SetInt("MaxLevelReached", nextLevel);
+            PlayerPrefs.Save();
         }
-        else
+
+        // 2. Lưu Online (Qua AuthManager)
+        if (AuthManager.Instance != null && AuthManager.Instance.IsLoggedIn)
         {
-            // Đang ở trong game rồi -> Tải và chơi luôn
-            StartCoroutine(DownloadAndPlayLevel(index, false));
+            AuthManager.Instance.SaveLevelData(nextLevel);
         }
     }
 
-    // Cách 2: Load Offline (Dự phòng)
-    public void LoadLevelOffline(int index)
-    {
-        if (index < 0 || index >= allLevels.Length) return;
-        CurrentLevelIndex = index;
-        CurrentLevel = allLevels[index]; // Lấy từ mảng có sẵn
+    #endregion
 
-        if (SceneManager.GetActiveScene().name != gameSceneName)
+    #region CORE LOGIC (FIRESTORE LOADING)
+
+    private IEnumerator LoadLevelFromFirestore(int index)
+    {
+        // 1. Chuyển Scene và chờ
+        yield return EnsureGameSceneActive();
+
+        Debug.Log($"[Firestore] Đang tải Level {index}...");
+
+        // 2. Gọi Firestore (Bất đồng bộ)
+        var task = db.Collection(collectionName).Document(index.ToString()).GetSnapshotAsync();
+        
+        // Đợi task hoàn thành mà không chặn main thread
+        yield return new WaitUntil(() => task.IsCompleted);
+
+        if (task.IsFaulted)
         {
-            SceneManager.LoadScene(gameSceneName);
-            // OnSceneLoaded sẽ lo phần còn lại vì CurrentLevel đã có dữ liệu
+            Debug.LogError($"Lỗi tải Level {index}: {task.Exception}");
+            Debug.LogWarning("-> Chuyển sang load Offline.");
+            LoadLevelOffline(index);
         }
         else
         {
-            StartCoroutine(SetupLevelRoutine(CurrentLevel));
-        }
-    }
-
-    // --- PHẦN 2: TẢI VÀ XỬ LÝ DATA CLOUD ---
-
-    private IEnumerator DownloadAndPlayLevel(int index, bool waitForScene)
-    {
-        if (waitForScene) 
-        {
-            // Vòng lặp: Chừng nào chưa sang Scene "Game" thì đứng đợi ở đây
-            while (SceneManager.GetActiveScene().name != gameSceneName)
+            DocumentSnapshot snapshot = task.Result;
+            if (snapshot.Exists)
             {
-                yield return null; // Đợi sang frame tiếp theo kiểm tra lại
-            }
-
-            // Đã sang Scene Game rồi, nhưng đợi thêm 1 frame để Spawner kịp chạy hàm Awake()
-            yield return null; 
-        }
-
-        Debug.Log($"Đang tải Level {index} từ: {serverUrl + index}");
-        
-        using (UnityWebRequest request = UnityWebRequest.Get(serverUrl + index))
-        {
-            yield return request.SendWebRequest();
-
-            if (request.result != UnityWebRequest.Result.Success)
-            {
-                Debug.LogError("Lỗi mạng: " + request.error + " -> Chuyển sang load Offline.");
-                LoadLevelOffline(index); // Fallback về offline nếu mất mạng
+                Debug.Log("Đã tìm thấy Level trên mây!");
+                // Parse dữ liệu từ Firestore Dictionary sang LevelData
+                LevelData cloudData = ParseFirestoreData(snapshot, index);
+                CurrentLevel = cloudData;
+                StartCoroutine(SetupGameRoutine(CurrentLevel));
             }
             else
             {
-                string json = request.downloadHandler.text;
-                Debug.Log("Đã nhận JSON: " + json);
-                
-                // Parse JSON sang DTO
-                LevelDataDTO dto = JsonUtility.FromJson<LevelDataDTO>(json);
-                
-                // Convert DTO sang LevelData xịn
-                SetupGameFromCloudData(dto);
+                Debug.LogError($"Level {index} không tồn tại trên Firestore!");
+                LoadLevelOffline(index);
             }
         }
     }
 
-    private void SetupGameFromCloudData(LevelDataDTO dto)
+    // Hàm load offline dự phòng
+    private void LoadLevelOffline(int index)
     {
-        // Tạo LevelData ảo
-        LevelData runtimeLevelData = ScriptableObject.CreateInstance<LevelData>();
-        runtimeLevelData.levelIndex = dto.levelIndex;
-        runtimeLevelData.levelName = dto.levelName;
-        runtimeLevelData.startingResources = dto.startingResources;
-        runtimeLevelData.startingLives = dto.startingLives;
+        // Index mảng bắt đầu từ 0, nên cần trừ 1 nếu level bắt đầu từ 1
+        int arrayIndex = index - 1; 
 
-        // Map String -> Prefab
-        runtimeLevelData.mapPrefab = resourceConfig.GetMap(dto.mapId);
-        if (runtimeLevelData.mapPrefab == null) Debug.LogError($"Thiếu Map Prefab: {dto.mapId}");
-
-        // Map String -> Enum cho Waves
-        List<WaveData> realWaves = new List<WaveData>();
-        foreach (var waveDto in dto.wavesInThisLevel)
+        if (arrayIndex >= 0 && arrayIndex < offlineLevels.Length)
         {
-            WaveData w = ScriptableObject.CreateInstance<WaveData>();
-            w.timeBetweenGroups = waveDto.timeBetweenGroups;
-
-            List<EnemyGroup> realGroups = new List<EnemyGroup>();
-            foreach (var groupDto in waveDto.groupsInWave)
-            {
-                EnemyGroup g = new EnemyGroup();
-                g.count = groupDto.count;
-                g.spawnInterval = groupDto.spawnInterval;
-                
-                // Chuyển đổi Enum an toàn
-                if (Enum.TryParse(groupDto.enemyType, out EnemyType parsedType))
-                    g.enemyType = parsedType;
-                else
-                    g.enemyType = EnemyType.EnemyBase; // Default
-
-                realGroups.Add(g);
-            }
-            w.groupsInWave = realGroups.ToArray();
-            realWaves.Add(w);
+            Debug.Log($"Loading Offline Level {index}");
+            CurrentLevel = offlineLevels[arrayIndex];
+            StartCoroutine(SetupGameRoutine(CurrentLevel));
         }
-        runtimeLevelData.wavesInThisLevel = realWaves.ToArray();
-
-        // Gán vào biến chính và chạy game
-        CurrentLevel = runtimeLevelData;
-        StartCoroutine(SetupLevelRoutine(CurrentLevel));
+        else
+        {
+            Debug.LogError($"Không tìm thấy Level {index} trong cả Online và Offline!");
+        }
     }
 
-    // --- PHẦN 3: SETUP GAME LOGIC ---
+    #endregion
 
-    // Nhận LevelData trực tiếp thay vì Index
-    private IEnumerator SetupLevelRoutine(LevelData data)
+    #region DATA PARSING (QUAN TRỌNG)
+
+    // Chuyển đổi cục dữ liệu thô của Firestore thành ScriptableObject game hiểu được
+    private LevelData ParseFirestoreData(DocumentSnapshot doc, int index)
     {
-        yield return null; 
+        LevelData data = ScriptableObject.CreateInstance<LevelData>();
         
-        // 1. Chờ UI Controller (Fix lỗi Null)
-        float waitTime = 0f;
-        while (UIController.Instance == null && waitTime < 1f)
+        // 1. Thông tin cơ bản (Dùng TryGetValue cho an toàn)
+        data.levelIndex = index;
+        data.levelName = doc.GetValue<string>("levelName");
+        data.startingLives = doc.ContainsField("startingLives") ? Convert.ToInt32(doc.GetValue<long>("startingLives")) : 20;
+        data.startingResources = doc.ContainsField("startingResources") ? Convert.ToInt32(doc.GetValue<long>("startingResources")) : 500;
+        
+        // 2. Map Prefab
+        string mapId = doc.GetValue<string>("mapId");
+        data.mapPrefab = resourceConfig.GetMap(mapId);
+
+        // 3. Waves (Phần phức tạp nhất: Xử lý mảng lồng nhau)
+        List<WaveData> wavesList = new List<WaveData>();
+
+        if (doc.ContainsField("waves"))
         {
+            // Lấy list các object thô
+            List<object> wavesRaw = doc.GetValue<List<object>>("waves");
+
+            foreach (var waveObj in wavesRaw)
+            {
+                // Ép kiểu về Dictionary để đọc
+                Dictionary<string, object> waveDict = (Dictionary<string, object>)waveObj;
+                
+                WaveData wave = ScriptableObject.CreateInstance<WaveData>();
+                wave.timeBetweenGroups = Convert.ToSingle(waveDict["timeBetweenGroups"]);
+
+                // Xử lý Groups trong Wave
+                List<EnemyGroup> groupsList = new List<EnemyGroup>();
+                List<object> groupsRaw = (List<object>)waveDict["groups"];
+
+                foreach (var groupObj in groupsRaw)
+                {
+                    Dictionary<string, object> groupDict = (Dictionary<string, object>)groupObj;
+                    
+                    EnemyGroup group = new EnemyGroup();
+                    group.count = Convert.ToInt32(groupDict["count"]);
+                    group.spawnInterval = Convert.ToSingle(groupDict["spawnInterval"]);
+                    
+                    // Parse Enum EnemyType
+                    string typeStr = groupDict["enemyType"].ToString();
+                    if (Enum.TryParse(typeStr, out EnemyType type)) group.enemyType = type;
+                    else group.enemyType = EnemyType.EnemyBase;
+
+                    groupsList.Add(group);
+                }
+                wave.groupsInWave = groupsList.ToArray();
+                wavesList.Add(wave);
+            }
+        }
+        
+        data.wavesInThisLevel = wavesList.ToArray();
+        return data;
+    }
+
+    #endregion
+
+    #region GAME SETUP (GIỮ NGUYÊN)
+
+    private IEnumerator EnsureGameSceneActive()
+    {
+        if (SceneManager.GetActiveScene().name != gameSceneName)
+        {
+            SceneManager.LoadScene(gameSceneName);
+            while (SceneManager.GetActiveScene().name != gameSceneName) yield return null;
             yield return null;
-            waitTime += Time.deltaTime;
+        }
+    }
+
+    private IEnumerator SetupGameRoutine(LevelData data)
+    {
+        // Timeout chờ UI
+        float timeout = 2f;
+        while (UIController.Instance == null && timeout > 0)
+        {
+            timeout -= Time.deltaTime;
+            yield return null;
         }
 
         if (UIController.Instance != null) UIController.Instance.ResetGameUI();
 
-        // 2. Reset Map
+        // Setup Map
         if (_currentMapInstance != null) Destroy(_currentMapInstance);
-        if (data.mapPrefab != null)
-        {
-            _currentMapInstance = Instantiate(data.mapPrefab, _mapParent);
-        }
+        InitializeMapContainer();
+        if (data.mapPrefab != null) _currentMapInstance = Instantiate(data.mapPrefab, _mapParent);
 
-        // 3. Reset Stats
+        // Setup Stats
         if (GameManager.Instance != null)
-        {
             GameManager.Instance.InitLevelStats(data.startingResources, data.startingLives);
-        }
 
-        // 4. Setup Spawner
-        List<Path> pathsInNewMap = new List<Path>();
-        if (_currentMapInstance != null)
-            pathsInNewMap.AddRange(_currentMapInstance.GetComponentsInChildren<Path>());
+        // Setup Spawner
+        SetupSpawner(data);
 
-        if (Spawner.Instance != null)
-        {
-            Spawner.Instance.SetupLevel(data.wavesInThisLevel, pathsInNewMap);
-        }
-        else
-        {
-            Debug.LogError("Không tìm thấy Spawner instance!");
-        }
-        
         Time.timeScale = 1f;
-        Debug.Log($"Đã Setup xong Level: {data.levelName} (Index: {data.levelIndex})");
+        Debug.Log($"<color=green>Setup Level {data.levelIndex} Success!</color>");
     }
 
-    public void LoadNextLevel()
+    private void InitializeMapContainer()
     {
-        int nextIndex = CurrentLevelIndex + 1;
-        LoadLevelFromCloud(nextIndex); 
-    }
-
-    public void ReloadCurrentLevel()
-    {
-        // Load lại đúng level hiện tại
-        LoadLevelFromCloud(CurrentLevelIndex);
-    }
-
-    public void SaveProgress()
-    {
-        int currentLevel = CurrentLevelIndex;
-
-        // 1. Lưu Offline (PlayerPrefs) - Vẫn giữ để backup
-        int maxLevelLocal = PlayerPrefs.GetInt("MaxLevelReached", 0);
-        if (currentLevel >= maxLevelLocal)
+        if (_mapParent == null)
         {
-            PlayerPrefs.SetInt("MaxLevelReached", currentLevel + 1);
-            PlayerPrefs.Save();
-        }
-
-        // 2. Lưu Online (Gọi AuthManager) - Lưu level tiếp theo đã mở khóa
-        if (AuthManager.Instance != null && AuthManager.Instance.IsLoggedIn)
-        {
-            // Lưu ý: currentLevel là level vừa thắng -> mở khóa currentLevel + 1
-            AuthManager.Instance.SaveProgress(currentLevel + 1);
+            GameObject envObj = GameObject.Find(mapContainerName);
+            if (envObj != null) _mapParent = envObj.transform;
+            else _mapParent = new GameObject(mapContainerName).transform;
         }
     }
-}
 
-// --- DTO CLASSES ---
+    private void SetupSpawner(LevelData data)
+    {
+        if (Spawner.Instance == null) return;
+        List<Path> mapPaths = new List<Path>();
+        if (_currentMapInstance != null) mapPaths.AddRange(_currentMapInstance.GetComponentsInChildren<Path>());
+        Spawner.Instance.SetupLevel(data.wavesInThisLevel, mapPaths);
+    }
 
-[Serializable]
-public class LevelDataDTO
-{
-    public int levelIndex;
-    public string levelName;
-    public int startingResources;
-    public int startingLives;
-    public string mapId;
-    public List<WaveDTO> wavesInThisLevel;
-}
-
-[Serializable]
-public class WaveDTO
-{
-    public float timeBetweenGroups;
-    public List<EnemyGroupDTO> groupsInWave;
-}
-
-[Serializable]
-public class EnemyGroupDTO
-{
-    public string enemyType;
-    public int count;
-    public float spawnInterval;
+    #endregion
 }

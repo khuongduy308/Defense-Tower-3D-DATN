@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9134551179c23f845b2e4ac9890f79d5, type: 3}
   m_Name: CannonTower2
   m_EditorClassIdentifier: 
-  range: 4.5
+  range: 2.3
   shootInterval: 2.2
   projectileSpeed: 5
   projectileDuration: 2

@@ -1,24 +1,19 @@
 using UnityEngine;
-using UnityEngine.Networking;
-using System.Collections;
 using System.Collections.Generic;
-#if UNITY_EDITOR
-using UnityEditor; // Chỉ chạy trong Editor
-#endif
-
-public class LevelUploader : MonoBehaviour
-{
-
-}
 
 #if UNITY_EDITOR
+using UnityEditor;
+using Firebase.Firestore;
+using Firebase.Extensions;
+
+public class LevelUploader : MonoBehaviour { } // Giữ nguyên class rỗng để không lỗi file
+
 public class LevelUploadMenu
 {
-    // Đường dẫn Server
-    static string serverUrl = "http://localhost:3000/api/level";
+    // Tên Collection trên Firestore
+    static string collectionName = "levels";
 
-    // Tạo menu chuột phải vào file LevelData
-    [MenuItem("Assets/TowerDefense/Upload Level To Cloud")]
+    [MenuItem("Assets/TowerDefense/Upload Level To Firestore")]
     public static void UploadLevel()
     {
         // 1. Lấy file đang được chọn
@@ -30,79 +25,79 @@ public class LevelUploadMenu
             return;
         }
 
-        // 2. Chuyển đổi LevelData (Unity) -> LevelDataDTO (JSON)
-        LevelDataDTO dto = ConvertToDTO(selectedLevel);
-        string json = JsonUtility.ToJson(dto);
+        Debug.Log($"Đang chuẩn bị upload Level {selectedLevel.levelIndex}...");
 
-        // 3. Gửi lên Server
-        // Vì Editor không chạy Coroutine, ta dùng EditorCoroutine hoặc gửi Async đơn giản
-        UploadToServer(json);
+        // 2. Chuyển đổi dữ liệu sang Dictionary (Format Firestore thích nhất)
+        Dictionary<string, object> firestoreData = ConvertToFirestoreData(selectedLevel);
+
+        // 3. Gửi lên Firestore
+        UploadToFirestore(selectedLevel.levelIndex.ToString(), firestoreData);
     }
 
-    static void UploadToServer(string json)
+    static void UploadToFirestore(string docId, Dictionary<string, object> data)
     {
-        var request = new UnityWebRequest(serverUrl, "POST");
-        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
-        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-        request.downloadHandler = new DownloadHandlerBuffer();
-        request.SetRequestHeader("Content-Type", "application/json");
+        // Lấy instance database
+        FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
 
-        Debug.Log("Đang tải lên server...");
-
-        var operation = request.SendWebRequest();
-        
-        // Chờ request chạy xong (Kiểu thủ công trong Editor)
-        operation.completed += (op) => 
-        {
-            if (request.result == UnityWebRequest.Result.Success)
+        // Ghi dữ liệu vào Collection "levels", Document ID = "1", "2"...
+        // SetAsync sẽ ghi đè nếu đã tồn tại, hoặc tạo mới nếu chưa có
+        db.Collection(collectionName).Document(docId).SetAsync(data).ContinueWithOnMainThread(task => {
+            if (task.IsCompleted && !task.IsFaulted)
             {
-                Debug.Log($"<color=green>UPLOAD THÀNH CÔNG!</color> Server phản hồi: {request.downloadHandler.text}");
+                Debug.Log($"<color=green>UPLOAD THÀNH CÔNG!</color> Level {docId} đã lên mây.");
             }
             else
             {
-                Debug.LogError($"UPLOAD THẤT BẠI: {request.error}\n{request.downloadHandler.text}");
+                Debug.LogError($"UPLOAD THẤT BẠI: {task.Exception}");
             }
-            request.Dispose();
-        };
+        });
     }
 
-    // Hàm chuyển đổi dữ liệu ngược (Unity -> DTO)
-    static LevelDataDTO ConvertToDTO(LevelData data)
+    // Hàm chuyển đổi: Unity Object -> Dictionary<string, object>
+    // Firestore lưu mảng dưới dạng List<object>, và map dưới dạng Dictionary<string, object>
+    static Dictionary<string, object> ConvertToFirestoreData(LevelData data)
     {
-        LevelDataDTO dto = new LevelDataDTO();
-        dto.levelIndex = data.levelIndex;
-        dto.levelName = data.levelName;
-        dto.startingResources = data.startingResources;
-        dto.startingLives = data.startingLives;
-        
-        // Lấy tên Map Prefab làm mapId
-        if (data.mapPrefab != null)
-            dto.mapId = data.mapPrefab.name; 
-        else 
-            dto.mapId = "UnknownMap";
+        // 1. Xử lý Map ID (Lấy tên Prefab)
+        string mapId = "UnknownMap";
+        if (data.mapPrefab != null) mapId = data.mapPrefab.name;
 
-        dto.wavesInThisLevel = new List<WaveDTO>();
+        // 2. Xử lý Waves (Mảng lồng nhau)
+        List<object> wavesList = new List<object>();
 
         foreach (var wave in data.wavesInThisLevel)
         {
-            WaveDTO wDto = new WaveDTO();
-            wDto.timeBetweenGroups = wave.timeBetweenGroups;
-            wDto.groupsInWave = new List<EnemyGroupDTO>();
+            // Tạo Dictionary cho từng Wave
+            var waveDict = new Dictionary<string, object>();
+            waveDict["timeBetweenGroups"] = wave.timeBetweenGroups;
 
+            // Xử lý Groups trong Wave
+            List<object> groupsList = new List<object>();
             foreach (var group in wave.groupsInWave)
             {
-                EnemyGroupDTO gDto = new EnemyGroupDTO();
-                gDto.count = group.count;
-                gDto.spawnInterval = group.spawnInterval;
-                // Chuyển Enum thành String
-                gDto.enemyType = group.enemyType.ToString(); 
+                var groupDict = new Dictionary<string, object>();
+                groupDict["count"] = group.count;
+                groupDict["spawnInterval"] = group.spawnInterval;
+                groupDict["enemyType"] = group.enemyType.ToString(); // Enum -> String
 
-                wDto.groupsInWave.Add(gDto);
+                groupsList.Add(groupDict);
             }
-            dto.wavesInThisLevel.Add(wDto);
+
+            waveDict["groups"] = groupsList; // Gán list group vào wave
+            wavesList.Add(waveDict);         // Gán wave vào list waves
         }
 
-        return dto;
+        // 3. Đóng gói Level hoàn chỉnh
+        Dictionary<string, object> levelData = new Dictionary<string, object>
+        {
+            { "levelIndex", data.levelIndex },
+            { "levelName", data.levelName },
+            { "startingResources", data.startingResources },
+            { "startingLives", data.startingLives },
+            { "mapId", mapId },
+            { "waves", wavesList } // Mảng waves đã xử lý
+        };
+
+        return levelData;
     }
 }
 #endif

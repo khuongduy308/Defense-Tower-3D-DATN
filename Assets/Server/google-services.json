@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "795222669468-cv7hstii0kknlc3juijgrl5p13fgt631.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.Duy.TowerDefense",
+            "certificate_hash": "8d257fafd9fb88231c59f817bc1d71ad18a93205"
+          }
+        },
+        {
           "client_id": "795222669468-fktrmld1g2jjhjtfvn4kvjsprt2rl3qb.apps.googleusercontent.com",
           "client_type": 3
         }

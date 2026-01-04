@@ -1,88 +1,89 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.SceneManagement;
 
 public class IntroController : MonoBehaviour
 {
     [Header("UI Panels")]
-    public GameObject welcomePanel; // Màn hình "Tap to Start"
-    public GameObject authPanel;    // Màn hình Đăng nhập
+    public GameObject welcomePanel; 
+    public GameObject authPanel;    
 
-    [Header("Auth UI Inputs")]
-    public TMP_InputField usernameInput;
-    public TMP_InputField passwordInput;
+    [Header("Inputs")]
+    public TMP_InputField emailInput;
+    public TMP_InputField passInput;
+    public TMP_InputField nameInput;
     public TMP_Text messageText;         
+
+    [Header("Buttons")]
+    public GameObject loginBtn;      
+    public GameObject registerBtn;   
+    public GameObject toggleText;    
+
+    private bool isLoginMode = true; 
 
     private void Start()
     {
         welcomePanel.SetActive(true);
         authPanel.SetActive(false);
-        
-        // Kiểm tra nếu đã từng đăng nhập (lưu token) thì vào luôn MainMenu (Nâng cao)
-        //...
+        if(messageText) messageText.gameObject.SetActive(false);
     }
 
-    private void OnEnable()
-    {
-        // Lắng nghe sự kiện từ AuthManager trả về
-        AuthManager.OnAuthActionFinished += UpdateMessage;
-    }
+    private void OnEnable() => AuthManager.OnAuthActionFinished += UpdateMessage;
+    private void OnDisable() => AuthManager.OnAuthActionFinished -= UpdateMessage;
 
-    private void OnDisable()
+    private void UpdateMessage(bool isSuccess, string msg)
     {
-        AuthManager.OnAuthActionFinished -= UpdateMessage;
-    }
-
-    // Hàm nhận tin nhắn từ AuthManager để hiển thị lên màn hình
-    private void UpdateMessage(bool isLoginSuccess, string msg)
-    {
+        if(messageText == null) return;
         messageText.gameObject.SetActive(true);
         messageText.text = msg;
-        messageText.color = isLoginSuccess ? Color.green : (msg.Contains("thành công") ? Color.green : Color.red);
+        messageText.color = isSuccess ? Color.green : Color.red;
     }
 
     public void OnTapToStart()
     {
-        welcomePanel.SetActive(true);
+        welcomePanel.SetActive(false);
         authPanel.SetActive(true);
+        SwitchMode(true); 
+    }
+
+    public void OnToggleModeClick()
+    {
+        isLoginMode = !isLoginMode;
+        SwitchMode(isLoginMode);
+    }
+
+    void SwitchMode(bool isLogin)
+    {
+        isLoginMode = isLogin;
+        nameInput.gameObject.SetActive(!isLogin); // Ẩn hiện ô nhập tên
+        loginBtn.SetActive(isLogin);
+        registerBtn.SetActive(!isLogin);
+        
+        TMP_Text txt = toggleText.GetComponentInChildren<TMP_Text>();
+        if(txt) txt.text = isLogin ? "Chưa có tài khoản? <b>Đăng ký</b>" : "Đã có tài khoản? <b>Đăng nhập</b>";
+        
         messageText.gameObject.SetActive(false);
     }
 
-    // --- CÁC HÀM GẮN VÀO NÚT BẤM (BUTTON) ---
+    // --- SỰ KIỆN NÚT BẤM ---
 
-    public void OnClickLogin()
+    public void OnRegisterBtnClick()
     {
-        if (string.IsNullOrEmpty(usernameInput.text) || string.IsNullOrEmpty(passwordInput.text))
+        string name = nameInput.text;
+        if(string.IsNullOrEmpty(name) && !isLoginMode) 
         {
-            messageText.text = "Vui lòng nhập đủ thông tin!";
-            messageText.color = Color.red;
+            UpdateMessage(false, "Vui lòng nhập tên hiển thị!");
             return;
         }
-        
-        messageText.text = "Đang xử lý...";
-        messageText.color = Color.yellow;
-        
-        // Gọi sang Logic Manager
-        AuthManager.Instance.RequestLogin(usernameInput.text, passwordInput.text);
+        AuthManager.Instance.Register(emailInput.text, passInput.text, name);
     }
 
-    public void OnClickRegister()
+    public void OnLoginBtnClick()
     {
-        if (string.IsNullOrEmpty(usernameInput.text) || string.IsNullOrEmpty(passwordInput.text))
-        {
-            messageText.text = "Vui lòng nhập đủ thông tin!";
-            return;
-        }
-
-        messageText.text = "Đang xử lý...";
-        
-        // Gọi sang Logic Manager
-        AuthManager.Instance.RequestRegister(usernameInput.text, passwordInput.text);
+        AuthManager.Instance.Login(emailInput.text, passInput.text);
     }
 
-    public void OnClickGoogleLogin()
+    public void OnForgotPasswordClick()
     {
-        messageText.text = "Đang kết nối Google...";
-        AuthManager.Instance.OnGoogleLoginBtnClicked();
+        AuthManager.Instance.ResetPassword(emailInput.text);
     }
 }

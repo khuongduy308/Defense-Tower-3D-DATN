@@ -1,249 +1,191 @@
 using UnityEngine;
-using UnityEngine.Networking;
-using System.Collections;
-using System.Text;
+using Firebase;
+using Firebase.Auth;
+using Firebase.Firestore; // Thư viện lưu trữ dữ liệu
+using Firebase.Extensions;
+using System.Collections.Generic; // Để dùng Dictionary
 using UnityEngine.SceneManagement;
-using Google;
-using System.Threading.Tasks;  // Để xử lý tác vụ bất đồng bộ
+using System.Collections;
 
 public class AuthManager : MonoBehaviour
 {
     public static AuthManager Instance { get; private set; }
 
-    [Header("UI References")]
-    // public GameObject authPanel;
-    // public TMP_InputField usernameInput;
-    // public TMP_InputField passwordInput;
-    // public TMP_Text messageText;
-    
-    [Header("Server Config")]
-    public string baseUrl = "http://localhost:3000/api"; 
+    [Header("User Info")]
+    public bool IsLoggedIn = false;
+    public string CurrentUserId;
+    public string CurrentUsername;
+    public int MaxLevelReached = 1; // Mặc định level 1
 
-    public string webClientId = "795222669468-fktrmld1g2jjhjtfvn4kvjsprt2rl3qb.apps.googleusercontent.com";
-
-    // --- LƯU TRẠNG THÁI NGƯỜI CHƠI ---
-    public bool IsLoggedIn { get; private set; } = false;
-    public string CurrentUserId { get; private set; }
-    public int MaxLevelReached { get; private set; } = 0;
-    public string LastMessage { get; private set; }
     public static event System.Action<bool, string> OnAuthActionFinished;
-    private GoogleSignInConfiguration configuration;
+
+    FirebaseAuth auth;
+    FirebaseFirestore db; // Biến quản lý Database
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            // transform.SetParent(null);
             DontDestroyOnLoad(gameObject);
-            SetupGoogle();
+            InitializeFirebase();
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+        else Destroy(gameObject);
     }
 
-    void SetupGoogle()
+    void InitializeFirebase()
     {
-        configuration = new GoogleSignInConfiguration
-        {
-            WebClientId = webClientId,
-            RequestIdToken = true, // Quan trọng: Phải có cái này mới lấy được Token gửi cho Server
-            RequestEmail = true 
-        };
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
+            if (task.Result == DependencyStatus.Available)
+            {
+                auth = FirebaseAuth.DefaultInstance;
+                db = FirebaseFirestore.DefaultInstance; // Khởi tạo Firestore
+
+                // Kiểm tra đăng nhập tự động
+                if (auth.CurrentUser != null)
+                {
+                    auth.CurrentUser.ReloadAsync().ContinueWithOnMainThread(reloadTask => {
+                        if (auth.CurrentUser.IsEmailVerified)
+                        {
+                            Debug.Log("Auto Login thành công!");
+                            OnLoginSuccess(auth.CurrentUser);
+                        }
+                    });
+                }
+            }
+            else Debug.LogError("Lỗi Firebase: " + task.Result);
+        });
     }
 
-    public void OnGoogleLoginBtnClicked()
-    {
-        Debug.Log("Đang mở bảng chọn Google...");
-        
-        GoogleSignIn.Configuration = configuration;
-        GoogleSignIn.Configuration.UseGameSignIn = false;
-        GoogleSignIn.Configuration.RequestIdToken = true;
+    // --- CÁC HÀM XỬ LÝ AUTH (Đăng ký/Đăng nhập) ---
 
-        GoogleSignIn.DefaultInstance.SignIn().ContinueWith(OnGoogleAuthFinished);
-    }
-
-    void OnGoogleAuthFinished(Task<GoogleSignInUser> task)
+    public void Register(string email, string password, string username)
     {
-        if (task.IsFaulted || task.IsCanceled)
-        {
-            Debug.LogError("Lỗi Google Sign-In: " + task.Exception);
-            // Vì đang ở luồng phụ, muốn update UI phải dùng MainThreadDispatcher (hoặc cách đơn giản dưới đây)
-             RunOnMainThread(() => OnAuthActionFinished?.Invoke(false, "Đăng nhập Google thất bại!"));
-        }
-        else
-        {
-            // Thành công! Lấy được Token
-            string idToken = task.Result.IdToken;
-            string email = task.Result.Email;
-            Debug.Log("Google OK! Token: " + idToken.Substring(0, 20) + "..."); // In thử 1 đoạn
+        auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task => {
+            if (task.IsFaulted)
+            {
+                OnAuthActionFinished?.Invoke(false, "Lỗi ĐK: " + task.Exception?.InnerException?.Message);
+                return;
+            }
+
+            FirebaseUser newUser = task.Result.User;
+            UserProfile profile = new UserProfile { DisplayName = username };
             
-            // Gửi Token này lên Server Node.js của mình
-            RunOnMainThread(() => StartCoroutine(ServerGoogleLogin(idToken)));
-        }
+            newUser.UpdateUserProfileAsync(profile).ContinueWithOnMainThread(updateTask => {
+                newUser.SendEmailVerificationAsync();
+                OnAuthActionFinished?.Invoke(true, "Đăng ký thành công! Hãy kiểm tra Email để kích hoạt.");
+                auth.SignOut(); // Bắt đăng nhập lại
+            });
+        });
     }
 
-    IEnumerator ServerGoogleLogin(string idToken)
+    public void Login(string email, string password)
     {
-        // Tạo JSON: { "idToken": "..." }
-        string json = JsonUtility.ToJson(new GoogleLoginData { idToken = idToken });
-
-        using (UnityWebRequest req = CreateRequest(baseUrl + "/google-login", json))
-        {
-            yield return req.SendWebRequest();
-
-            if (req.result == UnityWebRequest.Result.Success)
+        auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task => {
+            if (task.IsFaulted)
             {
-                // Server Node.js xác nhận OK
-                LoginResponse res = JsonUtility.FromJson<LoginResponse>(req.downloadHandler.text);
-                
-                IsLoggedIn = true;
-                CurrentUserId = res.userId;
-                MaxLevelReached = res.maxLevel;
-                
-                // Lưu lại
-                if (res.maxLevel > PlayerPrefs.GetInt("MaxLevelReached", 0))
-                {
-                    PlayerPrefs.SetInt("MaxLevelReached", res.maxLevel);
-                    PlayerPrefs.Save();
-                }
+                OnAuthActionFinished?.Invoke(false, "Sai email hoặc mật khẩu!");
+                return;
+            }
 
-                OnAuthActionFinished?.Invoke(true, $"Xin chào {res.username}!");
-                
-                yield return new WaitForSeconds(1f);
-                // Dùng Loader chuyển cảnh (như bài trước đã làm)
-                if (typeof(Loader) != null) Loader.Load("MainMenu"); 
-                else SceneManager.LoadScene("MainMenu");
+            FirebaseUser user = task.Result.User;
+            if (user.IsEmailVerified)
+            {
+                OnLoginSuccess(user);
             }
             else
             {
-                string errorMsg = "Lỗi Server: " + req.downloadHandler.text;
-                OnAuthActionFinished?.Invoke(false, errorMsg);
+                OnAuthActionFinished?.Invoke(false, "Email chưa kích hoạt! Vui lòng kiểm tra hòm thư.");
+                auth.SignOut();
             }
-        }
+        });
     }
 
-    // Helper để chạy code từ luồng phụ về luồng chính (Unity không cho update UI từ luồng khác)
-    void RunOnMainThread(System.Action action)
+    // Hàm chung xử lý khi Login thành công (để đỡ viết lặp lại)
+    void OnLoginSuccess(FirebaseUser user)
     {
-        UnityMainThreadDispatcher.Instance().Enqueue(action); 
+        IsLoggedIn = true;
+        CurrentUserId = user.UserId;
+        CurrentUsername = user.DisplayName;
+        
+        // TẢI DATA VỀ NGAY LẬP TỨC
+        LoadUserData(); 
     }
 
-    public void RequestRegister(string user, string pass) => StartCoroutine(AuthRequest("/register", user, pass));
-    public void RequestLogin(string user, string pass) => StartCoroutine(AuthRequest("/login", user, pass));
-
-    IEnumerator AuthRequest(string endpoint, string user, string pass)
+    public void ResetPassword(string email)
     {
-        AuthData data = new AuthData { username = user, password = pass };
-        string json = JsonUtility.ToJson(data);
-
-        using (UnityWebRequest req = CreateRequest(baseUrl + endpoint, json))
-        {
-            yield return req.SendWebRequest();
-
-            if (req.result == UnityWebRequest.Result.Success)
-            {
-                if (endpoint == "/login")
-                {
-                    LoginResponse res = JsonUtility.FromJson<LoginResponse>(req.downloadHandler.text);
-                    IsLoggedIn = true;
-                    CurrentUserId = res.userId;
-                    MaxLevelReached = res.maxLevel;
-                    
-                    // Logic cập nhật PlayerPrefs
-                    if (res.maxLevel > PlayerPrefs.GetInt("MaxLevelReached", 0))
-                    {
-                        PlayerPrefs.SetInt("MaxLevelReached", res.maxLevel);
-                        PlayerPrefs.Save();
-                    }
-
-                    // Bắn tin hiệu thành công về cho IntroController
-                    OnAuthActionFinished?.Invoke(true, $"Welcome {res.username}!");
-                    
-                    yield return new WaitForSeconds(1f);
-                    Loader.Load("MainMenu");
-                }
-                else
-                {
-                    // Đăng ký thành công
-                    OnAuthActionFinished?.Invoke(false, "Done Register! Please Login.");
-                }
-            }
-            else
-            {
-                // Thất bại (Lỗi mạng hoặc sai pass)
-                string errorMsg = "Lỗi: " + req.downloadHandler.text;
-                OnAuthActionFinished?.Invoke(false, errorMsg);
-            }
-        }
-    }
-
-    // ... (Các hàm SaveProgress, Logout, CreateRequest giữ nguyên) ...
-    // Nhớ copy lại các hàm đó vào đây nhé
-     public void SaveProgress(int levelIndex)
-    {
-        if (IsLoggedIn && levelIndex > MaxLevelReached)
-        {
-            MaxLevelReached = levelIndex; // Cập nhật RAM
-            StartCoroutine(SaveProgressRoutine(levelIndex)); // Gửi lên Server
-        }
-    }
-
-    IEnumerator SaveProgressRoutine(int levelIndex)
-    {
-        SaveData data = new SaveData { userId = CurrentUserId, levelIndex = levelIndex };
-        string json = JsonUtility.ToJson(data);
-        using (UnityWebRequest req = CreateRequest(baseUrl + "/save-progress", json))
-        {
-            yield return req.SendWebRequest();
-        }
+        if (string.IsNullOrEmpty(email)) return;
+        auth.SendPasswordResetEmailAsync(email).ContinueWithOnMainThread(task => {
+            OnAuthActionFinished?.Invoke(!task.IsFaulted, task.IsFaulted ? "Lỗi gửi mail" : "Đã gửi mail reset!");
+        });
     }
 
     public void Logout()
     {
+        if (auth != null) auth.SignOut();
         IsLoggedIn = false;
-        CurrentUserId = "";
-        MaxLevelReached = 0;
-        PlayerPrefs.DeleteKey("MaxLevelReached");
-        PlayerPrefs.Save();
+        MaxLevelReached = 1; // Reset data tạm
         SceneManager.LoadScene("IntroScene");
     }
 
-    UnityWebRequest CreateRequest(string url, string json)
+    // --- CÁC HÀM LƯU TRỮ DỮ LIỆU (FIRESTORE) ---
+
+    public void LoadUserData()
     {
-        var req = new UnityWebRequest(url, "POST");
-        byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
-        req.uploadHandler = new UploadHandlerRaw(bodyRaw);
-        req.downloadHandler = new DownloadHandlerBuffer();
-        req.SetRequestHeader("Content-Type", "application/json");
-        return req;
+        if (auth.CurrentUser == null) return;
+        
+        // Tìm file dữ liệu của user này
+        DocumentReference docRef = db.Collection("users").Document(CurrentUserId);
+
+        docRef.GetSnapshotAsync().ContinueWithOnMainThread(task => {
+            if (task.IsFaulted) return;
+
+            DocumentSnapshot snapshot = task.Result;
+            if (snapshot.Exists && snapshot.ContainsField("maxLevel"))
+            {
+                // Dữ liệu Firestore trả về dạng Long, cần ép kiểu về Int
+                MaxLevelReached = System.Convert.ToInt32(snapshot.GetValue<long>("maxLevel"));
+                Debug.Log($"Đã tải data: Level {MaxLevelReached}");
+            }
+            else
+            {
+                // User mới chưa có file save -> Tạo file mới level 1
+                SaveLevelData(1);
+            }
+
+            // Báo cho UI biết là xong xuôi hết rồi -> Vào game thôi
+            OnAuthActionFinished?.Invoke(true, $"Xin chào {CurrentUsername}!");
+            StartCoroutine(LoadGameDelay());
+        });
+    }
+
+    // Hàm này gọi khi thắng game
+    public void SaveLevelData(int level)
+    {
+        if (auth.CurrentUser == null) return;
+
+        // Chỉ lưu nếu kỷ lục mới cao hơn kỷ lục cũ
+        if (level >= MaxLevelReached)
+        {
+            MaxLevelReached = level; // Cập nhật RAM
+
+            // Đóng gói dữ liệu gửi lên mây
+            Dictionary<string, object> data = new Dictionary<string, object>
+            {
+                { "username", CurrentUsername },
+                { "maxLevel", level },
+                { "lastLogin", FieldValue.ServerTimestamp }
+            };
+
+            // Ghi đè (Merge) dữ liệu
+            db.Collection("users").Document(CurrentUserId).SetAsync(data, SetOptions.MergeAll);
+            Debug.Log("Đã lưu Level lên mây: " + level);
+        }
+    }
+
+    IEnumerator LoadGameDelay()
+    {
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene("MainMenu"); 
     }
 }
-
-[System.Serializable]
-public class AuthData 
-{ 
-    public string username; 
-    public string password; 
-}
-
-[System.Serializable]
-public class LoginResponse 
-{ 
-    public string message; 
-    public string userId; 
-    public string username; 
-    public int maxLevel; 
-}
-
-[System.Serializable]
-public class SaveData 
-{ 
-    public string userId; 
-    public int levelIndex; 
-}
-
-[System.Serializable]
-public class GoogleLoginData { public string idToken; }
