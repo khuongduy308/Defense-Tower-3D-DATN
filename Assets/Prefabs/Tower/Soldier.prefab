@@ -102,7 +102,8 @@ MonoBehaviour:
   moveSpeed: 2
   attackRange: 0.5
   attackInterval: 1
-  aggroRange: 1
+  aggroRange: 2
+  maxChaseDistance: 3
   maxHealth: 100
   healthBar: {fileID: 428587666253317264}
 --- !u!58 &6417521462564481288

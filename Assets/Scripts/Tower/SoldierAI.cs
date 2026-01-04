@@ -6,11 +6,12 @@ using UnityEngine.UI;
 public class SoldierAI : MonoBehaviour
 {
     [Header("Soldier Stats")]
-    [SerializeField] private float moveSpeed = 2f;
+    [SerializeField] private float moveSpeed;
     private float _damage;
-    [SerializeField] private float attackRange = 0.5f; // Khoảng cách lính đứng để đánh
-    [SerializeField] private float attackInterval = 1f; // Tốc độ đánh
-    [SerializeField] private float aggroRange = 2f; // Tầm lính phát hiện quái
+    [SerializeField] private float attackRange; // Khoảng cách lính đứng để đánh
+    [SerializeField] private float attackInterval; // Tốc độ đánh
+    [SerializeField] private float aggroRange; // Tầm lính phát hiện quái
+    [SerializeField] private float maxChaseDistance;
     [SerializeField] private int maxHealth = 100;
     [SerializeField] private Transform healthBar;
     private Vector3 _healthBarOriginalScale;
@@ -75,6 +76,27 @@ public class SoldierAI : MonoBehaviour
         _currentHealth = maxHealth;
         // Reset trạng thái
         _currentState = State.Patrolling;
+        _currentTarget = null;
+
+        // 1. Xóa danh sách cũ
+        _enemiesInRange.Clear();
+
+        // 2. --- QUÉT THỦ CÔNG NGAY LẬP TỨC ---
+        // Vì vừa hồi sinh nên Trigger chưa kịp bắt, ta phải tự đi tìm
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, aggroRange);
+        foreach (var hit in hits)
+        {
+            if (hit.CompareTag("Enemy"))
+            {
+                Enemy e = hit.GetComponent<Enemy>();
+                // Chỉ thêm nếu quái còn sống
+                if (e != null && e.gameObject.activeInHierarchy)
+                {
+                    _enemiesInRange.Add(e);
+                }
+            }
+        }
+
         UpdateHealthBar();
     }
 
@@ -131,18 +153,25 @@ public class SoldierAI : MonoBehaviour
             return;
         }
 
-        float distance = Vector2.Distance(transform.position, _currentTarget.transform.position);
+        float distToPost = Vector2.Distance(transform.position, _guardPost);
 
         // 1. Nếu quái ra khỏi tầm "aggro", bỏ qua nó
-        if (distance > aggroRange)
+        if (distToPost > aggroRange)
         {
             _currentTarget = null;
             _currentState = State.Patrolling;
             return;
         }
 
+        float distToEnemy = Vector2.Distance(transform.position, _currentTarget.transform.position);
         // 2. Nếu quái trong tầm đánh, chuyển sang đánh
-        if (distance <= attackRange)
+        if (distToEnemy > aggroRange)
+        {
+            _currentTarget = null;
+            _currentState = State.Patrolling;
+            return;
+        }
+        if (distToEnemy <= attackRange)
         {
             _currentState = State.Attacking;
             return;
@@ -163,13 +192,12 @@ public class SoldierAI : MonoBehaviour
         // Báo cho quái vật "dừng lại"
         _currentTarget.SetEngaged(true, this);
 
-        float distance = Vector2.Distance(transform.position, _currentTarget.transform.position);
-        
-        // Nếu quái chạy ra khỏi tầm đánh, đuổi theo
-        if (distance > attackRange)
+        float distToPost = Vector2.Distance(transform.position, _guardPost);
+        if (distToPost > maxChaseDistance)
         {
-            _currentTarget.SetEngaged(false, this); // "Thả" quái ra
-            _currentState = State.Chasing;
+            _currentTarget.SetEngaged(false, this); // Nhớ thả quái ra cho nó đi
+            _currentTarget = null;
+            _currentState = State.Patrolling;
             return;
         }
 
@@ -302,7 +330,7 @@ public class SoldierAI : MonoBehaviour
         if (healthBar == null) return;
         float healthPercent = (float)_currentHealth / maxHealth;
         healthPercent = Mathf.Clamp01(healthPercent);
-        
+
         Vector3 scale = _healthBarOriginalScale;
         scale.x = _healthBarOriginalScale.x * healthPercent;
         healthBar.localScale = scale;

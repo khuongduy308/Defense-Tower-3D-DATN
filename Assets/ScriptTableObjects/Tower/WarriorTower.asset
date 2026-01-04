@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9134551179c23f845b2e4ac9890f79d5, type: 3}
   m_Name: WarriorTower
   m_EditorClassIdentifier: 
-  range: 4
+  range: 3
   shootInterval: 0
   projectileSpeed: 0
   projectileDuration: 0
   projectileSize: 0
-  damage: 20
+  damage: 10
   cost: 70
   sprite: {fileID: 9078385209937823399, guid: f922aa84f2ac3f6469dce5113b66ccc5, type: 3}
   prefab: {fileID: 6722901716799460542, guid: 6bf71166c8d372844a5cad29a3d72a66, type: 3}
