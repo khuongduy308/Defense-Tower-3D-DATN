@@ -40,10 +40,11 @@ public class LevelManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    private void Start()
+    public void InitializeFirestore()
     {
-        // Khởi tạo DB một lần duy nhất
+        // Hàm này chỉ được gọi khi AuthManager báo là "Firebase đã OK"
         db = FirebaseFirestore.DefaultInstance;
+        Debug.Log("🔥 LevelManager: Firestore đã kết nối thành công!");
     }
 
     private void OnEnable() => SceneManager.sceneLoaded += OnSceneLoaded;
@@ -138,7 +139,7 @@ public class LevelManager : MonoBehaviour
     private void LoadLevelOffline(int index)
     {
         // Index mảng bắt đầu từ 0, nên cần trừ 1 nếu level bắt đầu từ 1
-        int arrayIndex = index - 1; 
+        int arrayIndex = index; 
 
         if (arrayIndex >= 0 && arrayIndex < offlineLevels.Length)
         {
@@ -254,7 +255,22 @@ public class LevelManager : MonoBehaviour
         SetupSpawner(data);
 
         Time.timeScale = 1f;
-        Debug.Log($"<color=green>Setup Level {data.levelIndex} Success!</color>");
+        
+        if(data.levelIndex == 0)
+        {
+            // Hiện tutorial nếu là level đầu tiên
+            if (UIController.Instance != null)
+            {
+                UIController.Instance.ShowTutorialAuto(() => {
+                if (Spawner.Instance != null) Spawner.Instance.StartSpawning();
+            });
+            }
+        }
+        else
+        {
+            Debug.Log($"Level {data.levelIndex}: Start Spawning immediately.");
+            if (Spawner.Instance != null) Spawner.Instance.StartSpawning();
+        }
     }
 
     private void InitializeMapContainer()

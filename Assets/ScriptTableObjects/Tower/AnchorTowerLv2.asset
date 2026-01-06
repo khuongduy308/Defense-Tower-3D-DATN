@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   range: 3.2
   shootInterval: 0.8
-  projectileSpeed: 12
-  projectileDuration: 2
+  projectileSpeed: 7
+  projectileDuration: 5
   projectileSize: 1
-  damage: 35
+  damage: 32
   cost: 150
   sprite: {fileID: -4311798649047596183, guid: 30841b9cf28649a48989314eb83efeea, type: 3}
   prefab: {fileID: 6102952699891265720, guid: 1f82a4e6bbfbbd042a370c1733e385c1, type: 3}

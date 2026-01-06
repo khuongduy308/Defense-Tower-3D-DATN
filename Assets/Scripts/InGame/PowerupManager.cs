@@ -86,6 +86,7 @@ public class PowerupManager : MonoBehaviour
         if (explosionVFX != null)
         {
             Instantiate(explosionVFX, position, Quaternion.identity);
+            AudioManager.Instance.PlaySFX("No");
         }
 
         // 2. Tìm tất cả quái vật trong tầm ảnh hưởng
@@ -121,12 +122,20 @@ public class PowerupManager : MonoBehaviour
 
     private bool IsPointerOverUI()
     {
-        // Nếu là cảm ứng
         if (Input.touchCount > 0)
         {
-            return EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId);
+            Touch touch = Input.GetTouch(0);
+            // Chỉ kiểm tra khi ngón tay bắt đầu chạm (Began) để chặn ngay lập tức
+            if (touch.phase == TouchPhase.Began)
+            {
+                if (EventSystem.current.IsPointerOverGameObject(touch.fingerId)) return true;
+            }
         }
-        // Nếu là chuột
-        return EventSystem.current.IsPointerOverGameObject();
+
+        // 2. Kiểm tra chuột (Editor / PC)
+        // Lưu ý: Trên mobile Unity đôi khi vẫn hiểu touch là mouse, nên dòng này vẫn cần thiết
+        if (EventSystem.current.IsPointerOverGameObject()) return true;
+
+        return false;
     }
 }

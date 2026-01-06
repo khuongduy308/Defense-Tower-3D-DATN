@@ -41,6 +41,16 @@ public class AuthManager : MonoBehaviour
                 auth = FirebaseAuth.DefaultInstance;
                 db = FirebaseFirestore.DefaultInstance; // Khởi tạo Firestore
 
+                if (LevelManager.Instance != null)
+                {
+                    // Gọi hàm này để LevelManager lấy instance Firestore an toàn
+                    LevelManager.Instance.InitializeFirestore(); 
+                }
+                else
+                {
+                    Debug.LogError("⚠️ Cảnh báo: Không tìm thấy LevelManager trong Scene!");
+                }
+
                 // Kiểm tra đăng nhập tự động
                 if (auth.CurrentUser != null)
                 {

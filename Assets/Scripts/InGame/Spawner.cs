@@ -146,56 +146,65 @@ public class Spawner : MonoBehaviour
     }
 
     public void SetupLevel(WaveData[] levelWaves, List<Path> mapPaths)
-{
-    _wavesForThisLevel = levelWaves;
-
-    allPaths = mapPaths;
-
-    // 1. Reset chỉ số Wave
-    _currentWaveIndex = 0;
-    
-    // 2. Reset các chỉ số trong Wave
-    _currentGroupIndex = 0;
-    _enemiesSpawnedInGroup = 0;
-    _spawnCounter = 0;
-    _enemiesRemoved = 0;
-    
-    _isBetweenWaves = false;
-
-    if (allPaths == null || allPaths.Count == 0)
     {
-        Debug.LogError("Spawner: Level này không tìm thấy Path (đường đi) nào cả!");
-        _isSpawningActive = false;
-        return;
-    }
+        _wavesForThisLevel = levelWaves;
 
-    // 3. Kiểm tra an toàn và kích hoạt
-    if (_wavesForThisLevel != null && _wavesForThisLevel.Length > 0)
-    {
-        _isSpawningActive = true;
+        allPaths = mapPaths;
+
+        // 1. Reset chỉ số Wave
+        _currentWaveIndex = 0;
         
-        // Báo hiệu UI cập nhật Wave 1
-        OnWaveChanged?.Invoke(1); 
+        // 2. Reset các chỉ số trong Wave
+        _currentGroupIndex = 0;
+        _enemiesSpawnedInGroup = 0;
+        _spawnCounter = 0;
+        _enemiesRemoved = 0;
+        _isBetweenWaves = false;
 
-        // Lấy thông tin Wave đầu tiên để setup timer ban đầu
-        WaveData firstWave = _wavesForThisLevel[0];
-        if (firstWave.groupsInWave != null && firstWave.groupsInWave.Length > 0)
+        _isSpawningActive = false;
+            
+
+        if (allPaths == null || allPaths.Count == 0)
         {
-            // Timer khởi điểm bằng thời gian giãn cách của nhóm quái đầu tiên
-            _spawnTimer = firstWave.groupsInWave[0].spawnInterval;
+            Debug.LogError("Spawner: Level này không tìm thấy Path (đường đi) nào cả!");
+            _isSpawningActive = false;
+            return;
+        }
+
+        // 3. Kiểm tra an toàn và kích hoạt
+        if (_wavesForThisLevel != null && _wavesForThisLevel.Length > 0)
+        {
+            
+            // Báo hiệu UI cập nhật Wave 1
+            OnWaveChanged?.Invoke(1); 
+
+            // Lấy thông tin Wave đầu tiên để setup timer ban đầu
+            WaveData firstWave = _wavesForThisLevel[0];
+            if (firstWave.groupsInWave != null && firstWave.groupsInWave.Length > 0)
+            {
+                // Timer khởi điểm bằng thời gian giãn cách của nhóm quái đầu tiên
+                _spawnTimer = firstWave.groupsInWave[0].spawnInterval;
+            }
+            else
+            {
+                // Trường hợp Wave rỗng không có quái
+                _spawnTimer = 1f; 
+            }
         }
         else
         {
-            // Trường hợp Wave rỗng không có quái
-            _spawnTimer = 1f; 
+            Debug.LogError("Spawner: List Wave bị rỗng hoặc null!");
+            _isSpawningActive = false;
         }
     }
-    else
+    public void StartSpawning()
     {
-        Debug.LogError("Spawner: List Wave bị rỗng hoặc null!");
-        _isSpawningActive = false;
+        if (_wavesForThisLevel != null && _wavesForThisLevel.Length > 0)
+        {
+            _isSpawningActive = true; // Bây giờ mới cho phép Update chạy
+            Debug.Log("Spawner: Bắt đầu thả quái!");
+        }
     }
-}
     private void SpawnEnemy(EnemyType typeToSpawn)
     {
 

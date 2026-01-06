@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: CannonTower2
   m_EditorClassIdentifier: 
   range: 2.3
-  shootInterval: 2.2
-  projectileSpeed: 5
-  projectileDuration: 2
+  shootInterval: 2.7
+  projectileSpeed: 3
+  projectileDuration: 3
   projectileSize: 2
-  damage: 100
+  damage: 95
   cost: 300
   sprite: {fileID: 21300000, guid: 8d0ada61c1408a4409a67008c2a18180, type: 3}
   prefab: {fileID: 3470518458149128897, guid: ce582ba1c3ac5a74197ef97aace8ad6d, type: 3}

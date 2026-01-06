@@ -54,6 +54,9 @@ public class UIController : MonoBehaviour
     private BaseTower _currentSelectedTower;
     public bool IsAnyPanelOpen => towerPanel.activeSelf || upgradePanel.activeSelf;
 
+    [Header("Tutorial System")]
+    [SerializeField] private TutorialPopup tutorialPopup;
+
     private void OnEnable()
     {
         Spawner.OnWaveChanged += UpdateWaveText;
@@ -509,5 +512,17 @@ public class UIController : MonoBehaviour
         HideUpgradePanel();
         
         missionCompletePanel.SetActive(false);
+    }
+
+    public void OnHintButtonClicked()
+    {
+        // Mở tutorial nhưng không truyền hành động gì (vì game đang chạy rồi)
+        tutorialPopup.ShowTutorial(null);
+    }
+
+    // Hàm dùng cho Level Manager (tự động mở đầu game)
+    public void ShowTutorialAuto(System.Action onFinished)
+    {
+        tutorialPopup.ShowTutorial(onFinished);
     }
 }
