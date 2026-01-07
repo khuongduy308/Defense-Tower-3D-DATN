@@ -47,9 +47,8 @@ public class MainMenuController : MonoBehaviour
         // Gọi LevelManager (đang là Singleton DontDestroyOnLoad)
         if (LevelManager.Instance != null)
         {
-            int actualLevelId = levelIndex + 1;
-            LevelManager.Instance.LoadLevel(actualLevelId);
-            Debug.Log("Đang tải Level " + (levelIndex + 1));
+            LevelManager.Instance.LoadLevel(levelIndex);
+            Debug.Log("Đang tải Level " + (levelIndex));
         }
         else
         {

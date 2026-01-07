@@ -35,16 +35,6 @@ public class SpawnerTower : BaseTower
             // 3. Chỉ spawn nếu chưa đạt giới hạn
             if (_spawnedSoldiers.Count < maxSoldiers)
             {
-                // Logic: Tháp này chỉ cử lính KHI CÓ KẺ THÙ TRONG TẦM
-                //gọi CleanUpEnemyList() và kiểm tra _enemiesInRange.Count > 0
-                
-                // CleanUpEnemyList();
-                // if (_enemiesInRange.Count > 0)
-                // {
-                //     SpawnSoldier();
-                // }
-
-                // Cử lính bất kể có kẻ thù hay không:
                 SpawnSoldier();
             }
         }

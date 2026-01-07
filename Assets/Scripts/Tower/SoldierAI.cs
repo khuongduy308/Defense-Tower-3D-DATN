@@ -249,8 +249,7 @@ public class SoldierAI : MonoBehaviour
             }
         }
 
-        // 2. Nếu tất cả quái đều đã bị chặn rồi (đông quá), 
-        // thì chọn con quái nào ít người bu vào nhất để hỗ trợ đồng đội.
+
         if (bestCandidate == null)
         {
             int minAttackers = int.MaxValue;
