@@ -27,6 +27,7 @@ public class SoldierAI : MonoBehaviour
     // Quản lý trạng thái
     private enum State { Patrolling, Chasing, Attacking }
     private State _currentState;
+    private Animator _animator;
 
     void OnEnable()
     {
@@ -53,6 +54,7 @@ public class SoldierAI : MonoBehaviour
 
     void Awake()
     {
+        _animator = GetComponent<Animator>();
         _healthBarOriginalScale = healthBar.localScale;
         // Tạo collider "phát hiện" quái
         _aggroCollider = gameObject.AddComponent<CircleCollider2D>();
@@ -76,7 +78,8 @@ public class SoldierAI : MonoBehaviour
         _currentHealth = maxHealth;
         // Reset trạng thái
         _currentState = State.Patrolling;
-        _currentTarget = null;
+        
+        ReleaseTarget();
 
         // 1. Xóa danh sách cũ
         _enemiesInRange.Clear();
@@ -103,7 +106,8 @@ public class SoldierAI : MonoBehaviour
     // Hàm này được gọi bởi SpawnerTower
     public void SetGuardPost(Vector2 post)
     {
-        _guardPost = post;
+        Vector2 randomOffset = Random.insideUnitCircle * 0.5f;
+        _guardPost = post + randomOffset;
     }
 
     void Update()
@@ -158,16 +162,16 @@ public class SoldierAI : MonoBehaviour
         // 1. Nếu quái ra khỏi tầm "aggro", bỏ qua nó
         if (distToPost > aggroRange)
         {
-            _currentTarget = null;
+            ReleaseTarget();
             _currentState = State.Patrolling;
             return;
         }
 
         float distToEnemy = Vector2.Distance(transform.position, _currentTarget.transform.position);
-        // 2. Nếu quái trong tầm đánh, chuyển sang đánh
+
         if (distToEnemy > aggroRange)
         {
-            _currentTarget = null;
+            ReleaseTarget();
             _currentState = State.Patrolling;
             return;
         }
@@ -188,6 +192,9 @@ public class SoldierAI : MonoBehaviour
             _currentState = State.Patrolling;
             return;
         }
+
+        HandleFacing(transform, _currentTarget.transform.position);
+        HandleFacing(_currentTarget.transform, transform.position);
         
         // Báo cho quái vật "dừng lại"
         _currentTarget.SetEngaged(true, this);
@@ -195,8 +202,7 @@ public class SoldierAI : MonoBehaviour
         float distToPost = Vector2.Distance(transform.position, _guardPost);
         if (distToPost > maxChaseDistance)
         {
-            _currentTarget.SetEngaged(false, this); // Nhớ thả quái ra cho nó đi
-            _currentTarget = null;
+            ReleaseTarget();
             _currentState = State.Patrolling;
             return;
         }
@@ -207,11 +213,12 @@ public class SoldierAI : MonoBehaviour
             _attackTimer = attackInterval;
             
             // (Tùy chọn) Chạy animation đánh
-            // transform.GetComponent<Animator>().Play("Chop");
+            _animator.Play("Chop");
 
             _currentTarget.TakeDamage(Mathf.RoundToInt(_damage));
             if (_currentTarget == null)
             {
+                _animator.Play("Idle");
                 return; // Quái đã chết, kết thúc hàm Attack() tại đây
             }
             // --- KẾT THÚC GIẢI PHÁP ---
@@ -220,10 +227,21 @@ public class SoldierAI : MonoBehaviour
         }
     }
 
+    private void ReleaseTarget()
+    {
+        if (_currentTarget != null)
+        {
+            _currentTarget.SetEngaged(false, this);
+            _currentTarget = null;
+        }
+        if (_animator) _animator.Play("Idle");
+    }
+
     // --- LOGIC HỖ TRỢ ---
 
     private void MoveTowards(Vector2 target)
     {
+        _animator.Play("Run");
         transform.position = Vector2.MoveTowards(transform.position, target, moveSpeed * Time.deltaTime);
     }
 
@@ -265,6 +283,26 @@ public class SoldierAI : MonoBehaviour
 
         // 3. Gán mục tiêu
         _currentTarget = bestCandidate;
+    }
+
+    private void HandleFacing(Transform objToRotate, Vector3 targetPos)
+    {
+        if (objToRotate == null) return;
+
+        // Nếu mục tiêu ở bên phải -> Scale X dương (1)
+        if (targetPos.x > objToRotate.position.x)
+        {
+            Vector3 scale = objToRotate.localScale;
+            scale.x = Mathf.Abs(scale.x); // Luôn dương (Mặt quay phải)
+            objToRotate.localScale = scale;
+        }
+        // Nếu mục tiêu ở bên trái -> Scale X âm (-1)
+        else
+        {
+            Vector3 scale = objToRotate.localScale;
+            scale.x = -Mathf.Abs(scale.x); // Luôn âm (Mặt quay trái)
+            objToRotate.localScale = scale;
+        }
     }
 
     // Nhận sát thương (ví dụ: bị quái đánh lại)

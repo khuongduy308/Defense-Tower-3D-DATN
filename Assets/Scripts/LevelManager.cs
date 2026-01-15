@@ -26,6 +26,7 @@ public class LevelManager : MonoBehaviour
     #region RUNTIME STATE
     public LevelData CurrentLevel { get; private set; }
     public int CurrentLevelIndex { get; private set; }
+    public List<Path> CurrentMapPaths { get; private set; } = new List<Path>();
     
     private Transform _mapParent;
     private GameObject _currentMapInstance;
@@ -55,11 +56,8 @@ public class LevelManager : MonoBehaviour
         if (scene.name == gameSceneName)
         {
             InitializeMapContainer();
-            // Nếu đã tải xong data level, tiến hành setup
-            if (CurrentLevel != null)
-            {
-                StartCoroutine(SetupGameRoutine(CurrentLevel));
-            }
+            
+            StartCoroutine(LoadLevelFromFirestore(CurrentLevelIndex));
         }
     }
     #endregion
@@ -69,7 +67,16 @@ public class LevelManager : MonoBehaviour
     public void LoadLevel(int index)
     {
         CurrentLevelIndex = index;
-        StartCoroutine(LoadLevelFromFirestore(index));
+        if (SceneManager.GetActiveScene().name != gameSceneName)
+        {
+            // Nếu đang ở Menu -> Gọi Loading Screen để chuyển sang Game
+            Loader.Load(gameSceneName); 
+        }
+        else
+        {
+            // Nếu đang ở trong Game rồi (Replay) -> Thì load luôn không cần chuyển cảnh
+            StartCoroutine(LoadLevelFromFirestore(index));
+        }
     }
 
     public void LoadNextLevel() => LoadLevel(CurrentLevelIndex + 1);
@@ -100,9 +107,9 @@ public class LevelManager : MonoBehaviour
     private IEnumerator LoadLevelFromFirestore(int index)
     {
         // 1. Chuyển Scene và chờ
-        yield return EnsureGameSceneActive();
+        // yield return EnsureGameSceneActive();
 
-        Debug.Log($"[Firestore] Đang tải Level {index}...");
+        // Debug.Log($"[Firestore] Đang tải Level {index}...");
 
         // 2. Gọi Firestore (Bất đồng bộ)
         var task = db.Collection(collectionName).Document(index.ToString()).GetSnapshotAsync();
@@ -233,7 +240,7 @@ public class LevelManager : MonoBehaviour
     private IEnumerator SetupGameRoutine(LevelData data)
     {
         // Timeout chờ UI
-        float timeout = 2f;
+        float timeout = 5f;
         while (UIController.Instance == null && timeout > 0)
         {
             timeout -= Time.deltaTime;
@@ -261,6 +268,7 @@ public class LevelManager : MonoBehaviour
             // Hiện tutorial nếu là level đầu tiên
             if (UIController.Instance != null)
             {
+                Debug.Log("Level 0: Show Tutorial before starting spawning.");
                 UIController.Instance.ShowTutorialAuto(() => {
                 if (Spawner.Instance != null) Spawner.Instance.StartSpawning();
             });
@@ -286,9 +294,14 @@ public class LevelManager : MonoBehaviour
     private void SetupSpawner(LevelData data)
     {
         if (Spawner.Instance == null) return;
+
+        CurrentMapPaths.Clear();
+        CurrentMapPaths.AddRange(_currentMapInstance.GetComponentsInChildren<Path>());
+
         List<Path> mapPaths = new List<Path>();
         if (_currentMapInstance != null) mapPaths.AddRange(_currentMapInstance.GetComponentsInChildren<Path>());
         Spawner.Instance.SetupLevel(data.wavesInThisLevel, mapPaths);
+        
     }
 
     #endregion

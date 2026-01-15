@@ -17,6 +17,9 @@ public class AuthManager : MonoBehaviour
     public string CurrentUsername;
     public int MaxLevelReached = 1; // Mặc định level 1
 
+    [SerializeField] private string emailSuffix = "@towerdefense.local";
+    [SerializeField] private string staticPassword = "TowerDefense123456";
+
     public static event System.Action<bool, string> OnAuthActionFinished;
 
     FirebaseAuth auth;
@@ -74,7 +77,7 @@ public class AuthManager : MonoBehaviour
         auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task => {
             if (task.IsFaulted)
             {
-                OnAuthActionFinished?.Invoke(false, "Lỗi ĐK: " + task.Exception?.InnerException?.Message);
+                OnAuthActionFinished?.Invoke(false, "Error: " + task.Exception?.InnerException?.Message);
                 return;
             }
 
@@ -83,7 +86,7 @@ public class AuthManager : MonoBehaviour
             
             newUser.UpdateUserProfileAsync(profile).ContinueWithOnMainThread(updateTask => {
                 newUser.SendEmailVerificationAsync();
-                OnAuthActionFinished?.Invoke(true, "Đăng ký thành công! Hãy kiểm tra Email để kích hoạt.");
+                OnAuthActionFinished?.Invoke(true, "Registration successful! Check your email to activate your account.");
                 auth.SignOut(); // Bắt đăng nhập lại
             });
         });
@@ -94,7 +97,7 @@ public class AuthManager : MonoBehaviour
         auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task => {
             if (task.IsFaulted)
             {
-                OnAuthActionFinished?.Invoke(false, "Sai email hoặc mật khẩu!");
+                OnAuthActionFinished?.Invoke(false, "Incorrect email or password!");
                 return;
             }
 
@@ -105,7 +108,7 @@ public class AuthManager : MonoBehaviour
             }
             else
             {
-                OnAuthActionFinished?.Invoke(false, "Email chưa kích hoạt! Vui lòng kiểm tra hòm thư.");
+                OnAuthActionFinished?.Invoke(false, "Email not activated! Please check your inbox.");
                 auth.SignOut();
             }
         });
@@ -164,7 +167,7 @@ public class AuthManager : MonoBehaviour
             }
 
             // Báo cho UI biết là xong xuôi hết rồi -> Vào game thôi
-            OnAuthActionFinished?.Invoke(true, $"Xin chào {CurrentUsername}!");
+            OnAuthActionFinished?.Invoke(true, $"Welcome {CurrentUsername}!");
             StartCoroutine(LoadGameDelay());
         });
     }
@@ -196,6 +199,48 @@ public class AuthManager : MonoBehaviour
     IEnumerator LoadGameDelay()
     {
         yield return new WaitForSeconds(1f);
-        SceneManager.LoadScene("MainMenu"); 
+       Loader.Load("MainMenu"); 
+    }
+
+    public void LoginWithDeviceID()
+    {
+        string deviceId = SystemInfo.deviceUniqueIdentifier;
+        string fakeEmail = deviceId + emailSuffix;
+
+        //thu dang nhap
+        auth.SignInWithEmailAndPasswordAsync(fakeEmail, staticPassword).ContinueWith(task =>
+        {
+            if(task.IsCanceled)
+            {
+                Debug.LogError("LoginWithDeviceID was canceled.");
+                return;
+            }
+            if (task.IsFaulted)
+            {
+                Debug.Log("No existing account, creating new one.");
+                RegisterWithDeviceID(fakeEmail);
+                return;
+            }
+
+            FirebaseUser newUser = task.Result.User;
+            Debug.Log("Dang nhap thanh cong voi Device ID: " + newUser.UserId);
+
+            OnLoginSuccess(newUser);
+        });
+    }
+
+    public void RegisterWithDeviceID(string email)
+    {
+        auth.CreateUserWithEmailAndPasswordAsync(email, staticPassword).ContinueWith(task =>
+        {
+            if (task.IsCanceled || task.IsFaulted)
+            {
+                Debug.LogError($"[Auth] Lỗi tạo tài khoản Device: {task.Exception}");
+                return;
+            }
+            FirebaseUser newUser = task.Result.User;
+            Debug.Log("Tạo tài khoản mới với Device ID: " + newUser.UserId);
+            // OnLoginSuccess(newUser);
+        });
     }
 }

@@ -13,15 +13,13 @@ public class LoadingCallback : MonoBehaviour
     [Header("Settings")]
     public float minLoadTime = 2f; // Thoi gian cho bat buoc
 
-    private void Start()
+    private IEnumerator Start()
     {
         string sceneToLoad = Loader.GetTargetScene();
         
-        if (string.IsNullOrEmpty(sceneToLoad))
-        {
-            Debug.LogError("Không có Scene nào để load!");
-            return;
-        }
+        if (string.IsNullOrEmpty(sceneToLoad)) yield break;
+
+        yield return null; 
 
         StartCoroutine(LoadAsync(sceneToLoad));
     }

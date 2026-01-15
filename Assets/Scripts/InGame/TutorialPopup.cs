@@ -17,15 +17,12 @@ public class TutorialPopup : MonoBehaviour
     private int _currentPageIndex = 0;
     private System.Action _onCloseCallback; // Hành động làm sau khi tắt (ví dụ: thả quái)
 
-    private void Start()
+    private void Awake()
     {
         // Gán sự kiện cho nút
         nextBtn.onClick.AddListener(NextPage);
         prevBtn.onClick.AddListener(PrevPage);
         closeBtn.onClick.AddListener(CloseTutorial);
-        
-        // Mặc định ẩn panel khi game bắt đầu
-        gameObject.SetActive(false);
     }
 
     // Hàm gọi mở Tutorial

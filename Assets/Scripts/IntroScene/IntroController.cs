@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UIElements;
 
 public class IntroController : MonoBehaviour
 {
@@ -40,7 +41,7 @@ public class IntroController : MonoBehaviour
 
     public void OnTapToStart()
     {
-        welcomePanel.SetActive(false);
+        welcomePanel.SetActive(true);
         authPanel.SetActive(true);
         SwitchMode(true); 
     }
@@ -59,7 +60,7 @@ public class IntroController : MonoBehaviour
         registerBtn.SetActive(!isLogin);
         
         TMP_Text txt = toggleText.GetComponentInChildren<TMP_Text>();
-        if(txt) txt.text = isLogin ? "Chưa có tài khoản? <b>Đăng ký</b>" : "Đã có tài khoản? <b>Đăng nhập</b>";
+        if(txt) txt.text = isLogin ? "<b>Register</b>" : "<b>Back</b>";
         
         messageText.gameObject.SetActive(false);
     }
@@ -85,5 +86,10 @@ public class IntroController : MonoBehaviour
     public void OnForgotPasswordClick()
     {
         AuthManager.Instance.ResetPassword(emailInput.text);
+    }
+
+    public void OnGuestLoginClick()
+    {
+        AuthManager.Instance.LoginWithDeviceID();
     }
 }
